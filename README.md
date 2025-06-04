@@ -1,1 +1,1 @@
-# Praca_In-ynierska_Plemiona
+# Praca_Inzynierska_Plemiona
