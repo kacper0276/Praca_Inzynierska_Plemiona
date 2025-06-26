@@ -4,10 +4,14 @@ import * as cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import * as bodyParser from 'body-parser';
+import { ConfigService } from './core/config/config.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   app.setGlobalPrefix('api');
+
+  const configService = app.get(ConfigService);
+  const port = parseInt(configService.get('PORT'), 10);
 
   const config = new DocumentBuilder()
     .setTitle('Pracownia Dyplomowa - Swagger')
@@ -35,6 +39,6 @@ async function bootstrap() {
 
   app.use(bodyParser.json({ limit: '10mb' }));
 
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(port);
 }
 bootstrap();

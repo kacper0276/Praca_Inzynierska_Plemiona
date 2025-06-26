@@ -17,7 +17,7 @@ export class ConfigService {
       type: 'mysql',
       host: this.get('DB_HOST'),
       port: parseInt(this.get('DB_PORT'), 10),
-      username: this.get('DB_USERNAME'),
+      username: this.get('DB_USER'),
       password: this.get('DB_PASSWORD'),
       database: this.get('DB_NAME'),
       entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
