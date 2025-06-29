@@ -7,12 +7,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { OrderByPipe } from './pipes/order-by.pipe';
 import { TimeAgoPipe } from './pipes/time-ago.pipe';
 import { TruncatePipe } from './pipes/truncate.pipe';
+import { SpinnerComponent } from './components/spinner/spinner.component';
+import { ModalComponent } from './components/modal/modal.component';
 
 @NgModule({
   declarations: [
     OrderByPipe,
     TimeAgoPipe,
-    TruncatePipe
+    TruncatePipe,
+    SpinnerComponent,
+    ModalComponent
   ],
   imports: [
     CommonModule,
