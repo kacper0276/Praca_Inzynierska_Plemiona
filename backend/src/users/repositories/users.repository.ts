@@ -17,7 +17,7 @@ export class UsersRepository extends BaseRepository<User> {
   }
 
   findOne(id: number): Promise<User | null> {
-    return this.repository.findOneBy({ id } as any);
+    return this.repository.findOneBy({ id });
   }
 
   create(entity: User): Promise<User> {
@@ -25,7 +25,7 @@ export class UsersRepository extends BaseRepository<User> {
   }
 
   update(id: number, entity: Partial<User>): Promise<User> {
-    return this.repository.save({ ...entity, id } as User);
+    return this.repository.save({ ...entity, id });
   }
 
   async delete(id: number): Promise<void> {
@@ -33,6 +33,6 @@ export class UsersRepository extends BaseRepository<User> {
   }
 
   findByEmail(email: string): Promise<User | null> {
-    return this.repository.findOneBy({ email } as any);
+    return this.repository.findOneBy({ email });
   }
 }
