@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { TitleScreenComponent } from './title-screen.component';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [TitleScreenComponent],
-  imports: [CommonModule],
-  exports: [TitleScreenComponent]
+  imports: [SharedModule],
+  exports: [TitleScreenComponent],
 })
 export class TitleScreenModule {}

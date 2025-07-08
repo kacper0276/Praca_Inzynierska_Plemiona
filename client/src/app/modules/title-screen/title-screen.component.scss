@@ -1,4 +1,4 @@
-.video-background {
+.image-background {
   position: fixed;
   top: 0;
   left: 0;
@@ -6,28 +6,22 @@
   height: 100vh;
   z-index: 0;
   overflow: hidden;
+  background: url("../../../assets/img/BackgroundImage.png") no-repeat center
+    center fixed;
+  background-size: cover;
 
-  video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    z-index: 0;
-  }
-}
-.title-content {
-  position: relative;
-  z-index: 1;
+  .title-content {
+    position: relative;
+    z-index: 1;
 
-  .title-screen {
-  text-align: center;
-  margin-top: 5rem;
-  
-  a {
-    margin: 0 1rem;
-    font-weight: bold;
+    .title-screen {
+      text-align: center;
+      margin-top: 5rem;
+
+      a {
+        margin: 0 1rem;
+        font-weight: bold;
+      }
+    }
   }
-}
 }
