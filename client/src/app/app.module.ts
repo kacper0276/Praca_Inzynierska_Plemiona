@@ -8,6 +8,8 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { ToastrModule } from 'ngx-toastr';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { AuthModule } from './modules/auth/auth.module';
+import { TitleScreenModule } from './modules/title-screen/title-screen.module';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -16,6 +18,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    // Config
     BrowserModule,
     AppRoutingModule,
     ToastrModule.forRoot(),
@@ -29,6 +32,10 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient],
       },
     }),
+
+    // Modules
+    AuthModule,
+    TitleScreenModule
   ],
   providers: [provideAnimationsAsync()],
   bootstrap: [AppComponent],
