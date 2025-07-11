@@ -1,16 +1,17 @@
-@use "../../../../styles/variables.scss" as *;
-@use "../../../../styles/mixins.scss" as *;
+@use "../../../../../styles/variables.scss" as *;
+@use "../../../../../styles/mixins.scss" as *;
 
-.login-form-wrapper {
+.register-form-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  height: 100vh;
+
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(4px);
 }
 
-.login-form {
+.register-form {
   background: rgba(255, 255, 255, 0.08);
   padding: 2rem;
   border-radius: 1rem;
