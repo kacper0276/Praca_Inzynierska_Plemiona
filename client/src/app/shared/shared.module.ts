@@ -17,7 +17,7 @@ import { ModalComponent } from './components/modal/modal.component';
     TimeAgoPipe,
     TruncatePipe,
     SpinnerComponent,
-    ModalComponent
+    ModalComponent,
   ],
   imports: [
     CommonModule,
@@ -27,8 +27,15 @@ import { ModalComponent } from './components/modal/modal.component';
     ReactiveFormsModule,
     MatIconModule,
     TranslateModule,
-    RouterModule
+    RouterModule,
   ],
-  exports: [CommonModule, MatIconModule, MatIconModule, TranslateModule, RouterModule],
+  exports: [
+    CommonModule,
+    MatIconModule,
+    MatIconModule,
+    TranslateModule,
+    RouterModule,
+    SpinnerComponent,
+  ],
 })
 export class SharedModule {}

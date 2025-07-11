@@ -10,6 +10,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { AuthModule } from './modules/auth/auth.module';
 import { TitleScreenModule } from './modules/title-screen/title-screen.module';
+import { SharedModule } from './shared/shared.module';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -35,7 +36,8 @@ export function HttpLoaderFactory(http: HttpClient) {
 
     // Modules
     AuthModule,
-    TitleScreenModule
+    TitleScreenModule,
+    SharedModule,
   ],
   providers: [provideAnimationsAsync()],
   bootstrap: [AppComponent],
