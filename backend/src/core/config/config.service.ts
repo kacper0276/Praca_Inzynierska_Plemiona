@@ -43,6 +43,7 @@ export class ConfigService {
       template: {
         dir: __dirname + '/../../templates/mails',
         adapter:
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
           new (require('@nestjs-modules/mailer/dist/adapters/handlebars.adapter').HandlebarsAdapter)(),
         options: {
           strict: true,
