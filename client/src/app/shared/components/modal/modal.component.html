@@ -1,5 +1,5 @@
-<div class="modal-backdrop">
-  <div class="modal">
+<div class="modal-backdrop" (click)="onBackdropClick()">
+  <div class="modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <ng-content select="[modal-header]"></ng-content>
     </div>
