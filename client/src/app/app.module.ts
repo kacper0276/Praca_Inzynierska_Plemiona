@@ -11,6 +11,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { AuthModule } from './modules/auth/auth.module';
 import { TitleScreenModule } from './modules/title-screen/title-screen.module';
 import { SharedModule } from './shared/shared.module';
+import { GameModule } from './modules/game/game.module';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -37,6 +38,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     // Modules
     AuthModule,
     TitleScreenModule,
+    GameModule,
     SharedModule,
   ],
   providers: [provideAnimationsAsync()],

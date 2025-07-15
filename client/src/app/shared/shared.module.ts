@@ -36,6 +36,9 @@ import { ModalComponent } from './components/modal/modal.component';
     TranslateModule,
     RouterModule,
     SpinnerComponent,
+    ReactiveFormsModule,
+    FormsModule,
+    ModalComponent,
   ],
 })
 export class SharedModule {}

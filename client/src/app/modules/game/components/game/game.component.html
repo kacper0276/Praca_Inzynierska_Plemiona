@@ -1,0 +1,35 @@
+@if (isModalOpen) {
+<app-modal (close)="closeModal()">
+  <div modal-header>
+    <h2>Wybierz Świat Gry</h2>
+  </div>
+
+  <div modal-body>
+    <p>Aby kontynuować, wybierz serwer, na którym chcesz grać.</p>
+    <select class="server-select" [(ngModel)]="selectedServerInModal">
+      <option *ngFor="let server of servers" [value]="server.id">
+        {{ server.name }}
+      </option>
+    </select>
+  </div>
+
+  <div modal-footer class="footer-buttons">
+    <button class="btn btn-secondary" (click)="closeModal()">Anuluj</button>
+    <button class="btn btn-primary" (click)="joinGame()">Dołącz do Gry</button>
+  </div>
+</app-modal>
+} @if (joinedServerId) {
+<div class="game-world">
+  <h1>
+    Witaj w Plemionach na serwerze: <strong>{{ joinedServerId }}</strong>
+  </h1>
+  <p>Twoja wioska czeka!</p>
+</div>
+} @if (!isModalOpen && !joinedServerId) {
+<div class="info-message">
+  <p>
+    Musisz wybrać serwer, aby rozpocząć grę. Odśwież stronę, aby spróbować
+    ponownie.
+  </p>
+</div>
+}

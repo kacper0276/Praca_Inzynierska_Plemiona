@@ -1,0 +1,58 @@
+@use "../../../../../styles/variables.scss" as *;
+@use "../../../../../styles/mixins.scss" as *;
+
+.server-select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid $gray-300;
+  border-radius: 4px;
+}
+
+.footer-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+
+  &.btn-primary {
+    background-color: $green-500;
+    color: $white;
+    &:hover {
+      background-color: $green-700;
+    }
+  }
+
+  &.btn-secondary {
+    background-color: $gray-700;
+    color: $white;
+    &:hover {
+      background-color: $gray-600;
+    }
+  }
+}
+
+.game-world {
+  text-align: center;
+  padding: 40px;
+}
+
+.info-message {
+  text-align: center;
+  padding: 40px;
+  color: $gray-600;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
