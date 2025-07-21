@@ -1,0 +1,10 @@
+<div
+  class="building-container"
+  (click)="onClick()"
+  [title]="name + ' (Poziom: ' + level + ')'"
+>
+  <img [src]="imageUrl" [alt]="name" class="building-image" />
+  @if(level > 0){
+  <span class="building-level">{{ level }}</span>
+  }
+</div>

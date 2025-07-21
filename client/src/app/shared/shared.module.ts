@@ -10,6 +10,7 @@ import { TimeAgoPipe } from './pipes/time-ago.pipe';
 import { TruncatePipe } from './pipes/truncate.pipe';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { ModalComponent } from './components/modal/modal.component';
+import { BuildingComponent } from './components/building/building.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { ModalComponent } from './components/modal/modal.component';
     TruncatePipe,
     SpinnerComponent,
     ModalComponent,
+    BuildingComponent,
   ],
   imports: [
     CommonModule,

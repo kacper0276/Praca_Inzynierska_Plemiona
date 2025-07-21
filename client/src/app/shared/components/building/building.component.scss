@@ -1,0 +1,37 @@
+@use "../../../../styles/variables.scss" as *;
+
+.building-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border: 1px dashed $white-200;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  background-color: $sand-color;
+}
+
+.building-container:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+}
+
+.building-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.building-level {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: $white;
+  padding: 2px 5px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+}
