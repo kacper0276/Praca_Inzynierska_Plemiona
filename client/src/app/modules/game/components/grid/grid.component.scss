@@ -1,0 +1,14 @@
+.grid-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 20px;
+  background-color: #a08a52;
+  border: 2px solid #5d4037;
+  border-radius: 5px;
+}
+
+.grid-row {
+  display: flex;
+  gap: 5px;
+}

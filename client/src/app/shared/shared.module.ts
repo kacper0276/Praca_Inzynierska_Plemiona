@@ -41,6 +41,7 @@ import { BuildingComponent } from './components/building/building.component';
     ReactiveFormsModule,
     FormsModule,
     ModalComponent,
+    BuildingComponent,
   ],
 })
 export class SharedModule {}

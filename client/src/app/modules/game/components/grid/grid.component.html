@@ -1,0 +1,12 @@
+<div class="grid-layout">
+  <div *ngFor="let row of buildings; let i = index" class="grid-row">
+    <div *ngFor="let building of row; let j = index" class="grid-cell">
+      <app-building
+        [name]="getBuildingData(i, j).name"
+        [level]="getBuildingData(i, j).level"
+        [imageUrl]="getBuildingData(i, j).imageUrl"
+      >
+      </app-building>
+    </div>
+  </div>
+</div>

@@ -18,6 +18,14 @@ export class GameComponent {
 
   selectedServerInModal: string = this.servers[0].id;
 
+  resources = {
+    wood: 1250,
+    clay: 1180,
+    iron: 980,
+    population: 120,
+    maxPopulation: 150,
+  };
+
   closeModal(): void {
     this.isModalOpen = false;
     console.log('Modal został zamknięty bez wyboru serwera.');
