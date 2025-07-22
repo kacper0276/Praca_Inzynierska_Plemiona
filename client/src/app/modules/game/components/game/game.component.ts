@@ -1,13 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Resources } from '../../../../shared/models/resources.model';
+import { ResourceService } from '../../../../shared/services/resource.service';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss',
 })
-export class GameComponent {
+export class GameComponent implements OnInit {
   isModalOpen = true;
-
   joinedServerId: string | null = null;
 
   servers = [
@@ -15,16 +17,29 @@ export class GameComponent {
     { id: 's2-beta', name: 'Świat Beta' },
     { id: 's3-gamma', name: 'Świat Gamma' },
   ];
-
   selectedServerInModal: string = this.servers[0].id;
 
-  resources = {
-    wood: 1250,
-    clay: 1180,
-    iron: 980,
-    population: 120,
-    maxPopulation: 150,
-  };
+  resources$!: Observable<Resources>;
+
+  constructor(private readonly resourceService: ResourceService) {}
+
+  ngOnInit(): void {
+    this.resources$ = this.resourceService.resources$;
+  }
+
+  public buildFarm(): void {
+    const cost = { wood: 75, clay: 50, iron: 20, population: 5 };
+    if (this.resourceService.spendResources(cost)) {
+      console.log('Zbudowano farmę!');
+    } else {
+      console.log('Nie udało się zbudować farmy - za mało surowców.');
+    }
+  }
+
+  public collectWood(): void {
+    this.resourceService.addResource('wood', 100);
+    console.log('Zebrano 100 drewna.');
+  }
 
   closeModal(): void {
     this.isModalOpen = false;
