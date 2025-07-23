@@ -25,13 +25,11 @@
       <h2>Plemiona</h2>
     </div>
     <div class="resources">
-      <span>Drewno: {{ (resources$ | async)?.wood }}</span>
-      <span>Glina: {{ (resources$ | async)?.clay }}</span>
-      <span>Żelazo: {{ (resources$ | async)?.iron }}</span>
+      <span>Drewno: {{ resources.wood }}</span>
+      <span>Glina: {{ resources.clay }}</span>
+      <span>Żelazo: {{ resources.iron }}</span>
       <span
-        >Ludność: {{ (resources$ | async)?.population }}/{{
-          (resources$ | async)?.maxPopulation
-        }}</span
+        >Ludność: {{ resources.population }}/{{ resources.maxPopulation }}</span
       >
     </div>
     <div class="server-info">

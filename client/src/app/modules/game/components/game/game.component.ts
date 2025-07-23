@@ -19,12 +19,20 @@ export class GameComponent implements OnInit {
   ];
   selectedServerInModal: string = this.servers[0].id;
 
-  resources$!: Observable<Resources>;
+  resources: Resources = {
+    wood: 0,
+    clay: 0,
+    iron: 0,
+    population: 0,
+    maxPopulation: 0,
+  };
 
   constructor(private readonly resourceService: ResourceService) {}
 
   ngOnInit(): void {
-    this.resources$ = this.resourceService.resources$;
+    this.resourceService.resources$.subscribe((res) => {
+      this.resources = res;
+    });
   }
 
   public buildFarm(): void {
