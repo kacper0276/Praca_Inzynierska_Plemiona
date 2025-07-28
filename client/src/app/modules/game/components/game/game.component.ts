@@ -38,7 +38,6 @@ export class GameComponent implements OnInit {
   public buildFarm(): void {
     const cost = { wood: 75, clay: 50, iron: 20, population: 5 };
     if (this.resourceService.spendResources(cost)) {
-      console.log('Zbudowano farmę!');
     } else {
       console.log('Nie udało się zbudować farmy - za mało surowców.');
     }
@@ -46,7 +45,6 @@ export class GameComponent implements OnInit {
 
   public collectWood(): void {
     this.resourceService.addResource('wood', 100);
-    console.log('Zebrano 100 drewna.');
   }
 
   closeModal(): void {
