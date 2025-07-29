@@ -5,12 +5,17 @@
       class="grid-cell"
       (dragover)="onDragOver($event)"
       (drop)="onDrop($event, i, j)"
+      (dragenter)="onDragEnter($event, i, j)"
+      (dragleave)="onDragLeave($event)"
     >
       <app-building
         *ngIf="building"
         [draggable]="true"
         (dragstart)="onDragStart(i, j)"
-        (dragend)="onDragEnd()"
+        (dragend)="onDragEnd($event)"
+        [class.is-dragging]="
+          draggedBuilding?.row === i && draggedBuilding?.col === j
+        "
         [name]="building.name"
         [level]="building.level"
         [imageUrl]="building.imageUrl"

@@ -10,11 +10,7 @@ export class GridComponent implements OnInit {
   gridSize: number = 5;
   buildings: (BuildingData | null)[][] = [];
 
-  private draggedBuilding: {
-    row: number;
-    col: number;
-    data: BuildingData;
-  } | null = null;
+  draggedBuilding: { row: number; col: number } | null = null;
 
   ngOnInit(): void {
     this.initializeGrid();
@@ -61,9 +57,26 @@ export class GridComponent implements OnInit {
   }
 
   onDragStart(row: number, col: number): void {
-    const buildingData = this.buildings[row][col];
-    if (buildingData) {
-      this.draggedBuilding = { row, col, data: buildingData };
+    if (this.buildings[row][col]) {
+      this.draggedBuilding = { row, col };
+    }
+  }
+
+  onDragEnter(event: DragEvent, row: number, col: number): void {
+    if (this.draggedBuilding) {
+      const targetElement = event.target as HTMLElement;
+      const cell = targetElement.closest('.grid-cell');
+      if (cell) {
+        cell.classList.add('drag-over-active');
+      }
+    }
+  }
+
+  onDragLeave(event: DragEvent): void {
+    const targetElement = event.target as HTMLElement;
+    const cell = targetElement.closest('.grid-cell');
+    if (cell) {
+      cell.classList.remove('drag-over-active');
     }
   }
 
@@ -81,18 +94,27 @@ export class GridComponent implements OnInit {
     const fromCol = this.draggedBuilding.col;
 
     if (fromRow === row && fromCol === col) {
-      this.draggedBuilding = null;
+      this.cleanupDragState(event);
       return;
     }
 
-    const targetBuilding = this.buildings[row][col];
-    this.buildings[row][col] = this.draggedBuilding.data;
-    this.buildings[fromRow][fromCol] = targetBuilding;
+    const draggedData = this.buildings[fromRow][fromCol];
+    const targetData = this.buildings[row][col];
 
-    this.draggedBuilding = null;
+    this.buildings[row][col] = draggedData;
+    this.buildings[fromRow][fromCol] = targetData;
+
+    this.cleanupDragState(event);
   }
 
-  onDragEnd(): void {
+  onDragEnd(event: DragEvent): void {
+    this.cleanupDragState(event);
+  }
+
+  private cleanupDragState(event: DragEvent | null): void {
     this.draggedBuilding = null;
+    document.querySelectorAll('.drag-over-active').forEach((el) => {
+      el.classList.remove('drag-over-active');
+    });
   }
 }
