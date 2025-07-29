@@ -1,10 +1,19 @@
 <div class="grid-layout">
   <div *ngFor="let row of buildings; let i = index" class="grid-row">
-    <div *ngFor="let building of row; let j = index" class="grid-cell">
+    <div
+      *ngFor="let building of row; let j = index"
+      class="grid-cell"
+      (dragover)="onDragOver($event)"
+      (drop)="onDrop($event, i, j)"
+    >
       <app-building
-        [name]="getBuildingData(i, j).name"
-        [level]="getBuildingData(i, j).level"
-        [imageUrl]="getBuildingData(i, j).imageUrl"
+        *ngIf="building"
+        [draggable]="true"
+        (dragstart)="onDragStart(i, j)"
+        (dragend)="onDragEnd()"
+        [name]="building.name"
+        [level]="building.level"
+        [imageUrl]="building.imageUrl"
       >
       </app-building>
     </div>

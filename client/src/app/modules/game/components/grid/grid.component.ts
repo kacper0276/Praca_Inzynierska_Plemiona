@@ -10,6 +10,12 @@ export class GridComponent implements OnInit {
   gridSize: number = 5;
   buildings: (BuildingData | null)[][] = [];
 
+  private draggedBuilding: {
+    row: number;
+    col: number;
+    data: BuildingData;
+  } | null = null;
+
   ngOnInit(): void {
     this.initializeGrid();
     this.loadPlayerBuildings();
@@ -52,5 +58,41 @@ export class GridComponent implements OnInit {
         imageUrl: 'assets/images/empty_plot.png',
       }
     );
+  }
+
+  onDragStart(row: number, col: number): void {
+    const buildingData = this.buildings[row][col];
+    if (buildingData) {
+      this.draggedBuilding = { row, col, data: buildingData };
+    }
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+  }
+
+  onDrop(event: DragEvent, row: number, col: number): void {
+    event.preventDefault();
+    if (!this.draggedBuilding) {
+      return;
+    }
+
+    const fromRow = this.draggedBuilding.row;
+    const fromCol = this.draggedBuilding.col;
+
+    if (fromRow === row && fromCol === col) {
+      this.draggedBuilding = null;
+      return;
+    }
+
+    const targetBuilding = this.buildings[row][col];
+    this.buildings[row][col] = this.draggedBuilding.data;
+    this.buildings[fromRow][fromCol] = targetBuilding;
+
+    this.draggedBuilding = null;
+  }
+
+  onDragEnd(): void {
+    this.draggedBuilding = null;
   }
 }
