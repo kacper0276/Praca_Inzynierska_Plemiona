@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { Resources } from '../../../../shared/models/resources.model';
 import { ResourceService } from '../../../../shared/services/resource.service';
 
@@ -11,6 +12,7 @@ import { ResourceService } from '../../../../shared/services/resource.service';
 export class GameComponent implements OnInit {
   isModalOpen = true;
   joinedServerId: string | null = null;
+  activeTab: string = 'village';
 
   servers = [
     { id: 's1-alpha', name: 'Świat Alfa' },
@@ -27,7 +29,17 @@ export class GameComponent implements OnInit {
     maxPopulation: 0,
   };
 
-  constructor(private readonly resourceService: ResourceService) {}
+  constructor(
+    private readonly resourceService: ResourceService,
+    private router: Router
+  ) {
+    this.router.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe((e: any) => {
+        const url = e.urlAfterRedirects.split('/').pop();
+        this.activeTab = url || 'village';
+      });
+  }
 
   ngOnInit(): void {
     this.resourceService.resources$.subscribe((res) => {

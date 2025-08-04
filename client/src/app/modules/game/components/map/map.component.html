@@ -1,0 +1,9 @@
+<div class="map-container">
+  <div *ngFor="let row of tiles" class="map-row">
+    <div
+      *ngFor="let tile of row"
+      class="map-tile"
+      [class.active]="tile === 1"
+    ></div>
+  </div>
+</div>

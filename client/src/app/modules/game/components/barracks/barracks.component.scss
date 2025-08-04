@@ -1,0 +1,11 @@
+.barracks-container {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  width: 200px;
+  background: #fff;
+}
+.unit-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.2rem 0;
+}

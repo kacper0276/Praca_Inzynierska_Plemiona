@@ -1,0 +1,18 @@
+.map-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.map-row {
+  display: flex;
+  gap: 2px;
+}
+.map-tile {
+  width: 32px;
+  height: 32px;
+  background: #eee;
+  border: 1px solid #ccc;
+}
+.map-tile.active {
+  background: #8bc34a;
+}

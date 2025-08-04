@@ -40,16 +40,26 @@
   <main class="main-content">
     <nav class="side-menu">
       <ul>
-        <li class="active"><a href="#">Wioska</a></li>
-        <li><a href="#">Mapa</a></li>
-        <li><a href="#">Koszary</a></li>
-        <li><a href="#">Wiadomości</a></li>
-        <li><a href="#">Ranking</a></li>
+        <li [class.active]="activeTab === 'village'">
+          <a routerLink="village">Wioska</a>
+        </li>
+        <li [class.active]="activeTab === 'map'">
+          <a routerLink="map">Mapa</a>
+        </li>
+        <li [class.active]="activeTab === 'barracks'">
+          <a routerLink="barracks">Koszary</a>
+        </li>
+        <li [class.active]="activeTab === 'chat'">
+          <a routerLink="chat">Wiadomości</a>
+        </li>
+        <li [class.active]="activeTab === 'ranking'">
+          <a routerLink="ranking">Ranking</a>
+        </li>
       </ul>
     </nav>
 
     <div class="game-world">
-      <app-grid></app-grid>
+      <router-outlet></router-outlet>
     </div>
   </main>
 </div>

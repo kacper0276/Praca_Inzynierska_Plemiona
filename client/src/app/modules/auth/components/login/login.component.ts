@@ -23,8 +23,7 @@ export class LoginComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       console.log(this.loginForm.value);
-
-      this.router.navigate(['/game']);
+      this.router.navigate(['/game/village']);
     }
   }
 }
