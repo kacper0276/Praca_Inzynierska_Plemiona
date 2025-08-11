@@ -12,15 +12,23 @@ export class UsersRepository extends BaseRepository<User> {
     super();
   }
 
-  findAll(): Promise<User[]> {
-    return this.repository.find();
+  findAll(options?: any): Promise<User[]> {
+    return this.repository.find(options);
   }
 
-  findOne(id: number): Promise<User | null> {
-    return this.repository.findOneBy({ id });
+  findOne(where: Partial<User>, options?: any): Promise<User | null> {
+    return this.repository.findOne({ where, ...options });
   }
 
-  create(entity: User): Promise<User> {
+  findOneById(id: number, options?: any): Promise<User | null> {
+    return this.repository.findOne({ where: { id }, ...options });
+  }
+
+  create(data: Partial<User>): User {
+    return this.repository.create(data);
+  }
+
+  save(entity: Partial<User>): Promise<User> {
     return this.repository.save(entity);
   }
 
