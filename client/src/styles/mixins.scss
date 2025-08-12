@@ -33,3 +33,95 @@
     cursor: not-allowed;
   }
 }
+
+@mixin custom-checkbox($size: 20px, $color: #2196f3, $border: #ccc) {
+  input[type="checkbox"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+
+  .checkmark {
+    position: relative;
+    display: inline-block;
+    width: $size;
+    height: $size;
+    background-color: #fff;
+    border: 2px solid $border;
+    border-radius: 4px;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  input[type="checkbox"]:checked ~ .checkmark {
+    background-color: $color;
+    border-color: $color;
+  }
+
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+  }
+
+  input[type="checkbox"]:checked ~ .checkmark:after {
+    display: block;
+  }
+}
+
+@mixin custom-radio($size: 20px, $color: #2196f3, $border: #ccc) {
+  position: relative;
+  width: $size;
+  height: $size;
+
+  input[type="radio"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+
+  .radiomark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: $size;
+    width: $size;
+    background-color: #fff;
+    border: 2px solid $border;
+    border-radius: 50%;
+    transition: background 0.2s;
+  }
+
+  input[type="radio"]:checked ~ .radiomark {
+    background-color: $color;
+    border-color: $color;
+  }
+
+  .radiomark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  input[type="radio"]:checked ~ .radiomark:after {
+    display: block;
+  }
+
+  .radiomark:after {
+    top: 5px;
+    left: 5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+  }
+}
