@@ -8,6 +8,7 @@ import { BarracksComponent } from './components/barracks/barracks.component';
 import { SideMenuComponent } from './components/side-menu/side-menu.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { GameRoutingModule } from './game-routing.module';
+import { RankingComponent } from './components/ranking/ranking.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { GameRoutingModule } from './game-routing.module';
     MapComponent,
     BarracksComponent,
     SideMenuComponent,
+    RankingComponent,
   ],
   imports: [SharedModule, DragDropModule, GameRoutingModule],
 })
