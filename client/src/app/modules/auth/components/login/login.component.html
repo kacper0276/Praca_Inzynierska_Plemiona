@@ -12,6 +12,10 @@
       <input formControlName="password" type="password" />
     </label>
 
+    <p class="create-account-link">
+      Nie masz konta? <a routerLink="/register">Załóż je teraz!</a>
+    </p>
+
     <button type="submit" [disabled]="loginForm.invalid">Zaloguj się</button>
   </form>
 </div>

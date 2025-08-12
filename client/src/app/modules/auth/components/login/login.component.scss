@@ -6,7 +6,6 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(4px);
   background: url("../../../../../assets/img/BackgroundImage.png") no-repeat
     center center fixed;
@@ -55,6 +54,18 @@
 
       &:focus {
         background-color: rgba(255, 255, 255, 0.25);
+      }
+    }
+  }
+
+  .create-account-link {
+    font-size: 1rem;
+
+    a {
+      color: $white;
+
+      &:visited {
+        color: $white;
       }
     }
   }
