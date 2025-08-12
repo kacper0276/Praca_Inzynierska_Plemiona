@@ -8,6 +8,9 @@
   min-height: 100vh;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(4px);
+  background: url("../../../../../assets/img/BackgroundImage.png") no-repeat
+    center center fixed;
+  background-size: cover;
 }
 
 .login-form {
@@ -27,6 +30,7 @@
     text-align: center;
     color: $primary-color;
     margin-bottom: 1rem;
+    -webkit-text-stroke: 0.5px $black;
   }
 
   label {
