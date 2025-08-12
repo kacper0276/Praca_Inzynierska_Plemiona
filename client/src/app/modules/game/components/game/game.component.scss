@@ -45,39 +45,6 @@ $side-menu-width: 200px;
     flex-grow: 1;
     overflow: hidden;
 
-    .side-menu {
-      width: $side-menu-width;
-      background-color: $theme-light-bg;
-      padding: 15px;
-      border-right: 2px solid $theme-light-border;
-      flex-shrink: 0;
-
-      ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-
-        li {
-          margin-bottom: 5px;
-
-          a {
-            display: block;
-            padding: 10px;
-            text-decoration: none;
-            color: $theme-light-text;
-            border-radius: 4px;
-            transition: background-color 0.2s, color 0.2s;
-          }
-
-          a:hover,
-          &.active a {
-            background-color: $theme-accent-color;
-            color: $theme-dark-text;
-          }
-        }
-      }
-    }
-
     .game-world {
       flex-grow: 1;
       padding: 20px;

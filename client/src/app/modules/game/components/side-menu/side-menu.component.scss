@@ -1,0 +1,48 @@
+@use "../../../../../styles/variables.scss" as *;
+
+$theme-dark-bg: $black-200;
+$theme-dark-border: $black-300;
+$theme-dark-text: $white;
+
+$theme-light-bg: $gray-100;
+$theme-light-border: $gray-300;
+$theme-light-text: $black-200;
+
+$theme-accent-color: $blue-600;
+$theme-game-world-bg: $parchment-color;
+
+$side-menu-width: 200px;
+
+.side-menu {
+  width: $side-menu-width;
+  background-color: $theme-light-bg;
+  padding: 15px;
+  border-right: 2px solid $theme-light-border;
+  flex-shrink: 0;
+  height: 100%;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin-bottom: 5px;
+
+      a {
+        display: block;
+        padding: 10px;
+        text-decoration: none;
+        color: $theme-light-text;
+        border-radius: 4px;
+        transition: background-color 0.2s, color 0.2s;
+      }
+
+      a:hover,
+      &.active a {
+        background-color: $theme-accent-color;
+        color: $theme-dark-text;
+      }
+    }
+  }
+}
