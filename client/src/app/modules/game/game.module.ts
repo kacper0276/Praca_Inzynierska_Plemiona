@@ -9,6 +9,7 @@ import { SideMenuComponent } from './components/side-menu/side-menu.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { GameRoutingModule } from './game-routing.module';
 import { RankingComponent } from './components/ranking/ranking.component';
+import { BuildingDetailsPopupComponent } from './components/grid/components/building-details-popup/building-details-popup.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { RankingComponent } from './components/ranking/ranking.component';
     BarracksComponent,
     SideMenuComponent,
     RankingComponent,
+    BuildingDetailsPopupComponent,
   ],
   imports: [SharedModule, DragDropModule, GameRoutingModule],
 })

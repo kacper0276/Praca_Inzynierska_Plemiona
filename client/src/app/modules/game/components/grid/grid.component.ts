@@ -12,6 +12,8 @@ export class GridComponent implements OnInit {
 
   draggedBuilding: { row: number; col: number } | null = null;
 
+  selectedBuilding: BuildingData | null = null;
+
   ngOnInit(): void {
     this.initializeGrid();
     this.loadPlayerBuildings();
@@ -116,5 +118,15 @@ export class GridComponent implements OnInit {
     document.querySelectorAll('.drag-over-active').forEach((el) => {
       el.classList.remove('drag-over-active');
     });
+  }
+
+  onBuildingClick(row: number, col: number): void {
+    const building = this.buildings[row][col];
+    if (building) {
+      this.selectedBuilding = building;
+    }
+  }
+  closePopup(): void {
+    this.selectedBuilding = null;
   }
 }

@@ -1,0 +1,12 @@
+<app-modal (close)="close.emit()">
+  <div modal-header>
+    <h2>{{ building?.name }}</h2>
+  </div>
+  <div modal-body>
+    <img [src]="building?.imageUrl" alt="{{ building?.name }}" />
+    <p>Poziom: {{ building?.level }}</p>
+  </div>
+  <div modal-footer>
+    <button (click)="close.emit()">Zamknij</button>
+  </div>
+</app-modal>

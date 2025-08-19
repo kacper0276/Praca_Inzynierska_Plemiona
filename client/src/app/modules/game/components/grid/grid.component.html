@@ -7,6 +7,7 @@
       (drop)="onDrop($event, i, j)"
       (dragenter)="onDragEnter($event, i, j)"
       (dragleave)="onDragLeave($event)"
+      (click)="onBuildingClick(i, j)"
     >
       <app-building
         *ngIf="building"
@@ -24,3 +25,8 @@
     </div>
   </div>
 </div>
+<app-building-details-popup
+  *ngIf="selectedBuilding"
+  [building]="selectedBuilding"
+  (close)="closePopup()"
+></app-building-details-popup>
