@@ -9,4 +9,5 @@ import { BuildingData } from '../../../../../../shared/models';
 export class BuildingDetailsPopupComponent {
   @Input() building: BuildingData | null = null;
   @Output() close = new EventEmitter<void>();
+  @Output() demolish = new EventEmitter<void>();
 }

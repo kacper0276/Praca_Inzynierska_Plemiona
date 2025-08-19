@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ResourceService } from '../../../../shared/services/resource.service';
+import { Resources } from '../../../../shared/models/resources.model';
 import { BuildingData } from '../../../../shared/models';
 
 @Component({
@@ -13,10 +15,35 @@ export class GridComponent implements OnInit {
   draggedBuilding: { row: number; col: number } | null = null;
 
   selectedBuilding: BuildingData | null = null;
+  selectedBuildingRow: number | null = null;
+  selectedBuildingCol: number | null = null;
+
+  resources: Resources;
+  availableBuildings: BuildingData[] = [
+    { id: 4, name: 'Farma', level: 1, imageUrl: 'assets/images/farm.png' },
+    { id: 5, name: 'Kuźnia', level: 1, imageUrl: 'assets/images/forge.png' },
+    // Dodaj inne typy budynków
+  ];
+  buildMode: boolean = false;
+  buildRow: number | null = null;
+  buildCol: number | null = null;
+
+  constructor(private resourceService: ResourceService) {
+    this.resources = {
+      wood: 0,
+      clay: 0,
+      iron: 0,
+      population: 0,
+      maxPopulation: 0,
+    };
+  }
 
   ngOnInit(): void {
     this.initializeGrid();
     this.loadPlayerBuildings();
+    this.resourceService.resources$.subscribe((res) => {
+      this.resources = res;
+    });
   }
 
   initializeGrid(): void {
@@ -124,9 +151,36 @@ export class GridComponent implements OnInit {
     const building = this.buildings[row][col];
     if (building) {
       this.selectedBuilding = building;
+      this.selectedBuildingRow = row;
+      this.selectedBuildingCol = col;
     }
   }
   closePopup(): void {
     this.selectedBuilding = null;
+    this.selectedBuildingRow = null;
+    this.selectedBuildingCol = null;
+  }
+
+  onEmptyPlotClick(row: number, col: number): void {
+    this.buildMode = true;
+    this.buildRow = row;
+    this.buildCol = col;
+  }
+
+  buildBuilding(building: BuildingData, cost: Partial<Resources>): void {
+    if (this.buildRow === null || this.buildCol === null) return;
+    if (this.resourceService.spendResources(cost)) {
+      this.buildings[this.buildRow][this.buildCol] = { ...building };
+      this.buildMode = false;
+      this.buildRow = null;
+      this.buildCol = null;
+    } else {
+      alert('Za mało surowców!');
+    }
+  }
+
+  demolishBuilding(row: number, col: number): void {
+    this.buildings[row][col] = null;
+    this.closePopup();
   }
 }

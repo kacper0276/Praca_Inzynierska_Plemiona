@@ -1,6 +1,14 @@
 @use "../../../../../../../styles/mixins.scss" as *;
 @use "../../../../../../../styles/variables.scss" as *;
 
+.buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 1rem;
+}
+
 button {
   @include button($red-500);
 }

@@ -6,7 +6,10 @@
     <img [src]="building?.imageUrl" alt="{{ building?.name }}" />
     <p>Poziom: {{ building?.level }}</p>
   </div>
-  <div modal-footer>
+  <div modal-footer class="buttons">
+    <button class="btn btn-danger" (click)="demolish.emit()">
+      Usuń budynek
+    </button>
     <button (click)="close.emit()">Zamknij</button>
   </div>
 </app-modal>

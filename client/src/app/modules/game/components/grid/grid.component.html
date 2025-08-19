@@ -7,7 +7,7 @@
       (drop)="onDrop($event, i, j)"
       (dragenter)="onDragEnter($event, i, j)"
       (dragleave)="onDragLeave($event)"
-      (click)="onBuildingClick(i, j)"
+      (click)="building ? onBuildingClick(i, j) : onEmptyPlotClick(i, j)"
     >
       <app-building
         *ngIf="building"
@@ -22,11 +22,47 @@
         [imageUrl]="building.imageUrl"
       >
       </app-building>
+      <div *ngIf="!building" class="empty-plot-placeholder">+</div>
     </div>
   </div>
 </div>
+
+<ng-container *ngIf="buildMode">
+  <app-modal (close)="buildMode = false">
+    <div modal-header>
+      <h2>Wybierz budynek do budowy</h2>
+    </div>
+    <div modal-body>
+      <div class="build-options">
+        <div *ngFor="let b of availableBuildings" class="build-option">
+          <img [src]="b.imageUrl" [alt]="b.name" />
+          <div>{{ b.name }}</div>
+          <button
+            (click)="
+              buildBuilding(b, {
+                wood: 100,
+                clay: 50,
+                iron: 30,
+                population: 5,
+              })
+            "
+          >
+            Buduj
+          </button>
+        </div>
+      </div>
+    </div>
+    <div modal-footer>
+      <button class="btn btn-secondary" (click)="buildMode = false">
+        Anuluj
+      </button>
+    </div>
+  </app-modal>
+</ng-container>
+
 <app-building-details-popup
   *ngIf="selectedBuilding"
   [building]="selectedBuilding"
   (close)="closePopup()"
+  (demolish)="demolishBuilding(selectedBuildingRow!, selectedBuildingCol!)"
 ></app-building-details-popup>
