@@ -174,6 +174,12 @@ export class GridComponent implements OnInit {
       this.buildMode = false;
       this.buildRow = null;
       this.buildCol = null;
+      if (
+        this.selectedBuildingRow === this.buildRow &&
+        this.selectedBuildingCol === this.buildCol
+      ) {
+        this.closePopup();
+      }
     } else {
       alert('Za mało surowców!');
     }
@@ -182,5 +188,19 @@ export class GridComponent implements OnInit {
   demolishBuilding(row: number, col: number): void {
     this.buildings[row][col] = null;
     this.closePopup();
+  }
+
+  upgradeBuilding(event: { cost: Partial<Resources> }) {
+    if (this.selectedBuildingRow === null || this.selectedBuildingCol === null)
+      return;
+    if (this.resourceService.spendResources(event.cost)) {
+      const building =
+        this.buildings[this.selectedBuildingRow][this.selectedBuildingCol];
+      if (building) {
+        building.level = (building.level || 1) + 1;
+      }
+    } else {
+      alert('Za mało surowców na rozbudowę!');
+    }
   }
 }

@@ -8,6 +8,30 @@ import { BuildingData } from '../../../../../../shared/models';
 })
 export class BuildingDetailsPopupComponent {
   @Input() building: BuildingData | null = null;
+  @Input() resources: any;
+  @Input() availableBuildings: BuildingData[] = [];
   @Output() close = new EventEmitter<void>();
   @Output() demolish = new EventEmitter<void>();
+  @Output() build = new EventEmitter<any>();
+  @Output() upgrade = new EventEmitter<any>();
+  buildMode = false;
+  upgradeMode = false;
+  openBuild() {
+    this.buildMode = true;
+  }
+  openUpgrade() {
+    this.upgradeMode = true;
+  }
+  closeModals() {
+    this.buildMode = false;
+    this.upgradeMode = false;
+  }
+  onBuild(event: any) {
+    this.build.emit(event);
+    this.closeModals();
+  }
+  onUpgrade(event: any) {
+    this.upgrade.emit(event);
+    this.closeModals();
+  }
 }

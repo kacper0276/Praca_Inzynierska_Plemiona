@@ -1,0 +1,25 @@
+<app-modal (close)="close.emit()">
+  <div modal-header>
+    <h2>Rozbuduj budynek</h2>
+  </div>
+  <div modal-body>
+    <div *ngIf="building">
+      <img [src]="building.imageUrl" [alt]="building.name" />
+      <div>{{ building.name }} (Poziom: {{ building.level }})</div>
+      <div class="costs">
+        <span *ngFor="let key of getUpgradeCost() | keyvalue">
+          {{ key.key }}: {{ key.value }}
+        </span>
+      </div>
+      <button
+        [disabled]="!canUpgrade(getUpgradeCost())"
+        (click)="upgrade.emit({ cost: getUpgradeCost() })"
+      >
+        Rozbuduj
+      </button>
+    </div>
+  </div>
+  <div modal-footer>
+    <button class="btn btn-secondary" (click)="close.emit()">Anuluj</button>
+  </div>
+</app-modal>

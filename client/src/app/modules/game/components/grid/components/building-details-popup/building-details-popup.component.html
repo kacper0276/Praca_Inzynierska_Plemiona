@@ -5,11 +5,19 @@
   <div modal-body>
     <img [src]="building?.imageUrl" alt="{{ building?.name }}" />
     <p>Poziom: {{ building?.level }}</p>
+    <div class="actions">
+      <button class="btn btn-primary" (click)="openUpgrade()">Rozbuduj</button>
+    </div>
+    <app-upgrade-modal
+      *ngIf="upgradeMode"
+      [building]="building"
+      [resources]="resources"
+      (upgrade)="onUpgrade($event)"
+      (close)="closeModals()"
+    ></app-upgrade-modal>
   </div>
   <div modal-footer class="buttons">
-    <button class="btn btn-danger" (click)="demolish.emit()">
-      Usuń budynek
-    </button>
+    <button (click)="demolish.emit()">Usuń budynek</button>
     <button (click)="close.emit()">Zamknij</button>
   </div>
 </app-modal>

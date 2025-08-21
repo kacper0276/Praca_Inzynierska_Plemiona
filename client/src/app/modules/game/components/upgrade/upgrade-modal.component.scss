@@ -1,0 +1,9 @@
+.costs {
+  margin: 0.5rem 0;
+  font-size: 0.95em;
+  color: #555;
+}
+button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
