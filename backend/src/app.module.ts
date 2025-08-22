@@ -7,6 +7,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { mailerConfigAsync } from './core/config/mailer/mailer.config';
 import { AuthModule } from './auth/auth.module';
 import { ResourcesModule } from './resources/resources.module';
+import { LoggerModule } from './core/logger/logger.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ResourcesModule } from './resources/resources.module';
     MailerModule.forRootAsync(mailerConfigAsync),
     AuthModule,
     ResourcesModule,
+    LoggerModule,
   ],
   controllers: [],
   providers: [],
