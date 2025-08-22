@@ -1,7 +1,8 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, ManyToMany } from 'typeorm';
+import { Clan } from '../../clans/entities/clan.entity';
 import { BaseEntity } from '../../core/entities/base.entity';
 import { Role } from '../../core/enums/role.enum';
-import { Resources } from 'src/resources/resources.entity';
+import { Resources } from 'src/resources/entities/resources.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -40,4 +41,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Resources, (resources) => resources.user)
   resources: Resources[];
+
+  @ManyToMany(() => Clan, (clan) => clan.members)
+  clans: Clan[];
 }

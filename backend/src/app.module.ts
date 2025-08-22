@@ -8,6 +8,7 @@ import { mailerConfigAsync } from './core/config/mailer/mailer.config';
 import { AuthModule } from './auth/auth.module';
 import { ResourcesModule } from './resources/resources.module';
 import { LoggerModule } from './core/logger/logger.module';
+import { ClansModule } from './clans/clans.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { LoggerModule } from './core/logger/logger.module';
     AuthModule,
     ResourcesModule,
     LoggerModule,
+    ClansModule,
   ],
   controllers: [],
   providers: [],

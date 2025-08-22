@@ -28,8 +28,8 @@ export class UsersRepository extends BaseRepository<User> {
     return this.repository.create(data);
   }
 
-  save(entity: Partial<User>): Promise<User> {
-    return this.repository.save(entity);
+  save(data: Partial<User>): Promise<User> {
+    return this.repository.save(data);
   }
 
   update(id: number, entity: Partial<User>): Promise<User> {
