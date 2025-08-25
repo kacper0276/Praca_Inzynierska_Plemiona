@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, ManyToMany } from 'typeorm';
+import { Column, Entity, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { Clan } from '../../clans/entities/clan.entity';
 import { BaseEntity } from '../../core/entities/base.entity';
 import { Role } from '../../core/enums/role.enum';
@@ -44,4 +44,8 @@ export class User extends BaseEntity {
 
   @ManyToMany(() => Clan, (clan) => clan.members)
   clans: Clan[];
+
+  @ManyToMany(() => User, (user) => user.friends)
+  @JoinTable({ name: 'user_friends' })
+  friends: User[];
 }
