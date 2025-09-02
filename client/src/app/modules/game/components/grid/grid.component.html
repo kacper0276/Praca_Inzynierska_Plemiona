@@ -7,7 +7,7 @@
       (drop)="onDrop($event, i, j)"
       (dragenter)="onDragEnter($event, i, j)"
       (dragleave)="onDragLeave($event)"
-      (click)="building ? onBuildingClick(i, j) : onEmptyPlotClick(i, j)"
+      (click)="building ? onBuildingClick(i, j) : null"
     >
       <app-building
         *ngIf="building"
@@ -22,7 +22,12 @@
         [imageUrl]="building.imageUrl"
       >
       </app-building>
-      <div *ngIf="!building" class="empty-plot-placeholder">+</div>
+      <app-radial-menu
+        *ngIf="!building"
+        [menuOptions]="emptyPlotOptions"
+        (optionSelected)="handleMenuOption($event, i, j)"
+      >
+      </app-radial-menu>
     </div>
   </div>
 </div>

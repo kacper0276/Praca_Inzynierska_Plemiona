@@ -1,0 +1,15 @@
+<div class="radial-menu">
+  <div class="menu-toggle" (click)="toggleMenu()">+</div>
+
+  <ul class="menu-items" [class.active]="isOpen" [ngStyle]="menuStyles">
+    <li
+      *ngFor="let option of menuOptions; let i = index"
+      class="menu-item"
+      [style.--i]="i"
+      (click)="selectOption(option.action)"
+      [title]="option.tooltip"
+    >
+      <img [src]="option.iconUrl" [alt]="option.action" />
+    </li>
+  </ul>
+</div>

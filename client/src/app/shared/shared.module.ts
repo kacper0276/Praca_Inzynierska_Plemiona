@@ -11,6 +11,7 @@ import { TruncatePipe } from './pipes/truncate.pipe';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { ModalComponent } from './components/modal/modal.component';
 import { BuildingComponent } from './components/building/building.component';
+import { RadialMenuComponent } from './components/radial-menu/radial-menu.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { BuildingComponent } from './components/building/building.component';
     SpinnerComponent,
     ModalComponent,
     BuildingComponent,
+    RadialMenuComponent,
   ],
   imports: [
     CommonModule,
@@ -42,6 +44,7 @@ import { BuildingComponent } from './components/building/building.component';
     FormsModule,
     ModalComponent,
     BuildingComponent,
+    RadialMenuComponent,
   ],
 })
 export class SharedModule {}

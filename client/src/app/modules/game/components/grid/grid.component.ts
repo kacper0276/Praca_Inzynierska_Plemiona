@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ResourceService } from '../../../../shared/services/resource.service';
 import { Resources } from '../../../../shared/models/resources.model';
-import { BuildingData } from '../../../../shared/models';
+import { BuildingData, RadialMenuOption } from '../../../../shared/models';
 
 @Component({
   selector: 'app-grid',
@@ -27,6 +27,32 @@ export class GridComponent implements OnInit {
   buildMode: boolean = false;
   buildRow: number | null = null;
   buildCol: number | null = null;
+
+  emptyPlotOptions: RadialMenuOption[] = [
+    {
+      action: 'build',
+      iconUrl: 'assets/images/build-icon.png',
+      tooltip: 'Zbuduj nowy budynek',
+    },
+    {
+      action: 'inspect',
+      iconUrl: 'assets/images/inspect-icon.png',
+      tooltip: 'Informacje o polu',
+    },
+  ];
+
+  handleMenuOption(action: string, row: number, col: number): void {
+    switch (action) {
+      case 'build':
+        this.onEmptyPlotClick(row, col);
+        break;
+      case 'inspect':
+        alert(`Informacje o polu [${row}, ${col}]`);
+        break;
+      default:
+        console.warn('Nieznana akcja:', action);
+    }
+  }
 
   constructor(private resourceService: ResourceService) {
     this.resources = {
