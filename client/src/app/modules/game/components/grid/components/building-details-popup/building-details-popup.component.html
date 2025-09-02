@@ -5,8 +5,33 @@
   <div modal-body>
     <img [src]="building?.imageUrl" alt="{{ building?.name }}" />
     <p>Poziom: {{ building?.level }}</p>
-    <div class="actions">
-      <button class="btn btn-primary" (click)="openUpgrade()">Rozbuduj</button>
+    <div class="radial-menu-container">
+      <div class="radial-menu">
+        <button class="radial-btn create" (click)="openBuild()" title="Stwórz">
+          <span class="icon">＋</span>
+        </button>
+        <button
+          class="radial-btn edit"
+          (click)="$event.stopPropagation()"
+          title="Edytuj (Wkrótce)"
+        >
+          <span class="icon">✎</span>
+        </button>
+        <button
+          class="radial-btn destroy"
+          (click)="demolish.emit()"
+          title="Usuń"
+        >
+          <span class="icon">🗑️</span>
+        </button>
+        <button
+          class="radial-btn upgrade"
+          (click)="openUpgrade()"
+          title="Rozbuduj"
+        >
+          <span class="icon">⬆️</span>
+        </button>
+      </div>
     </div>
     <app-upgrade-modal
       *ngIf="upgradeMode"
@@ -15,6 +40,13 @@
       (upgrade)="onUpgrade($event)"
       (close)="closeModals()"
     ></app-upgrade-modal>
+    <app-build-modal
+      *ngIf="buildMode"
+      [availableBuildings]="availableBuildings"
+      [resources]="resources"
+      (build)="onBuild($event)"
+      (close)="closeModals()"
+    ></app-build-modal>
   </div>
   <div modal-footer class="buttons">
     <button (click)="demolish.emit()">Usuń budynek</button>

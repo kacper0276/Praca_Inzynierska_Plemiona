@@ -13,10 +13,66 @@ button {
   @include button($red-500);
 }
 
-.actions {
+.radial-menu-container {
   display: flex;
-  flex-direction: row;
-  gap: 10px;
   justify-content: center;
   align-items: center;
+  margin: 2rem 0 1rem 0;
+}
+
+.radial-menu {
+  position: relative;
+  width: 180px;
+  height: 180px;
+}
+
+.radial-btn {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.radial-btn.create {
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, 0);
+  background: #4caf50;
+  color: #fff;
+}
+.radial-btn.edit {
+  left: 100%;
+  top: 50%;
+  transform: translate(-100%, -50%);
+  background: #2196f3;
+  color: #fff;
+}
+.radial-btn.destroy {
+  left: 50%;
+  top: 100%;
+  transform: translate(-50%, -100%);
+  background: #f44336;
+  color: #fff;
+}
+.radial-btn.upgrade {
+  left: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+  background: #ff9800;
+  color: #fff;
+}
+.radial-btn:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+.radial-btn .icon {
+  pointer-events: none;
 }
