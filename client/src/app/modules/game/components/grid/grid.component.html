@@ -7,7 +7,6 @@
       (drop)="onDrop($event, i, j)"
       (dragenter)="onDragEnter($event, i, j)"
       (dragleave)="onDragLeave($event)"
-      (click)="building ? onBuildingClick(i, j) : null"
     >
       <ng-container *ngIf="building">
         <app-building
@@ -28,15 +27,20 @@
             activeRadial && activeRadial.row === i && activeRadial.col === j
           "
           [menuOptions]="buildingOptions"
+          [forceOpen]="true"
+          [showToggle]="false"
           (optionSelected)="handleBuildingMenuOption($event, i, j)"
         ></app-radial-menu>
       </ng-container>
-      <app-radial-menu
-        *ngIf="!building"
-        [menuOptions]="emptyPlotOptions"
-        (optionSelected)="handleMenuOption($event, i, j)"
-      >
-      </app-radial-menu>
+      <ng-container *ngIf="!building">
+        <app-radial-menu
+          [menuOptions]="emptyPlotOptions"
+          [showToggle]="true"
+          [forceOpen]="false"
+          (optionSelected)="handleMenuOption($event, i, j)"
+        >
+        </app-radial-menu>
+      </ng-container>
     </div>
   </div>
 </div>

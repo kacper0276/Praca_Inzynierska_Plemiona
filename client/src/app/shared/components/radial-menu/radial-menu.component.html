@@ -1,5 +1,5 @@
 <div class="radial-menu">
-  <div class="menu-toggle" (click)="toggleMenu()">+</div>
+  <div *ngIf="showToggle" class="menu-toggle" (click)="toggleMenu()">+</div>
 
   <ul class="menu-items" [class.active]="isOpen" [ngStyle]="menuStyles">
     <li

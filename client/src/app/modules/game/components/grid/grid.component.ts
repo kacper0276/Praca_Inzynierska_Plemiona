@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { ResourceService } from '../../../../shared/services/resource.service';
 import { Resources } from '../../../../shared/models/resources.model';
 import { BuildingData, RadialMenuOption } from '../../../../shared/models';
@@ -26,6 +26,7 @@ export class GridComponent implements OnInit {
   buildMode: boolean = false;
   buildRow: number | null = null;
   buildCol: number | null = null;
+  activeRadial: { row: number; col: number } | null = null;
 
   emptyPlotOptions: RadialMenuOption[] = [
     {
@@ -39,37 +40,6 @@ export class GridComponent implements OnInit {
       tooltip: 'Informacje o polu',
     },
   ];
-
-  handleMenuOption(action: string, row: number, col: number): void {
-    this.activeEmptyRadial = null;
-    switch (action) {
-      case 'build':
-        this.buildRow = row;
-        this.buildCol = col;
-        this.buildMode = true;
-        break;
-      case 'inspect':
-        alert(`Informacje o polu [${row}, ${col}]`);
-        break;
-      default:
-        console.warn('Nieznana akcja:', action);
-    }
-  }
-
-  activeEmptyRadial: { row: number; col: number } | null = null;
-
-  showEmptyRadial(row: number, col: number) {
-    if (
-      this.activeEmptyRadial &&
-      this.activeEmptyRadial.row === row &&
-      this.activeEmptyRadial.col === col
-    ) {
-      this.activeEmptyRadial = null;
-    } else {
-      this.activeEmptyRadial = { row, col };
-    }
-  }
-
   buildingOptions: RadialMenuOption[] = [
     {
       action: 'details',
@@ -85,7 +55,58 @@ export class GridComponent implements OnInit {
     { action: 'edit', iconUrl: 'assets/icons/edit.svg', tooltip: 'Edytuj' },
   ];
 
-  activeRadial: { row: number; col: number } | null = null;
+  constructor(
+    private resourceService: ResourceService,
+    private elementRef: ElementRef
+  ) {
+    this.resources = {
+      wood: 0,
+      clay: 0,
+      iron: 0,
+      population: 0,
+      maxPopulation: 0,
+    };
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.activeRadial) {
+      return;
+    }
+
+    const clickedElement = event.target as HTMLElement;
+    const activeCellElement = this.elementRef.nativeElement.querySelector(
+      `.grid-row:nth-child(${this.activeRadial.row + 1}) 
+       .grid-cell:nth-child(${this.activeRadial.col + 1})`
+    );
+
+    if (activeCellElement && !activeCellElement.contains(clickedElement)) {
+      this.activeRadial = null;
+    }
+  }
+
+  ngOnInit(): void {
+    this.initializeGrid();
+    this.loadPlayerBuildings();
+    this.resourceService.resources$.subscribe((res) => {
+      this.resources = res;
+    });
+  }
+
+  handleMenuOption(action: string, row: number, col: number): void {
+    switch (action) {
+      case 'build':
+        this.buildRow = row;
+        this.buildCol = col;
+        this.buildMode = true;
+        break;
+      case 'inspect':
+        alert(`Informacje o polu [${row}, ${col}]`);
+        break;
+      default:
+        console.warn('Nieznana akcja:', action);
+    }
+  }
 
   handleBuildingMenuOption(action: string, row: number, col: number): void {
     this.activeRadial = null;
@@ -106,24 +127,6 @@ export class GridComponent implements OnInit {
       case 'edit':
         break;
     }
-  }
-
-  constructor(private resourceService: ResourceService) {
-    this.resources = {
-      wood: 0,
-      clay: 0,
-      iron: 0,
-      population: 0,
-      maxPopulation: 0,
-    };
-  }
-
-  ngOnInit(): void {
-    this.initializeGrid();
-    this.loadPlayerBuildings();
-    this.resourceService.resources$.subscribe((res) => {
-      this.resources = res;
-    });
   }
 
   initializeGrid(): void {
@@ -230,10 +233,19 @@ export class GridComponent implements OnInit {
   onBuildingClick(row: number, col: number): void {
     const building = this.buildings[row][col];
     if (building) {
-      this.activeRadial = { row, col };
+      if (
+        this.activeRadial &&
+        this.activeRadial.row === row &&
+        this.activeRadial.col === col
+      ) {
+        this.activeRadial = null;
+      } else {
+        this.activeRadial = { row, col };
+      }
       this.selectedBuilding = null;
     }
   }
+
   closePopup(): void {
     this.selectedBuilding = null;
     this.selectedBuildingRow = null;

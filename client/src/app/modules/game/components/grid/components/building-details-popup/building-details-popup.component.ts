@@ -45,21 +45,26 @@ export class BuildingDetailsPopupComponent {
   openBuild() {
     this.buildMode = true;
   }
+
   openUpgrade() {
     this.upgradeMode = true;
   }
+
   closeModals() {
     this.buildMode = false;
     this.upgradeMode = false;
   }
+
   onBuild(event: any) {
     this.build.emit(event);
     this.closeModals();
   }
+
   onUpgrade(event: any) {
     this.upgrade.emit(event);
     this.closeModals();
   }
+
   onRadialAction(action: string) {
     switch (action) {
       case 'create':

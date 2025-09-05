@@ -1,91 +1,82 @@
 :host {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
 }
 
 .radial-menu {
   position: relative;
-  width: 50px;
-  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .menu-toggle {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.5);
+  width: 50px;
+  height: 50px;
+  background-color: rgba(30, 30, 30, 0.8);
   color: white;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 30px;
+  font-weight: bold;
   cursor: pointer;
-  transition: transform 0.3s ease;
-  z-index: 10;
-  position: relative;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 
   &:hover {
     transform: scale(1.1);
+    background-color: rgba(0, 0, 0, 0.9);
   }
 }
 
 .menu-items {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.9);
-  list-style: none;
   padding: 0;
   margin: 0;
-  opacity: 0;
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  list-style: none;
+  width: 200px;
+  height: 200px;
+  transform: scale(0);
   pointer-events: none;
-  border-radius: 50%;
-  z-index: 1000;
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 
   &.active {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
     pointer-events: auto;
-
-    .menu-item {
-      opacity: 1;
-      $radius: 80px;
-      transform: rotate(calc(360deg / var(--item-count) * var(--i)))
-        translateY(-$radius);
-    }
   }
 }
 
 .menu-item {
   position: absolute;
-  top: calc(50% - 25px);
-  left: calc(50% - 25px);
+  top: 50%;
+  left: 50%;
+  margin: -25px;
   width: 50px;
   height: 50px;
-  background-color: #f0e68c;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transform-origin: center center;
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-  opacity: 0;
+  transform: rotate(calc(var(--i) * (360deg / var(--item-count))))
+    translateY(-100px);
+  z-index: 20000;
 
   img {
-    width: 30px;
-    height: 30px;
-    transform: rotate(calc(-360deg / var(--item-count) * var(--i)));
-  }
+    width: 100%;
+    height: 100%;
+    background-color: #f0e68c;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 5px;
+    box-sizing: border-box;
+    transform: rotate(calc(var(--i) * (-360deg / var(--item-count))));
+    transition: transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
-  &:hover {
-    background-color: #ffd700;
-    $radius: 80px;
-    transform: rotate(calc(360deg / var(--item-count) * var(--i)))
-      translateY(-$radius - 5px) scale(1.1);
+    &:hover {
+      transform: rotate(calc(var(--i) * (-360deg / var(--item-count))))
+        scale(1.2);
+    }
   }
 }
