@@ -9,19 +9,28 @@
       (dragleave)="onDragLeave($event)"
       (click)="building ? onBuildingClick(i, j) : null"
     >
-      <app-building
-        *ngIf="building"
-        [draggable]="true"
-        (dragstart)="onDragStart(i, j)"
-        (dragend)="onDragEnd($event)"
-        [class.is-dragging]="
-          draggedBuilding?.row === i && draggedBuilding?.col === j
-        "
-        [name]="building.name"
-        [level]="building.level"
-        [imageUrl]="building.imageUrl"
-      >
-      </app-building>
+      <ng-container *ngIf="building">
+        <app-building
+          [draggable]="true"
+          (dragstart)="onDragStart(i, j)"
+          (dragend)="onDragEnd($event)"
+          [class.is-dragging]="
+            draggedBuilding?.row === i && draggedBuilding?.col === j
+          "
+          [name]="building.name"
+          [level]="building.level"
+          [imageUrl]="building.imageUrl"
+          (click)="onBuildingClick(i, j)"
+        ></app-building>
+
+        <app-radial-menu
+          *ngIf="
+            activeRadial && activeRadial.row === i && activeRadial.col === j
+          "
+          [menuOptions]="buildingOptions"
+          (optionSelected)="handleBuildingMenuOption($event, i, j)"
+        ></app-radial-menu>
+      </ng-container>
       <app-radial-menu
         *ngIf="!building"
         [menuOptions]="emptyPlotOptions"

@@ -6,32 +6,10 @@
     <img [src]="building?.imageUrl" alt="{{ building?.name }}" />
     <p>Poziom: {{ building?.level }}</p>
     <div class="radial-menu-container">
-      <div class="radial-menu">
-        <button class="radial-btn create" (click)="openBuild()" title="Stwórz">
-          <span class="icon">＋</span>
-        </button>
-        <button
-          class="radial-btn edit"
-          (click)="$event.stopPropagation()"
-          title="Edytuj (Wkrótce)"
-        >
-          <span class="icon">✎</span>
-        </button>
-        <button
-          class="radial-btn destroy"
-          (click)="demolish.emit()"
-          title="Usuń"
-        >
-          <span class="icon">🗑️</span>
-        </button>
-        <button
-          class="radial-btn upgrade"
-          (click)="openUpgrade()"
-          title="Rozbuduj"
-        >
-          <span class="icon">⬆️</span>
-        </button>
-      </div>
+      <app-radial-menu
+        [menuOptions]="menuOptions"
+        (optionSelected)="onRadialAction($event)"
+      ></app-radial-menu>
     </div>
     <app-upgrade-modal
       *ngIf="upgradeMode"

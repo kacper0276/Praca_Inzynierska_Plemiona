@@ -1,5 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { BuildingData } from '../../../../../../shared/models';
+import {
+  BuildingData,
+  RadialMenuOption,
+} from '../../../../../../shared/models';
 
 @Component({
   selector: 'app-building-details-popup',
@@ -16,6 +19,29 @@ export class BuildingDetailsPopupComponent {
   @Output() upgrade = new EventEmitter<any>();
   buildMode = false;
   upgradeMode = false;
+  menuOptions: RadialMenuOption[] = [
+    {
+      action: 'create',
+      iconUrl: 'assets/icons/plus.svg',
+      tooltip: 'Stwórz',
+    },
+    {
+      action: 'edit',
+      iconUrl: 'assets/icons/edit.svg',
+      tooltip: 'Edytuj (Wkrótce)',
+    },
+    {
+      action: 'destroy',
+      iconUrl: 'assets/icons/trash.svg',
+      tooltip: 'Usuń',
+    },
+    {
+      action: 'upgrade',
+      iconUrl: 'assets/icons/upgrade.svg',
+      tooltip: 'Rozbuduj',
+    },
+  ];
+
   openBuild() {
     this.buildMode = true;
   }
@@ -33,5 +59,20 @@ export class BuildingDetailsPopupComponent {
   onUpgrade(event: any) {
     this.upgrade.emit(event);
     this.closeModals();
+  }
+  onRadialAction(action: string) {
+    switch (action) {
+      case 'create':
+        this.openBuild();
+        break;
+      case 'edit':
+        break;
+      case 'destroy':
+        this.demolish.emit();
+        break;
+      case 'upgrade':
+        this.openUpgrade();
+        break;
+    }
   }
 }

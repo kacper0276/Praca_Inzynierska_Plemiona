@@ -6,7 +6,7 @@ import { BuildingData, RadialMenuOption } from '../../../../shared/models';
 @Component({
   selector: 'app-grid',
   templateUrl: './grid.component.html',
-  styleUrl: './grid.component.scss',
+  styleUrls: ['./grid.component.scss'],
 })
 export class GridComponent implements OnInit {
   gridSize: number = 5;
@@ -22,7 +22,6 @@ export class GridComponent implements OnInit {
   availableBuildings: BuildingData[] = [
     { id: 4, name: 'Farma', level: 1, imageUrl: 'assets/images/farm.png' },
     { id: 5, name: 'Kuźnia', level: 1, imageUrl: 'assets/images/forge.png' },
-    // Dodaj inne typy budynków
   ];
   buildMode: boolean = false;
   buildRow: number | null = null;
@@ -42,15 +41,70 @@ export class GridComponent implements OnInit {
   ];
 
   handleMenuOption(action: string, row: number, col: number): void {
+    this.activeEmptyRadial = null;
     switch (action) {
       case 'build':
-        this.onEmptyPlotClick(row, col);
+        this.buildRow = row;
+        this.buildCol = col;
+        this.buildMode = true;
         break;
       case 'inspect':
         alert(`Informacje o polu [${row}, ${col}]`);
         break;
       default:
         console.warn('Nieznana akcja:', action);
+    }
+  }
+
+  activeEmptyRadial: { row: number; col: number } | null = null;
+
+  showEmptyRadial(row: number, col: number) {
+    if (
+      this.activeEmptyRadial &&
+      this.activeEmptyRadial.row === row &&
+      this.activeEmptyRadial.col === col
+    ) {
+      this.activeEmptyRadial = null;
+    } else {
+      this.activeEmptyRadial = { row, col };
+    }
+  }
+
+  buildingOptions: RadialMenuOption[] = [
+    {
+      action: 'details',
+      iconUrl: 'assets/icons/info.svg',
+      tooltip: 'Szczegóły',
+    },
+    {
+      action: 'upgrade',
+      iconUrl: 'assets/icons/upgrade.svg',
+      tooltip: 'Rozbuduj',
+    },
+    { action: 'destroy', iconUrl: 'assets/icons/trash.svg', tooltip: 'Usuń' },
+    { action: 'edit', iconUrl: 'assets/icons/edit.svg', tooltip: 'Edytuj' },
+  ];
+
+  activeRadial: { row: number; col: number } | null = null;
+
+  handleBuildingMenuOption(action: string, row: number, col: number): void {
+    this.activeRadial = null;
+    switch (action) {
+      case 'details':
+        this.selectedBuilding = this.buildings[row][col];
+        this.selectedBuildingRow = row;
+        this.selectedBuildingCol = col;
+        break;
+      case 'upgrade':
+        this.selectedBuilding = this.buildings[row][col];
+        this.selectedBuildingRow = row;
+        this.selectedBuildingCol = col;
+        break;
+      case 'destroy':
+        this.demolishBuilding(row, col);
+        break;
+      case 'edit':
+        break;
     }
   }
 
@@ -176,15 +230,21 @@ export class GridComponent implements OnInit {
   onBuildingClick(row: number, col: number): void {
     const building = this.buildings[row][col];
     if (building) {
-      this.selectedBuilding = building;
-      this.selectedBuildingRow = row;
-      this.selectedBuildingCol = col;
+      this.activeRadial = { row, col };
+      this.selectedBuilding = null;
     }
   }
   closePopup(): void {
     this.selectedBuilding = null;
     this.selectedBuildingRow = null;
     this.selectedBuildingCol = null;
+    this.activeRadial = null;
+  }
+
+  demolishSelected(): void {
+    if (this.selectedBuildingRow === null || this.selectedBuildingCol === null)
+      return;
+    this.demolishBuilding(this.selectedBuildingRow, this.selectedBuildingCol);
   }
 
   onEmptyPlotClick(row: number, col: number): void {
