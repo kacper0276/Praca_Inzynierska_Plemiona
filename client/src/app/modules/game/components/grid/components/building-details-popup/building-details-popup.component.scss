@@ -13,6 +13,20 @@ button {
   @include button($red-500);
 }
 
+.health-bar {
+  width: 100%;
+  height: 10px;
+  background: #ddd;
+  border-radius: 4px;
+  margin: 8px 0 12px 0;
+  overflow: hidden;
+}
+.health-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
+  transition: width 0.3s ease;
+}
+
 .radial-menu-container {
   display: flex;
   justify-content: center;

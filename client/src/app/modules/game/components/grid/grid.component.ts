@@ -142,18 +142,24 @@ export class GridComponent implements OnInit {
       name: 'Ratusz',
       level: 3,
       imageUrl: 'assets/images/town_hall.png',
+      maxHealth: 150,
+      health: 150,
     };
     this.buildings[2][3] = {
       id: 2,
       name: 'Koszary',
       level: 1,
       imageUrl: 'assets/images/barracks.png',
+      maxHealth: 80,
+      health: 80,
     };
     this.buildings[3][1] = {
       id: 3,
       name: 'Spichlerz',
       level: 5,
       imageUrl: 'assets/images/storage.png',
+      maxHealth: 250,
+      health: 250,
     };
   }
 
@@ -268,7 +274,13 @@ export class GridComponent implements OnInit {
   buildBuilding(building: BuildingData, cost: Partial<Resources>): void {
     if (this.buildRow === null || this.buildCol === null) return;
     if (this.resourceService.spendResources(cost)) {
-      this.buildings[this.buildRow][this.buildCol] = { ...building };
+      // ensure health fields exist on newly built building
+      const newBuilding: BuildingData = {
+        ...building,
+        maxHealth: building.maxHealth ?? 100,
+        health: building.health ?? building.maxHealth ?? 100,
+      };
+      this.buildings[this.buildRow][this.buildCol] = newBuilding;
       this.buildMode = false;
       this.buildRow = null;
       this.buildCol = null;
@@ -296,6 +308,12 @@ export class GridComponent implements OnInit {
         this.buildings[this.selectedBuildingRow][this.selectedBuildingCol];
       if (building) {
         building.level = (building.level || 1) + 1;
+        // increase maxHealth and restore some health on upgrade
+        building.maxHealth = (building.maxHealth || 100) + 10;
+        building.health = Math.min(
+          building.health ? building.health + 10 : building.maxHealth,
+          building.maxHealth
+        );
       }
     } else {
       alert('Za mało surowców na rozbudowę!');

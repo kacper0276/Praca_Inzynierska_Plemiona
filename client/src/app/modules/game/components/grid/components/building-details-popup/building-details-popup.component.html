@@ -5,6 +5,17 @@
   <div modal-body>
     <img [src]="building?.imageUrl" alt="{{ building?.name }}" />
     <p>Poziom: {{ building?.level }}</p>
+    <p *ngIf="building">
+      Zdrowie: {{ building.health }} / {{ building.maxHealth }}
+    </p>
+    <div *ngIf="building" class="health-bar">
+      <div
+        class="health-fill"
+        [style.width.%]="
+          ((building.health || 0) / (building.maxHealth || 1)) * 100
+        "
+      ></div>
+    </div>
     <div class="radial-menu-container">
       <app-radial-menu
         [menuOptions]="menuOptions"

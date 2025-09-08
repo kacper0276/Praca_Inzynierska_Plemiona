@@ -3,4 +3,6 @@ export interface BuildingData {
   name: string;
   level: number;
   imageUrl: string;
+  health?: number;
+  maxHealth?: number;
 }
