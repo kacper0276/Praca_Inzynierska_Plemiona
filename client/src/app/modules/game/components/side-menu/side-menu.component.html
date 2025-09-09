@@ -8,6 +8,37 @@
       <mat-icon>{{ isCollapsed ? "menu" : "chevron_left" }}</mat-icon>
     </button>
   </div>
+  <div class="side-controls">
+    <div class="lang-flags">
+      <button
+        class="flag-btn"
+        [class.active]="currentLang === 'pl'"
+        (click)="setLanguage('pl')"
+        title="Polski"
+      >
+        <img src="/assets/icons/pl-flag.png" alt="PL" />
+      </button>
+      <button
+        class="flag-btn"
+        [class.active]="currentLang === 'en'"
+        (click)="setLanguage('en')"
+        title="English"
+      >
+        <img src="/assets/icons/en-flag.png" alt="EN" />
+      </button>
+    </div>
+    <div class="theme-toggle">
+      <button
+        class="theme-btn"
+        (click)="toggleTheme()"
+        [title]="currentTheme === 'dark' ? 'Jasny motyw' : 'Ciemny motyw'"
+      >
+        <mat-icon>{{
+          currentTheme === "dark" ? "dark_mode" : "light_mode"
+        }}</mat-icon>
+      </button>
+    </div>
+  </div>
   <ul>
     <li
       [class.active]="activeTab === 'village'"
