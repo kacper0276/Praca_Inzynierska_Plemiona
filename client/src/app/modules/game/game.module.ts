@@ -12,6 +12,7 @@ import { RankingComponent } from './components/ranking/ranking.component';
 import { BuildingDetailsPopupComponent } from './components/grid/components/building-details-popup/building-details-popup.component';
 import { BuildModalComponent } from './components/build/build-modal.component';
 import { UpgradeModalComponent } from './components/upgrade/upgrade-modal.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,6 @@ import { UpgradeModalComponent } from './components/upgrade/upgrade-modal.compon
     BuildModalComponent,
     UpgradeModalComponent,
   ],
-  imports: [SharedModule, DragDropModule, GameRoutingModule],
+  imports: [SharedModule, DragDropModule, GameRoutingModule, MatIconModule],
 })
 export class GameModule {}

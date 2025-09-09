@@ -1,17 +1,76 @@
-<nav class="side-menu">
+<nav class="side-menu" [class.collapsed]="isCollapsed">
+  <div class="toggle-button-container">
+    <button
+      class="toggle-btn"
+      (click)="toggleCollapse()"
+      aria-label="Zwiń/rozwiń menu"
+    >
+      <mat-icon>{{ isCollapsed ? "menu" : "chevron_left" }}</mat-icon>
+    </button>
+  </div>
   <ul>
-    <li [class.active]="activeTab === 'village'">
-      <a routerLink="village">Wioska</a>
+    <li
+      [class.active]="activeTab === 'village'"
+      [title]="isCollapsed ? 'Wioska' : null"
+    >
+      <a routerLink="village">
+        <mat-icon>cottage</mat-icon>
+        <span *ngIf="!isCollapsed">Wioska</span>
+      </a>
     </li>
-    <li [class.active]="activeTab === 'map'"><a routerLink="map">Mapa</a></li>
-    <li [class.active]="activeTab === 'barracks'">
-      <a routerLink="barracks">Koszary</a>
+    <li
+      [class.active]="activeTab === 'map'"
+      [title]="isCollapsed ? 'Mapa' : null"
+    >
+      <a routerLink="map">
+        <mat-icon>map</mat-icon>
+        <span *ngIf="!isCollapsed">Mapa</span>
+      </a>
     </li>
-    <li [class.active]="activeTab === 'chat'">
-      <a routerLink="chat">Wiadomości</a>
+    <li
+      [class.active]="activeTab === 'barracks'"
+      [title]="isCollapsed ? 'Koszary' : null"
+    >
+      <a routerLink="barracks">
+        <mat-icon>fort</mat-icon>
+        <span *ngIf="!isCollapsed">Koszary</span>
+      </a>
     </li>
-    <li [class.active]="activeTab === 'ranking'">
-      <a routerLink="ranking">Ranking</a>
+    <li
+      [class.active]="activeTab === 'chat'"
+      [title]="isCollapsed ? 'Wiadomości' : null"
+    >
+      <a routerLink="chat">
+        <mat-icon>chat</mat-icon>
+        <span *ngIf="!isCollapsed">Wiadomości</span>
+      </a>
+    </li>
+    <li
+      [class.active]="activeTab === 'ranking'"
+      [title]="isCollapsed ? 'Ranking' : null"
+    >
+      <a routerLink="ranking">
+        <mat-icon>leaderboard</mat-icon>
+        <span *ngIf="!isCollapsed">Ranking</span>
+      </a>
+    </li>
+    <li
+      [class.active]="activeTab === 'clan'"
+      [title]="isCollapsed ? 'Klan' : null"
+    >
+      <a routerLink="clan">
+        <mat-icon>groups</mat-icon>
+        <span *ngIf="!isCollapsed">Klan</span>
+      </a>
+    </li>
+    <li
+      [class.active]="activeTab === 'invitations'"
+      [title]="isCollapsed ? 'Zaproszenia' : null"
+    >
+      <a routerLink="invitations">
+        <mat-icon>person_add</mat-icon>
+        <span *ngIf="!isCollapsed">Zaproszenia</span>
+      </a>
     </li>
   </ul>
 </nav>

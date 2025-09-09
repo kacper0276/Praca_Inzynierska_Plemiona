@@ -7,4 +7,9 @@ import { Component, Input } from '@angular/core';
 })
 export class SideMenuComponent {
   @Input() activeTab: string = 'village';
+  isCollapsed = false;
+
+  toggleCollapse() {
+    this.isCollapsed = !this.isCollapsed;
+  }
 }

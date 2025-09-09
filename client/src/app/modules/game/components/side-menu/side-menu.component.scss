@@ -12,6 +12,7 @@ $theme-accent-color: $blue-600;
 $theme-game-world-bg: $parchment-color;
 
 $side-menu-width: 200px;
+$side-menu-collapsed-width: 68px;
 
 .side-menu {
   width: $side-menu-width;
@@ -20,6 +21,43 @@ $side-menu-width: 200px;
   border-right: 2px solid $theme-light-border;
   flex-shrink: 0;
   height: 100%;
+  transition: width 0.3s ease-in-out;
+  overflow: hidden;
+
+  .toggle-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    height: 40px;
+  }
+
+  .toggle-btn {
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $theme-light-text;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: rgba($black, 0.08);
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $theme-accent-color;
+      outline-offset: 2px;
+    }
+  }
 
   ul {
     list-style: none;
@@ -30,18 +68,42 @@ $side-menu-width: 200px;
       margin-bottom: 5px;
 
       a {
-        display: block;
+        display: flex;
+        align-items: center;
         padding: 10px;
         text-decoration: none;
         color: $theme-light-text;
         border-radius: 4px;
         transition: background-color 0.2s, color 0.2s;
+        white-space: nowrap;
+
+        mat-icon {
+          margin-right: 15px;
+          transition: margin 0.3s ease-in-out;
+        }
       }
 
       a:hover,
       &.active a {
         background-color: $theme-accent-color;
         color: $theme-dark-text;
+      }
+    }
+  }
+
+  &.collapsed {
+    width: $side-menu-collapsed-width;
+    padding: 15px 10px;
+
+    .toggle-button-container {
+      justify-content: center;
+    }
+
+    ul li a {
+      justify-content: center;
+
+      mat-icon {
+        margin-right: 0;
       }
     }
   }
