@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, HostBinding, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-building',
@@ -12,6 +12,17 @@ export class BuildingComponent {
   @Input() health?: number;
   @Input() maxHealth?: number;
   @Input() draggable?: boolean;
+
+  @HostBinding('attr.draggable') get draggableAttr() {
+    return this.draggable ? 'true' : null;
+  }
+
+  @HostListener('dragstart', ['$event'])
+  onNativeDragStart(event: DragEvent) {
+    try {
+      event.dataTransfer?.setData('text/plain', '');
+    } catch (e) {}
+  }
 
   onClick() {
     console.log(`Kliknięto budynek: ${this.name}, poziom: ${this.level}`);
