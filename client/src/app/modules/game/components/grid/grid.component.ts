@@ -27,6 +27,7 @@ export class GridComponent implements OnInit {
   buildRow: number | null = null;
   buildCol: number | null = null;
   activeRadial: { row: number; col: number } | null = null;
+  activeEmptyRadial: { row: number; col: number } | null = null;
 
   emptyPlotOptions: RadialMenuOption[] = [
     {
@@ -159,7 +160,7 @@ export class GridComponent implements OnInit {
       level: 5,
       imageUrl: 'assets/images/storage.png',
       maxHealth: 250,
-      health: 250,
+      health: 200,
     };
   }
 
@@ -252,6 +253,32 @@ export class GridComponent implements OnInit {
     }
   }
 
+  showEmptyRadial(event: Event, row: number, col: number) {
+    event.stopPropagation();
+    if (
+      this.activeEmptyRadial &&
+      this.activeEmptyRadial.row === row &&
+      this.activeEmptyRadial.col === col
+    ) {
+      this.activeEmptyRadial = null;
+    } else {
+      this.activeEmptyRadial = { row, col };
+      this.activeRadial = null;
+    }
+  }
+
+  onEmptyRadialToggled(isOpen: boolean, row: number, col: number): void {
+    if (!isOpen) {
+      if (
+        this.activeEmptyRadial &&
+        this.activeEmptyRadial.row === row &&
+        this.activeEmptyRadial.col === col
+      ) {
+        this.activeEmptyRadial = null;
+      }
+    }
+  }
+
   closePopup(): void {
     this.selectedBuilding = null;
     this.selectedBuildingRow = null;
@@ -274,7 +301,6 @@ export class GridComponent implements OnInit {
   buildBuilding(building: BuildingData, cost: Partial<Resources>): void {
     if (this.buildRow === null || this.buildCol === null) return;
     if (this.resourceService.spendResources(cost)) {
-      // ensure health fields exist on newly built building
       const newBuilding: BuildingData = {
         ...building,
         maxHealth: building.maxHealth ?? 100,
@@ -308,7 +334,6 @@ export class GridComponent implements OnInit {
         this.buildings[this.selectedBuildingRow][this.selectedBuildingCol];
       if (building) {
         building.level = (building.level || 1) + 1;
-        // increase maxHealth and restore some health on upgrade
         building.maxHealth = (building.maxHealth || 100) + 10;
         building.health = Math.min(
           building.health ? building.health + 10 : building.maxHealth,

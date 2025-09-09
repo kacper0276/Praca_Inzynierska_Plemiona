@@ -4,7 +4,17 @@
   [title]="name + ' (Poziom: ' + level + ')'"
 >
   <img [src]="imageUrl" [alt]="name" class="building-image" />
-  @if(level > 0){
-  <span class="building-level">{{ level }}</span>
-  }
+  <span *ngIf="level > 0" class="building-level">{{ level }}</span>
+
+  <div
+    *ngIf="
+      health !== undefined && maxHealth !== undefined && health < maxHealth
+    "
+    class="overhead-health"
+  >
+    <div
+      class="overhead-fill"
+      [style.width.%]="(health / maxHealth) * 100"
+    ></div>
+  </div>
 </div>

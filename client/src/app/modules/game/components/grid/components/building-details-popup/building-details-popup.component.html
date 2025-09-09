@@ -16,12 +16,7 @@
         "
       ></div>
     </div>
-    <div class="radial-menu-container">
-      <app-radial-menu
-        [menuOptions]="menuOptions"
-        (optionSelected)="onRadialAction($event)"
-      ></app-radial-menu>
-    </div>
+    <div class="radial-menu-container"></div>
     <app-upgrade-modal
       *ngIf="upgradeMode"
       [building]="building"

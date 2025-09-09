@@ -19,6 +19,8 @@
           [name]="building.name"
           [level]="building.level"
           [imageUrl]="building.imageUrl"
+          [health]="building.health"
+          [maxHealth]="building.maxHealth"
           (click)="onBuildingClick(i, j)"
         ></app-building>
 
@@ -33,13 +35,30 @@
         ></app-radial-menu>
       </ng-container>
       <ng-container *ngIf="!building">
+        <button
+          *ngIf="
+            !activeEmptyRadial ||
+            activeEmptyRadial.row !== i ||
+            activeEmptyRadial.col !== j
+          "
+          class="empty-plot-placeholder"
+          (click)="showEmptyRadial($event, i, j)"
+        >
+          +
+        </button>
+
         <app-radial-menu
+          *ngIf="
+            activeEmptyRadial &&
+            activeEmptyRadial.row === i &&
+            activeEmptyRadial.col === j
+          "
           [menuOptions]="emptyPlotOptions"
           [showToggle]="true"
-          [forceOpen]="false"
+          [forceOpen]="true"
           (optionSelected)="handleMenuOption($event, i, j)"
-        >
-        </app-radial-menu>
+          (toggled)="onEmptyRadialToggled($event, i, j)"
+        ></app-radial-menu>
       </ng-container>
     </div>
   </div>
