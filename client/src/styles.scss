@@ -1,5 +1,7 @@
 @import "ngx-toastr/toastr";
 @import "material-icons/iconfont/material-icons.css";
+@import "styles/variables";
+@import "styles/mixins";
 
 * {
   box-sizing: border-box;
@@ -15,4 +17,73 @@ body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+:root {
+  --bg: #f8f9fa;
+  --panel: #ffffff;
+  --muted: #6c757d;
+  --text: #212529;
+  --accent: #ffcc00;
+  --accent-strong: #e6b800;
+  --success: #28a745;
+  --danger: #dc3545;
+  --side-menu-bg: var(--panel);
+  --game-bg: #efe6cf;
+  --game-border: #5d4037;
+  --cell-border: #795548;
+  --empty-plot-bg: rgba(30, 30, 30, 0.85);
+  --empty-plot-bg-hover: rgba(0, 0, 0, 0.95);
+  --empty-plot-text: #ffffff;
+  --theme-toggle-color: #ffffff;
+}
+
+.dark-theme {
+  --bg: #0f1720;
+  --panel: #0b1220;
+  --muted: #9aa4b2;
+  --text: #e6eef6;
+  --accent: #ffb84d;
+  --accent-strong: #ff9f1a;
+  --success: #2ecc71;
+  --danger: #ff6b6b;
+  --side-menu-bg: #071018;
+  --game-bg: #1f2933;
+  --game-border: #1b1b1b;
+  --cell-border: #3a3a3a;
+  --empty-plot-bg: rgba(255, 255, 255, 0.06);
+  --empty-plot-bg-hover: rgba(255, 255, 255, 0.12);
+  --empty-plot-text: #e6eef6;
+  --theme-toggle-color: var(--text);
+}
+
+.panel {
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.btn-accent {
+  background: var(--accent);
+  color: var(--text);
+  border: none;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+input,
+textarea,
+select {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.dark-theme input,
+.dark-theme textarea,
+.dark-theme select {
+  border-color: rgba(255, 255, 255, 0.06);
 }

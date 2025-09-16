@@ -25,9 +25,9 @@ $side-menu-width: 200px;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: $theme-dark-bg;
-    color: $theme-dark-text;
-    border-bottom: 3px solid $theme-dark-border;
+    background: var(--top-bar-bg, var(--panel));
+    color: var(--top-bar-text, var(--text));
+    border-bottom: 3px solid var(--top-bar-border, rgba(0, 0, 0, 0.06));
     flex-shrink: 0;
 
     .logo h2 {
@@ -48,7 +48,7 @@ $side-menu-width: 200px;
     .game-world {
       flex-grow: 1;
       padding: 20px;
-      background: $theme-game-world-bg;
+      background: var(--game-bg);
       overflow-y: auto;
     }
   }

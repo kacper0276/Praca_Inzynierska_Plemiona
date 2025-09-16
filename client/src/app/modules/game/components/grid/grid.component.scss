@@ -3,8 +3,8 @@
   flex-direction: column;
   gap: 5px;
   padding: 20px;
-  background-color: #a08a52;
-  border: 2px solid #5d4037;
+  background: var(--game-bg, #a08a52);
+  border: 2px solid var(--game-border, #5d4037);
   border-radius: 5px;
 }
 
@@ -23,8 +23,8 @@
 }
 
 .expand-btn {
-  background: #5d4037;
-  color: #fff;
+  background: var(--accent, #5d4037);
+  color: var(--accent-contrast, #fff);
   border: none;
   padding: 6px 10px;
   border-radius: 4px;
@@ -56,7 +56,8 @@
 }
 
 .expansion-modal-inner {
-  background: #fff;
+  background: var(--panel, #fff);
+  color: var(--text);
   padding: 18px;
   border-radius: 6px;
   min-width: 260px;
@@ -71,8 +72,8 @@
 }
 
 .confirm-btn {
-  background: #2e7d32;
-  color: #fff;
+  background: var(--success, #2e7d32);
+  color: var(--accent-contrast, #fff);
   border: none;
   padding: 6px 10px;
   border-radius: 4px;
@@ -80,7 +81,8 @@
 }
 
 .cancel-btn {
-  background: #e0e0e0;
+  background: var(--muted, #e0e0e0);
+  color: var(--text-muted, #222);
   border: none;
   padding: 6px 10px;
   border-radius: 4px;
@@ -96,7 +98,7 @@
   position: relative;
   width: 100px;
   height: 100px;
-  border: 1px dashed #795548;
+  border: 1px dashed var(--cell-border, #795548);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -104,7 +106,7 @@
 
   &.drag-over-active {
     background-color: rgba(68, 151, 68, 0.3);
-    border: 1px solid #4caf50;
+    border: 1px solid var(--success, #4caf50);
   }
 }
 
@@ -131,8 +133,8 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(30, 30, 30, 0.85);
-  color: #fff;
+  background: var(--empty-plot-bg, rgba(30, 30, 30, 0.85));
+  color: var(--empty-plot-text, #fff);
   font-size: 26px;
   display: flex;
   align-items: center;
@@ -146,5 +148,5 @@
 
 .empty-plot-placeholder:hover {
   transform: scale(1.07);
-  background: rgba(0, 0, 0, 0.95);
+  background: var(--empty-plot-bg-hover, rgba(0, 0, 0, 0.95));
 }

@@ -33,7 +33,7 @@
         (click)="toggleTheme()"
         [title]="currentTheme === 'dark' ? 'Jasny motyw' : 'Ciemny motyw'"
       >
-        <mat-icon>{{
+        <mat-icon [ngClass]="{ 'dark-icon': currentTheme === 'dark' }">{{
           currentTheme === "dark" ? "dark_mode" : "light_mode"
         }}</mat-icon>
       </button>

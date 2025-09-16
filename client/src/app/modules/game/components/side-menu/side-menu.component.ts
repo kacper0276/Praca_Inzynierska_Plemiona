@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Theme } from '../../../../shared/types/theme.type';
+import { ThemeService } from '../../../../shared/services/theme.service';
+import { th } from 'date-fns/locale';
 
 @Component({
   selector: 'app-side-menu',
@@ -13,7 +15,10 @@ export class SideMenuComponent {
   currentLang = 'pl';
   currentTheme: Theme = 'light';
 
-  constructor(private translate: TranslateService) {}
+  constructor(
+    private translate: TranslateService,
+    private readonly themeService: ThemeService
+  ) {}
 
   ngOnInit(): void {
     const storedLang = localStorage.getItem('lang');
@@ -24,8 +29,8 @@ export class SideMenuComponent {
       this.translate.use(this.currentLang);
     }
 
-    const storedTheme = (localStorage.getItem('theme') as Theme) || 'light';
-    this.applyTheme(storedTheme);
+    const serviceTheme = this.themeService.theme || 'light';
+    this.currentTheme = serviceTheme;
   }
 
   toggleCollapse() {
@@ -39,18 +44,12 @@ export class SideMenuComponent {
   }
 
   toggleTheme() {
-    const next: Theme = this.currentTheme === 'dark' ? 'light' : 'dark';
-    this.applyTheme(next);
+    const next = this.themeService.toggle();
+    this.currentTheme = next;
   }
 
   private applyTheme(theme: Theme) {
+    this.themeService.set(theme);
     this.currentTheme = theme;
-    const body = document.body;
-    if (theme === 'dark') {
-      body.classList.add('dark-theme');
-    } else {
-      body.classList.remove('dark-theme');
-    }
-    localStorage.setItem('theme', theme);
   }
 }
