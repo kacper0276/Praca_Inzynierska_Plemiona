@@ -1,65 +1,94 @@
-<div class="grid-layout">
-  <div *ngFor="let row of buildings; let i = index" class="grid-row">
-    <div
-      *ngFor="let building of row; let j = index"
-      class="grid-cell"
-      (dragover)="onDragOver($event)"
-      (drop)="onDrop($event, i, j)"
-      (dragenter)="onDragEnter($event, i, j)"
-      (dragleave)="onDragLeave($event)"
+<div class="grid-wrapper">
+  <div class="expand-controls">
+    <button
+      class="expand-btn left"
+      (click)="requestExpansion('left')"
+      [disabled]="
+        gridSize >= maxGridSize || !canAfford(getCurrentExpansionCost())
+      "
+      title="Rozszerz w lewo"
     >
-      <ng-container *ngIf="building">
-        <app-building
-          [draggable]="true"
-          (dragstart)="onDragStart(i, j)"
-          (dragend)="onDragEnd($event)"
-          [class.is-dragging]="
-            draggedBuilding?.row === i && draggedBuilding?.col === j
-          "
-          [name]="building.name"
-          [level]="building.level"
-          [imageUrl]="building.imageUrl"
-          [health]="building.health"
-          [maxHealth]="building.maxHealth"
-          (click)="onBuildingClick(i, j)"
-        ></app-building>
+      ◀ Rozszerz ({{ getCurrentExpansionCost().wood }}W
+      {{ getCurrentExpansionCost().clay }}C
+      {{ getCurrentExpansionCost().iron }}I)
+    </button>
+    <button
+      class="expand-btn right"
+      (click)="requestExpansion('right')"
+      [disabled]="
+        gridSize >= maxGridSize || !canAfford(getCurrentExpansionCost())
+      "
+      title="Rozszerz w prawo"
+    >
+      Rozszerz ({{ getCurrentExpansionCost().wood }}W
+      {{ getCurrentExpansionCost().clay }}C
+      {{ getCurrentExpansionCost().iron }}I) ▶
+    </button>
+  </div>
 
-        <app-radial-menu
-          *ngIf="
-            activeRadial && activeRadial.row === i && activeRadial.col === j
-          "
-          [menuOptions]="buildingOptions"
-          [forceOpen]="true"
-          [showToggle]="false"
-          (optionSelected)="handleBuildingMenuOption($event, i, j)"
-        ></app-radial-menu>
-      </ng-container>
-      <ng-container *ngIf="!building">
-        <button
-          *ngIf="
-            !activeEmptyRadial ||
-            activeEmptyRadial.row !== i ||
-            activeEmptyRadial.col !== j
-          "
-          class="empty-plot-placeholder"
-          (click)="showEmptyRadial($event, i, j)"
-        >
-          +
-        </button>
+  <div class="grid-layout">
+    <div *ngFor="let row of buildings; let i = index" class="grid-row">
+      <div
+        *ngFor="let building of row; let j = index"
+        class="grid-cell"
+        (dragover)="onDragOver($event)"
+        (drop)="onDrop($event, i, j)"
+        (dragenter)="onDragEnter($event, i, j)"
+        (dragleave)="onDragLeave($event)"
+      >
+        <ng-container *ngIf="building">
+          <app-building
+            [draggable]="true"
+            (dragstart)="onDragStart(i, j)"
+            (dragend)="onDragEnd($event)"
+            [class.is-dragging]="
+              draggedBuilding?.row === i && draggedBuilding?.col === j
+            "
+            [name]="building.name"
+            [level]="building.level"
+            [imageUrl]="building.imageUrl"
+            [health]="building.health"
+            [maxHealth]="building.maxHealth"
+            (click)="onBuildingClick(i, j)"
+          ></app-building>
 
-        <app-radial-menu
-          *ngIf="
-            activeEmptyRadial &&
-            activeEmptyRadial.row === i &&
-            activeEmptyRadial.col === j
-          "
-          [menuOptions]="emptyPlotOptions"
-          [showToggle]="true"
-          [forceOpen]="true"
-          (optionSelected)="handleMenuOption($event, i, j)"
-          (toggled)="onEmptyRadialToggled($event, i, j)"
-        ></app-radial-menu>
-      </ng-container>
+          <app-radial-menu
+            *ngIf="
+              activeRadial && activeRadial.row === i && activeRadial.col === j
+            "
+            [menuOptions]="buildingOptions"
+            [forceOpen]="true"
+            [showToggle]="false"
+            (optionSelected)="handleBuildingMenuOption($event, i, j)"
+          ></app-radial-menu>
+        </ng-container>
+        <ng-container *ngIf="!building">
+          <button
+            *ngIf="
+              !activeEmptyRadial ||
+              activeEmptyRadial.row !== i ||
+              activeEmptyRadial.col !== j
+            "
+            class="empty-plot-placeholder"
+            (click)="showEmptyRadial($event, i, j)"
+          >
+            +
+          </button>
+
+          <app-radial-menu
+            *ngIf="
+              activeEmptyRadial &&
+              activeEmptyRadial.row === i &&
+              activeEmptyRadial.col === j
+            "
+            [menuOptions]="emptyPlotOptions"
+            [showToggle]="true"
+            [forceOpen]="true"
+            (optionSelected)="handleMenuOption($event, i, j)"
+            (toggled)="onEmptyRadialToggled($event, i, j)"
+          ></app-radial-menu>
+        </ng-container>
+      </div>
     </div>
   </div>
 </div>
@@ -84,3 +113,22 @@
   (build)="buildBuilding($event.building, $event.cost)"
   (upgrade)="upgradeBuilding($event)"
 ></app-building-details-popup>
+
+<div class="expansion-modal" *ngIf="pendingExpansion as pe">
+  <div class="expansion-modal-inner">
+    <h3>Rozszerzenie wioski</h3>
+    <p>
+      Chcesz rozszerzyć wioskę na <strong>{{ pe.side }}</strong> za:
+    </p>
+    <p>
+      {{ pe.cost.wood }} drewna, {{ pe.cost.clay }} gliny,
+      {{ pe.cost.iron }} żelaza
+    </p>
+    <div class="modal-actions">
+      <button class="confirm-btn" (click)="confirmExpansion()">
+        Tak, rozszerz
+      </button>
+      <button class="cancel-btn" (click)="cancelExpansion()">Anuluj</button>
+    </div>
+  </div>
+</div>

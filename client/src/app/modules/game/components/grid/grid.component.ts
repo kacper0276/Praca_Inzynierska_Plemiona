@@ -11,6 +11,14 @@ import { BuildingData, RadialMenuOption } from '../../../../shared/models';
 export class GridComponent implements OnInit {
   gridSize: number = 5;
   buildings: (BuildingData | null)[][] = [];
+  readonly expansionCost = { wood: 50, clay: 30, iron: 20 };
+  readonly maxGridSize = 11;
+  expansionMultiplier: number = 1;
+
+  pendingExpansion: {
+    side: 'left' | 'right';
+    cost: Partial<Resources>;
+  } | null = null;
 
   draggedBuilding: { row: number; col: number } | null = null;
 
@@ -67,6 +75,20 @@ export class GridComponent implements OnInit {
       population: 0,
       maxPopulation: 0,
     };
+  }
+
+  canAfford(cost: Partial<Resources>): boolean {
+    const svc: any = this.resourceService as any;
+    if (typeof svc.canAfford === 'function') {
+      return svc.canAfford(cost);
+    }
+
+    const r = this.resources || { wood: 0, clay: 0, iron: 0 };
+    return (
+      (cost.wood || 0) <= (r.wood || 0) &&
+      (cost.clay || 0) <= (r.clay || 0) &&
+      (cost.iron || 0) <= (r.iron || 0)
+    );
   }
 
   @HostListener('document:click', ['$event'])
@@ -296,6 +318,74 @@ export class GridComponent implements OnInit {
     this.buildMode = true;
     this.buildRow = row;
     this.buildCol = col;
+  }
+
+  expandLeft(): void {
+    if (this.gridSize >= this.maxGridSize) {
+      alert('Osiągnięto maksymalny rozmiar wioski');
+      return;
+    }
+
+    const cost = this.getCurrentExpansionCost();
+    if (!this.resourceService.spendResources(cost)) {
+      alert('Za mało surowców na rozszerzenie!');
+      return;
+    }
+
+    this.buildings = this.buildings.map((row) => [null, ...row]);
+    this.gridSize = this.gridSize + 1;
+    this.expansionMultiplier += 0.5;
+  }
+
+  expandRight(): void {
+    if (this.gridSize >= this.maxGridSize) {
+      alert('Osiągnięto maksymalny rozmiar wioski');
+      return;
+    }
+
+    const cost = this.getCurrentExpansionCost();
+    if (!this.resourceService.spendResources(cost)) {
+      alert('Za mało surowców na rozszerzenie!');
+      return;
+    }
+
+    this.buildings = this.buildings.map((row) => [...row, null]);
+    this.gridSize = this.gridSize + 1;
+    this.expansionMultiplier += 0.5; // increase future costs
+  }
+
+  getCurrentExpansionCost(): Partial<Resources> {
+    return {
+      wood: Math.ceil(
+        (this.expansionCost.wood || 0) * this.expansionMultiplier
+      ),
+      clay: Math.ceil(
+        (this.expansionCost.clay || 0) * this.expansionMultiplier
+      ),
+      iron: Math.ceil(
+        (this.expansionCost.iron || 0) * this.expansionMultiplier
+      ),
+    };
+  }
+
+  requestExpansion(side: 'left' | 'right') {
+    if (this.gridSize >= this.maxGridSize) {
+      alert('Osiągnięto maksymalny rozmiar wioski');
+      return;
+    }
+    this.pendingExpansion = { side, cost: this.getCurrentExpansionCost() };
+  }
+
+  confirmExpansion() {
+    if (!this.pendingExpansion) return;
+    const { side, cost } = this.pendingExpansion;
+    this.pendingExpansion = null;
+    if (side === 'left') this.expandLeft();
+    else this.expandRight();
+  }
+
+  cancelExpansion() {
+    this.pendingExpansion = null;
   }
 
   buildBuilding(building: BuildingData, cost: Partial<Resources>): void {
