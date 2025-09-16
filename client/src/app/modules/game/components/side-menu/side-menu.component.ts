@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Theme } from '../../../../shared/types/theme.type';
 import { ThemeService } from '../../../../shared/services/theme.service';
-import { th } from 'date-fns/locale';
 
 @Component({
   selector: 'app-side-menu',
@@ -14,6 +13,13 @@ export class SideMenuComponent {
   isCollapsed = false;
   currentLang = 'pl';
   currentTheme: Theme = 'light';
+  bugModalOpen = false;
+  bug = {
+    title: '',
+    description: '',
+    email: '',
+  };
+  bugSubmitted = false;
 
   constructor(
     private translate: TranslateService,
@@ -48,8 +54,25 @@ export class SideMenuComponent {
     this.currentTheme = next;
   }
 
-  private applyTheme(theme: Theme) {
-    this.themeService.set(theme);
-    this.currentTheme = theme;
+  openBugReport() {
+    this.bugModalOpen = true;
+    this.bugSubmitted = false;
+    this.bug = { title: '', description: '', email: '' };
+  }
+
+  closeBugModal() {
+    this.bugModalOpen = false;
+  }
+
+  submitBugReport() {
+    console.log('Bug report submitted', this.bug);
+    this.bugSubmitted = true;
+    setTimeout(() => {
+      this.bugModalOpen = false;
+    }, 1200);
+  }
+
+  onBugSubmitted() {
+    this.bugSubmitted = true;
   }
 }

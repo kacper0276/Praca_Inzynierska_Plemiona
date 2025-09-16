@@ -12,6 +12,7 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
 import { ModalComponent } from './components/modal/modal.component';
 import { BuildingComponent } from './components/building/building.component';
 import { RadialMenuComponent } from './components/radial-menu/radial-menu.component';
+import { BugReportComponent } from './components/bug-report/bug-report.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { RadialMenuComponent } from './components/radial-menu/radial-menu.compon
     ModalComponent,
     BuildingComponent,
     RadialMenuComponent,
+    BugReportComponent,
   ],
   imports: [
     CommonModule,
@@ -45,6 +47,7 @@ import { RadialMenuComponent } from './components/radial-menu/radial-menu.compon
     ModalComponent,
     BuildingComponent,
     RadialMenuComponent,
+    BugReportComponent,
   ],
 })
 export class SharedModule {}

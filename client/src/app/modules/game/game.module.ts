@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
+import { FormsModule } from '@angular/forms';
 import { GameComponent } from './components/game/game.component';
 import { GridComponent } from './components/grid/grid.component';
 import { ChatComponent } from './components/chat/chat.component';
@@ -27,6 +28,12 @@ import { MatIconModule } from '@angular/material/icon';
     BuildModalComponent,
     UpgradeModalComponent,
   ],
-  imports: [SharedModule, DragDropModule, GameRoutingModule, MatIconModule],
+  imports: [
+    SharedModule,
+    FormsModule,
+    DragDropModule,
+    GameRoutingModule,
+    MatIconModule,
+  ],
 })
 export class GameModule {}

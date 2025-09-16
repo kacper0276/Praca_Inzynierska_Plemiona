@@ -1,0 +1,43 @@
+<div class="bug-modal">
+  <div class="bug-modal-inner panel">
+    <h3>Zgłoś błąd</h3>
+
+    <div *ngIf="bugSubmitted" class="success-message">
+      Twoje zgłoszenie zostało wysłane. Dziękujemy!
+    </div>
+
+    <form *ngIf="!bugSubmitted" (ngSubmit)="submit(bugForm)" #bugForm="ngForm">
+      <label>
+        Tytuł
+        <input name="title" [(ngModel)]="bug.title" required />
+      </label>
+
+      <label>
+        Opis
+        <textarea
+          name="description"
+          [(ngModel)]="bug.description"
+          required
+        ></textarea>
+      </label>
+
+      <label>
+        Email (opcjonalnie)
+        <input name="email" type="email" [(ngModel)]="bug.email" />
+      </label>
+
+      <div class="modal-actions">
+        <button type="button" class="cancel-btn" (click)="close()">
+          Anuluj
+        </button>
+        <button
+          type="submit"
+          [disabled]="!bugForm.form.valid"
+          class="confirm-btn"
+        >
+          Wyślij
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

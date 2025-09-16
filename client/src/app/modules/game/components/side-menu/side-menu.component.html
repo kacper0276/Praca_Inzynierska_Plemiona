@@ -8,6 +8,7 @@
       <mat-icon>{{ isCollapsed ? "menu" : "chevron_left" }}</mat-icon>
     </button>
   </div>
+
   <div class="side-controls">
     <div class="lang-flags">
       <button
@@ -27,6 +28,7 @@
         <img src="/assets/icons/en-flag.png" alt="EN" />
       </button>
     </div>
+
     <div class="theme-toggle">
       <button
         class="theme-btn"
@@ -39,6 +41,7 @@
       </button>
     </div>
   </div>
+
   <ul>
     <li
       [class.active]="activeTab === 'village'"
@@ -49,6 +52,7 @@
         <span *ngIf="!isCollapsed">Wioska</span>
       </a>
     </li>
+
     <li
       [class.active]="activeTab === 'map'"
       [title]="isCollapsed ? 'Mapa' : null"
@@ -58,6 +62,7 @@
         <span *ngIf="!isCollapsed">Mapa</span>
       </a>
     </li>
+
     <li
       [class.active]="activeTab === 'barracks'"
       [title]="isCollapsed ? 'Koszary' : null"
@@ -67,6 +72,7 @@
         <span *ngIf="!isCollapsed">Koszary</span>
       </a>
     </li>
+
     <li
       [class.active]="activeTab === 'chat'"
       [title]="isCollapsed ? 'Wiadomości' : null"
@@ -76,6 +82,7 @@
         <span *ngIf="!isCollapsed">Wiadomości</span>
       </a>
     </li>
+
     <li
       [class.active]="activeTab === 'ranking'"
       [title]="isCollapsed ? 'Ranking' : null"
@@ -85,6 +92,7 @@
         <span *ngIf="!isCollapsed">Ranking</span>
       </a>
     </li>
+
     <li
       [class.active]="activeTab === 'clan'"
       [title]="isCollapsed ? 'Klan' : null"
@@ -94,6 +102,7 @@
         <span *ngIf="!isCollapsed">Klan</span>
       </a>
     </li>
+
     <li
       [class.active]="activeTab === 'invitations'"
       [title]="isCollapsed ? 'Zaproszenia' : null"
@@ -103,5 +112,18 @@
         <span *ngIf="!isCollapsed">Zaproszenia</span>
       </a>
     </li>
+
+    <li class="report-bug">
+      <a (click)="openBugReport()" title="Zgłoś błąd">
+        <mat-icon>bug_report</mat-icon>
+        <span *ngIf="!isCollapsed">Zgłoś błąd</span>
+      </a>
+    </li>
   </ul>
+
+  <app-bug-report
+    *ngIf="bugModalOpen"
+    (closed)="closeBugModal()"
+    (submitted)="onBugSubmitted()"
+  ></app-bug-report>
 </nav>
