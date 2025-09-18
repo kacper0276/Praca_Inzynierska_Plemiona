@@ -1,4 +1,12 @@
-import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
+import { Subscription } from 'rxjs';
+import { GatheringService } from '../../../../shared/services/gathering.service';
 import { ResourceService } from '../../../../shared/services/resource.service';
 import { Resources } from '../../../../shared/models/resources.model';
 import { BuildingData, RadialMenuOption } from '../../../../shared/models';
@@ -8,7 +16,7 @@ import { BuildingData, RadialMenuOption } from '../../../../shared/models';
   templateUrl: './grid.component.html',
   styleUrls: ['./grid.component.scss'],
 })
-export class GridComponent implements OnInit {
+export class GridComponent implements OnInit, OnDestroy {
   gridSize: number = 5;
   buildings: (BuildingData | null)[][] = [];
   readonly expansionCost = { wood: 50, clay: 30, iron: 20 };
@@ -66,7 +74,8 @@ export class GridComponent implements OnInit {
 
   constructor(
     private resourceService: ResourceService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private gatheringService: GatheringService
   ) {
     this.resources = {
       wood: 0,
@@ -76,6 +85,8 @@ export class GridComponent implements OnInit {
       maxPopulation: 0,
     };
   }
+  gatherSecondsLeft: number = 0;
+  private _gatherSub: Subscription | null = null;
 
   canAfford(cost: Partial<Resources>): boolean {
     const svc: any = this.resourceService as any;
@@ -114,6 +125,19 @@ export class GridComponent implements OnInit {
     this.resourceService.resources$.subscribe((res) => {
       this.resources = res;
     });
+    // start gathering loop
+    this.gatheringService.start(() => this.buildings);
+    this._gatherSub = this.gatheringService.timeLeft$.subscribe(
+      (s) => (this.gatherSecondsLeft = s)
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.gatheringService.stop();
+    if (this._gatherSub) {
+      this._gatherSub.unsubscribe();
+      this._gatherSub = null;
+    }
   }
 
   handleMenuOption(action: string, row: number, col: number): void {

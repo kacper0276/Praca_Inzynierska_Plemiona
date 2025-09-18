@@ -22,6 +22,12 @@
   align-items: center;
 }
 
+.gather-countdown {
+  font-size: 13px;
+  color: var(--text-muted, #333);
+  margin-left: 8px;
+}
+
 .expand-btn {
   background: var(--accent, #5d4037);
   color: var(--accent-contrast, #fff);

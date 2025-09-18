@@ -12,6 +12,9 @@
       {{ getCurrentExpansionCost().clay }}C
       {{ getCurrentExpansionCost().iron }}I)
     </button>
+    <div class="gather-countdown" *ngIf="gatherSecondsLeft > 0">
+      Następne surowce za: <strong>{{ gatherSecondsLeft }}s</strong>
+    </div>
     <button
       class="expand-btn right"
       (click)="requestExpansion('right')"
