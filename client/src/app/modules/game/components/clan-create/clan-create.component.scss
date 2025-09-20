@@ -4,6 +4,7 @@
   border-radius: 6px;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
   max-width: 420px;
+  color: var(--top-bar-text, var(--text));
 }
 .form-row {
   display: flex;
