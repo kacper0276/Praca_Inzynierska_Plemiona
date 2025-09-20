@@ -1,0 +1,25 @@
+<div class="clan-create">
+  <h3>Utwórz klan</h3>
+  <form [formGroup]="form" (ngSubmit)="createClan()">
+    <div class="form-row">
+      <label>Nazwa klanu</label>
+      <input formControlName="name" />
+    </div>
+
+    <div class="form-row">
+      <label>Zaproszeni gracze</label>
+      <app-multi-select
+        [items]="players"
+        formControlName="members"
+      ></app-multi-select>
+    </div>
+
+    <div class="cost">
+      Koszt: {{ clanCost.wood }}W {{ clanCost.clay }}C {{ clanCost.iron }}I
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="form.invalid">Utwórz klan</button>
+    </div>
+  </form>
+</div>

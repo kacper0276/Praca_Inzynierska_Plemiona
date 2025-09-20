@@ -6,6 +6,7 @@ import { BarracksComponent } from './components/barracks/barracks.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { GameComponent } from './components/game/game.component';
 import { RankingComponent } from './components/ranking/ranking.component';
+import { ClanCreateComponent } from './components/clan-create/clan-create.component';
 
 const gameRoutes: Routes = [
   {
@@ -17,6 +18,7 @@ const gameRoutes: Routes = [
       { path: 'barracks', component: BarracksComponent },
       { path: 'chat', component: ChatComponent },
       { path: 'ranking', component: RankingComponent },
+      { path: 'clan', component: ClanCreateComponent },
       { path: '', redirectTo: 'village', pathMatch: 'full' },
     ],
   },

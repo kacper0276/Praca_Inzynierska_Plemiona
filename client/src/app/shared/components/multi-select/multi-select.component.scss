@@ -1,0 +1,15 @@
+.multi-select {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.multi-item label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+}
+.multi-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}

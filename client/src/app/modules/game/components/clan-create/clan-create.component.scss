@@ -1,0 +1,30 @@
+.clan-create {
+  background: var(--panel, #fff);
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  max-width: 420px;
+}
+.form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+.form-row label {
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.cost {
+  margin-top: 8px;
+  font-weight: 600;
+}
+.actions {
+  margin-top: 12px;
+}
+.actions button {
+  background: var(--accent, #5d4037);
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+}

@@ -1,0 +1,12 @@
+<div class="multi-select">
+  <div *ngFor="let it of items" class="multi-item">
+    <label>
+      <input
+        type="checkbox"
+        [checked]="selected.indexOf(it.id) > -1"
+        (change)="toggle(it.id)"
+      />
+      <span>{{ it.label }}</span>
+    </label>
+  </div>
+</div>

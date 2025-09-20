@@ -14,6 +14,7 @@ import { BuildingDetailsPopupComponent } from './components/grid/components/buil
 import { BuildModalComponent } from './components/build/build-modal.component';
 import { UpgradeModalComponent } from './components/upgrade/upgrade-modal.component';
 import { MatIconModule } from '@angular/material/icon';
+import { ClanCreateComponent } from './components/clan-create/clan-create.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
     BuildingDetailsPopupComponent,
     BuildModalComponent,
     UpgradeModalComponent,
+    ClanCreateComponent,
   ],
   imports: [
     SharedModule,
