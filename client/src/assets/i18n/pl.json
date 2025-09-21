@@ -1,0 +1,12 @@
+{
+  "INFO_FIELD": "Informacje o polu [{row}, {col}]",
+  "MAX_GRID": "Osiągnięto maksymalny rozmiar wioski",
+  "NOT_ENOUGH_RES_EXPAND": "Za mało surowców na rozszerzenie!",
+  "NOT_ENOUGH_RES": "Za mało surowców!",
+  "NOT_ENOUGH_RES_UPGRADE": "Za mało surowców na rozbudowę!",
+  "NOT_ENOUGH_RES_CLAN": "Za mało surowców na utworzenie klanu",
+  "CLAN_CREATED": "Klan utworzony! (symulacja)",
+  "CLAN_CREATED_SUBTITLE": "Zaproszenia wysłane do wybranych graczy",
+  "CLAN_COST_LABEL": "Koszt",
+  "GATHER_TICK_INFO": "Następne surowce za {seconds}s"
+}

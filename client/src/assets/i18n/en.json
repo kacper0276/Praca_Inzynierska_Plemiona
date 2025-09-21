@@ -1,0 +1,12 @@
+{
+  "INFO_FIELD": "Field information [{row}, {col}]",
+  "MAX_GRID": "Maximum village size reached",
+  "NOT_ENOUGH_RES_EXPAND": "Not enough resources to expand!",
+  "NOT_ENOUGH_RES": "Not enough resources!",
+  "NOT_ENOUGH_RES_UPGRADE": "Not enough resources to upgrade!",
+  "NOT_ENOUGH_RES_CLAN": "Not enough resources to create a clan",
+  "CLAN_CREATED": "Clan created! (simulation)",
+  "CLAN_CREATED_SUBTITLE": "Invitations sent to selected players",
+  "CLAN_COST_LABEL": "Cost",
+  "GATHER_TICK_INFO": "Next resources in {seconds}s"
+}

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ResourceService } from '../../../../shared/services/resource.service';
 import { Resources } from '../../../../shared/models/resources.model';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-clan-create',
@@ -19,7 +21,12 @@ export class ClanCreateComponent implements OnInit {
 
   readonly clanCost: Partial<Resources> = { wood: 500, clay: 300, iron: 200 };
 
-  constructor(private fb: FormBuilder, private resSvc: ResourceService) {
+  constructor(
+    private fb: FormBuilder,
+    private resSvc: ResourceService,
+    private toastr: ToastrService,
+    private translate: TranslateService
+  ) {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       members: [[]],
@@ -31,7 +38,7 @@ export class ClanCreateComponent implements OnInit {
   createClan() {
     if (this.form.invalid) return;
     if (!this.resSvc.spendResources(this.clanCost)) {
-      alert('Za mało surowców na utworzenie klanu');
+      this.toastr.error(this.translate.instant('NOT_ENOUGH_RES_CLAN'));
       return;
     }
 
@@ -41,7 +48,7 @@ export class ClanCreateComponent implements OnInit {
     };
 
     console.log('Utworzono klan', payload);
-    alert('Klan utworzony! (symulacja)');
+    this.toastr.success(this.translate.instant('CLAN_CREATED'));
     this.form.reset({ name: '', members: [] });
   }
 }

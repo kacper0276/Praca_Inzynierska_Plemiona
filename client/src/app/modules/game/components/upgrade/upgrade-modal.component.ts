@@ -15,7 +15,6 @@ export class UpgradeModalComponent {
 
   getUpgradeCost(): Partial<Resources> {
     if (!this.building) return {};
-    // Przykładowa logika kosztu rozbudowy
     return {
       wood: 100 * (this.building.level + 1),
       clay: 50 * (this.building.level + 1),

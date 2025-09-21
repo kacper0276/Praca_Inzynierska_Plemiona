@@ -8,6 +8,8 @@ import {
 import { Subscription } from 'rxjs';
 import { GatheringService } from '../../../../shared/services/gathering.service';
 import { ResourceService } from '../../../../shared/services/resource.service';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { Resources } from '../../../../shared/models/resources.model';
 import { BuildingData, RadialMenuOption } from '../../../../shared/models';
 
@@ -75,7 +77,9 @@ export class GridComponent implements OnInit, OnDestroy {
   constructor(
     private resourceService: ResourceService,
     private elementRef: ElementRef,
-    private gatheringService: GatheringService
+    private gatheringService: GatheringService,
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {
     this.resources = {
       wood: 0,
@@ -148,7 +152,7 @@ export class GridComponent implements OnInit, OnDestroy {
         this.buildMode = true;
         break;
       case 'inspect':
-        alert(`Informacje o polu [${row}, ${col}]`);
+        this.toastr.info(this.translate.instant('INFO_FIELD', { row, col }));
         break;
       default:
         console.warn('Nieznana akcja:', action);
@@ -346,13 +350,13 @@ export class GridComponent implements OnInit, OnDestroy {
 
   expandLeft(): void {
     if (this.gridSize >= this.maxGridSize) {
-      alert('Osiągnięto maksymalny rozmiar wioski');
+      this.toastr.error(this.translate.instant('MAX_GRID'));
       return;
     }
 
     const cost = this.getCurrentExpansionCost();
     if (!this.resourceService.spendResources(cost)) {
-      alert('Za mało surowców na rozszerzenie!');
+      this.toastr.error(this.translate.instant('NOT_ENOUGH_RES_EXPAND'));
       return;
     }
 
@@ -363,13 +367,13 @@ export class GridComponent implements OnInit, OnDestroy {
 
   expandRight(): void {
     if (this.gridSize >= this.maxGridSize) {
-      alert('Osiągnięto maksymalny rozmiar wioski');
+      this.toastr.error(this.translate.instant('MAX_GRID'));
       return;
     }
 
     const cost = this.getCurrentExpansionCost();
     if (!this.resourceService.spendResources(cost)) {
-      alert('Za mało surowców na rozszerzenie!');
+      this.toastr.error(this.translate.instant('NOT_ENOUGH_RES_EXPAND'));
       return;
     }
 
@@ -394,7 +398,7 @@ export class GridComponent implements OnInit, OnDestroy {
 
   requestExpansion(side: 'left' | 'right') {
     if (this.gridSize >= this.maxGridSize) {
-      alert('Osiągnięto maksymalny rozmiar wioski');
+      this.toastr.error(this.translate.instant('MAX_GRID'));
       return;
     }
     this.pendingExpansion = { side, cost: this.getCurrentExpansionCost() };
@@ -431,7 +435,7 @@ export class GridComponent implements OnInit, OnDestroy {
         this.closePopup();
       }
     } else {
-      alert('Za mało surowców!');
+      this.toastr.error(this.translate.instant('NOT_ENOUGH_RES'));
     }
   }
 
@@ -455,7 +459,7 @@ export class GridComponent implements OnInit, OnDestroy {
         );
       }
     } else {
-      alert('Za mało surowców na rozbudowę!');
+      this.toastr.error(this.translate.instant('NOT_ENOUGH_RES_UPGRADE'));
     }
   }
 }
