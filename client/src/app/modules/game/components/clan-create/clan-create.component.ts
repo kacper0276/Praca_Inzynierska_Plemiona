@@ -47,7 +47,6 @@ export class ClanCreateComponent implements OnInit {
       invited: this.form.get('members')?.value || [],
     };
 
-    console.log('Utworzono klan', payload);
     this.toastr.success(this.translate.instant('CLAN_CREATED'));
     this.form.reset({ name: '', members: [] });
   }
