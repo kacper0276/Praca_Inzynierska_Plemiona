@@ -74,6 +74,16 @@
     </li>
 
     <li
+      [class.active]="activeTab === 'army'"
+      [title]="isCollapsed ? 'Armia' : null"
+    >
+      <a routerLink="army">
+        <mat-icon>shield</mat-icon>
+        <span *ngIf="!isCollapsed">Armia</span>
+      </a>
+    </li>
+
+    <li
       [class.active]="activeTab === 'chat'"
       [title]="isCollapsed ? 'Wiadomości' : null"
     >

@@ -15,6 +15,7 @@ import { BuildModalComponent } from './components/build/build-modal.component';
 import { UpgradeModalComponent } from './components/upgrade/upgrade-modal.component';
 import { MatIconModule } from '@angular/material/icon';
 import { ClanCreateComponent } from './components/clan-create/clan-create.component';
+import { ArmyComponent } from './components/army/army.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { ClanCreateComponent } from './components/clan-create/clan-create.compon
     BuildModalComponent,
     UpgradeModalComponent,
     ClanCreateComponent,
+    ArmyComponent,
   ],
   imports: [
     SharedModule,

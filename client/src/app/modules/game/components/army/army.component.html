@@ -1,0 +1,79 @@
+<div class="army-container">
+  <h3 class="title">Armia</h3>
+
+  <div class="units-grid">
+    <div
+      class="unit-card"
+      *ngFor="let unit of units"
+      [class.selected]="unit.id === selectedUnitId"
+      (click)="selectUnit(unit.id)"
+      role="button"
+      tabindex="0"
+    >
+      <div class="unit-top">
+        <div class="unit-illustration" aria-hidden>
+          <span class="shield">🛡️</span>
+        </div>
+
+        <div class="unit-info">
+          <div class="unit-header">
+            <strong>{{ unit.name }}</strong>
+            <span class="level">Lv. {{ unit.level }}</span>
+          </div>
+
+          <div class="unit-body">
+            <div class="unit-count">
+              Posiada: <span class="badge">{{ unit.count }}</span>
+            </div>
+
+            <div class="unit-cost">
+              Koszt:
+              <span class="cost"
+                ><span class="icon">🌲</span>{{ unit.cost.wood }}</span
+              >
+              <span class="cost"
+                ><span class="icon">⛰️</span>{{ unit.cost.clay }}</span
+              >
+              <span class="cost"
+                ><span class="icon">⛓️</span>{{ unit.cost.iron }}</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="unit-actions">
+        <button
+          mat-raised-button
+          class="upgrade-btn"
+          (click)="upgradeUnit(unit); $event.stopPropagation()"
+        >
+          <mat-icon>arrow_upward</mat-icon>
+          Ulepsz
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="create-panel" *ngIf="selectedUnit">
+    <div class="create-card">
+      <div class="create-header">
+        <h4>Twórz {{ selectedUnit.name }}</h4>
+        <div class="create-meta">Lv. {{ selectedUnit.level }}</div>
+      </div>
+
+      <div class="create-body">
+        <label class="create-label">
+          Ilość
+          <input type="number" [(ngModel)]="createAmount" min="1" />
+        </label>
+
+        <div class="create-actions">
+          <button mat-raised-button color="accent" (click)="createUnits()">
+            Stwórz
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
