@@ -128,7 +128,7 @@ body.dark-theme {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--theme-toggle-color);
+    color: var(--text);
     transition: background-color 0.2s;
 
     &:hover {
