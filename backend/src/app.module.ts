@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ResourcesModule } from './resources/resources.module';
 import { LoggerModule } from './core/logger/logger.module';
 import { ClansModule } from './clans/clans.module';
+import { WsGateway } from './core/gateways/ws.gateway';
 
 @Module({
   imports: [
@@ -22,6 +23,6 @@ import { ClansModule } from './clans/clans.module';
     ClansModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [WsGateway],
 })
 export class AppModule {}
