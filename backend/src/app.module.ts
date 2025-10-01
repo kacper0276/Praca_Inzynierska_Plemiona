@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ResourcesModule } from './resources/resources.module';
 import { LoggerModule } from './core/logger/logger.module';
 import { ClansModule } from './clans/clans.module';
+import { VillagesModule } from './villages/villages.module';
 import { WsGateway } from './core/gateways/ws.gateway';
 
 @Module({
@@ -21,6 +22,7 @@ import { WsGateway } from './core/gateways/ws.gateway';
     ResourcesModule,
     LoggerModule,
     ClansModule,
+    VillagesModule,
   ],
   controllers: [],
   providers: [WsGateway],
