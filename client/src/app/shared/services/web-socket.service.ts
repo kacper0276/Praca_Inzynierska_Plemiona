@@ -1,6 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, timer } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { io, Socket } from 'socket.io-client';
 import { WebSocketEvent } from '../enums/websocket-event.enum';
 
 export interface WsMessage<T = any> {
@@ -10,11 +11,10 @@ export interface WsMessage<T = any> {
 
 @Injectable({ providedIn: 'root' })
 export class WebSocketService {
-  private socket: WebSocket | null = null;
+  private socket: Socket | null = null;
   private url = '';
   private incoming$ = new Subject<WsMessage>();
   private connected$ = new BehaviorSubject<boolean>(false);
-  private stopReconnect$ = new Subject<void>();
 
   constructor(private ngZone: NgZone) {}
 
@@ -24,40 +24,27 @@ export class WebSocketService {
     }
 
     this.url = url;
-    this.createSocket();
-  }
+    this.socket = io(this.url, { transports: ['websocket'] });
 
-  private createSocket() {
-    this.socket = new WebSocket(this.url);
-
-    this.socket.addEventListener('open', () => {
+    this.socket.on('connect', () => {
       this.ngZone.run(() => this.connected$.next(true));
     });
 
-    this.socket.addEventListener('message', (evt) => {
-      this.handleMessage(evt.data);
-    });
-
-    this.socket.addEventListener('close', () => {
+    this.socket.on('disconnect', (reason: any) => {
       this.ngZone.run(() => this.connected$.next(false));
-      timer(1000)
-        .pipe(takeUntil(this.stopReconnect$))
-        .subscribe(() => this.createSocket());
     });
 
-    this.socket.addEventListener('error', (err) => {
-      console.error('WebSocket error', err);
-      try {
-        this.socket?.close();
-      } catch {}
+    this.socket.onAny((event: string, payload: any) => {
+      this.ngZone.run(() => {
+        this.incoming$.next({ event, payload });
+      });
     });
   }
 
   disconnect() {
-    this.stopReconnect$.next();
     if (this.socket) {
       try {
-        this.socket.close();
+        this.socket.disconnect();
       } catch {}
       this.socket = null;
     }
@@ -78,24 +65,10 @@ export class WebSocketService {
   }
 
   send<T = any>(event: WebSocketEvent | string, payload?: T) {
-    const msg: WsMessage<T> = { event, payload };
-    const str = JSON.stringify(msg);
-    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(str);
-    } else {
-      console.warn('WebSocket is not open. Message dropped:', msg);
+    if (!this.socket || !this.socket.connected) {
+      console.warn('Socket not connected, dropping message', event);
+      return;
     }
-  }
-
-  private handleMessage(raw: any) {
-    let parsed: WsMessage | null = null;
-    try {
-      parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
-    } catch (e) {
-      console.warn('Failed to parse WS message', raw);
-      parsed = { event: WebSocketEvent.GENERIC, payload: raw };
-    }
-
-    this.ngZone.run(() => this.incoming$.next(parsed as WsMessage));
+    this.socket.emit(event as string, payload);
   }
 }

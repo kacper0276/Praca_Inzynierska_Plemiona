@@ -3,6 +3,8 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Resources } from '../../../../shared/models/resources.model';
 import { ResourceService } from '../../../../shared/services/resource.service';
+import { WebSocketService } from '../../../../shared/services/web-socket.service';
+import { WebSocketEvent } from '../../../../shared/enums/websocket-event.enum';
 
 @Component({
   selector: 'app-game',
@@ -31,7 +33,8 @@ export class GameComponent implements OnInit {
 
   constructor(
     private readonly resourceService: ResourceService,
-    private router: Router
+    private router: Router,
+    private webSocket: WebSocketService
   ) {
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
@@ -45,6 +48,21 @@ export class GameComponent implements OnInit {
     this.resourceService.resources$.subscribe((res) => {
       this.resources = res;
     });
+    try {
+      const origin = window.location.origin;
+      this.webSocket.connect(origin);
+      this.webSocket
+        .onEvent(WebSocketEvent.ARMY_UPDATE)
+        .subscribe((m) => console.log('Army update', m));
+    } catch (e) {
+      console.warn('WS connect failed', e);
+    }
+  }
+
+  ngOnDestroy(): void {
+    try {
+      this.webSocket.disconnect();
+    } catch {}
   }
 
   public buildFarm(): void {
