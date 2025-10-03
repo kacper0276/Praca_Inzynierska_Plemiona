@@ -12,6 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { Resources } from '../../../../shared/models/resources.model';
 import { BuildingData, RadialMenuOption } from '../../../../shared/models';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-grid',
@@ -24,6 +25,7 @@ export class GridComponent implements OnInit, OnDestroy {
   readonly expansionCost = { wood: 50, clay: 30, iron: 20 };
   readonly maxGridSize = 11;
   expansionMultiplier: number = 1;
+  userEmail: string = '';
 
   pendingExpansion: {
     side: 'left' | 'right';
@@ -75,11 +77,12 @@ export class GridComponent implements OnInit, OnDestroy {
   ];
 
   constructor(
-    private resourceService: ResourceService,
-    private elementRef: ElementRef,
-    private gatheringService: GatheringService,
-    private toastr: ToastrService,
-    private translate: TranslateService
+    private readonly resourceService: ResourceService,
+    private readonly elementRef: ElementRef,
+    private readonly gatheringService: GatheringService,
+    private readonly toastr: ToastrService,
+    private readonly translate: TranslateService,
+    private readonly activatedRoute: ActivatedRoute
   ) {
     this.resources = {
       wood: 0,
@@ -88,6 +91,8 @@ export class GridComponent implements OnInit, OnDestroy {
       population: 0,
       maxPopulation: 0,
     };
+
+    this.userEmail = this.activatedRoute.snapshot.params['userEmail'];
   }
   gatherSecondsLeft: number = 0;
   private _gatherSub: Subscription | null = null;

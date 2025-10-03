@@ -14,7 +14,7 @@ const gameRoutes: Routes = [
     path: '',
     component: GameComponent,
     children: [
-      { path: 'village', component: GridComponent },
+      { path: 'village/:userEmail', component: GridComponent },
       { path: 'map', component: MapComponent },
       { path: 'barracks', component: BarracksComponent },
       { path: 'army', component: ArmyComponent },
