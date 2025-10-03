@@ -446,6 +446,7 @@ export class GridComponent implements OnInit, OnDestroy {
       return;
     }
     this.pendingExpansion = { side, cost: this.getCurrentExpansionCost() };
+    this.confirmExpansion();
   }
 
   confirmExpansion() {
