@@ -27,6 +27,23 @@ export class GridComponent implements OnInit, OnDestroy {
   expansionMultiplier: number = 1;
   userEmail: string = '';
 
+  isOwnVillage: boolean = true;
+
+  isAttacking: boolean = false;
+  attackingArmy = {
+    units: 20,
+    gifUrl: 'assets/images/attacking-army.gif',
+    x: 0,
+    y: 0,
+  };
+  defendingArmy = {
+    units: 15,
+    gifUrl: 'assets/images/defending-army.gif',
+  };
+  attackTarget: { row: number; col: number } | null = null;
+  explosionGifUrl = 'assets/images/explosion.gif';
+  showExplosion = false;
+
   pendingExpansion: {
     side: 'left' | 'right';
     cost: Partial<Resources>;
@@ -93,6 +110,8 @@ export class GridComponent implements OnInit, OnDestroy {
     };
 
     this.userEmail = this.activatedRoute.snapshot.params['userEmail'];
+
+    this.isOwnVillage = this.userEmail === 'kacper0276@op.pl';
   }
   gatherSecondsLeft: number = 0;
   private _gatherSub: Subscription | null = null;
@@ -465,6 +484,66 @@ export class GridComponent implements OnInit, OnDestroy {
       }
     } else {
       this.toastr.error(this.translate.instant('NOT_ENOUGH_RES_UPGRADE'));
+    }
+  }
+
+  startAttack(): void {
+    if (this.isAttacking) return;
+    this.isAttacking = true;
+    this.findNextTarget();
+  }
+
+  findNextTarget(): void {
+    for (let i = 0; i < this.gridSize; i++) {
+      for (let j = 0; j < this.gridSize; j++) {
+        if (this.buildings[i][j]) {
+          this.attackTarget = { row: i, col: j };
+          this.moveArmyToTarget();
+          return;
+        }
+      }
+    }
+    this.isAttacking = false;
+    this.toastr.success('Wszystkie budynki zostały zniszczone!');
+  }
+
+  moveArmyToTarget(): void {
+    if (!this.attackTarget) return;
+
+    const targetElement = this.elementRef.nativeElement.querySelector(
+      `.grid-row:nth-child(${this.attackTarget.row + 1}) .grid-cell:nth-child(${
+        this.attackTarget.col + 1
+      })`
+    );
+
+    if (targetElement) {
+      const rect = targetElement.getBoundingClientRect();
+      this.attackingArmy.x = rect.left + window.scrollX + rect.width / 2 - 50;
+      this.attackingArmy.y = rect.top + window.scrollY + rect.height / 2 - 50;
+
+      setTimeout(() => this.attackBuilding(), 1000);
+    }
+  }
+
+  attackBuilding(): void {
+    if (!this.attackTarget || !this.isAttacking) return;
+
+    const building =
+      this.buildings[this.attackTarget.row][this.attackTarget.col];
+    if (building && building.health) {
+      this.showExplosion = true;
+      setTimeout(() => (this.showExplosion = false), 500);
+
+      building.health -= 20;
+
+      if (building.health <= 0) {
+        this.buildings[this.attackTarget.row][this.attackTarget.col] = null;
+        setTimeout(() => this.findNextTarget(), 500);
+      } else {
+        setTimeout(() => this.attackBuilding(), 1000);
+      }
+    } else {
+      this.findNextTarget();
     }
   }
 }

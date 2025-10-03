@@ -1,4 +1,10 @@
 <div class="grid-wrapper">
+  <div class="top-actions" *ngIf="!isOwnVillage">
+    <button class="attack-btn" (click)="startAttack()" [disabled]="isAttacking">
+      {{ isAttacking ? "Atak w toku..." : "Atakuj" }}
+    </button>
+  </div>
+
   <div class="expand-controls">
     <button
       class="expand-btn left"
@@ -134,4 +140,23 @@
       <button class="cancel-btn" (click)="cancelExpansion()">Anuluj</button>
     </div>
   </div>
+</div>
+<div *ngIf="isAttacking" class="attack-overlay">
+  <img
+    [src]="attackingArmy.gifUrl"
+    class="army-gif attacking"
+    [style.transform]="
+      'translate(' + attackingArmy.x + 'px, ' + attackingArmy.y + 'px)'
+    "
+  />
+
+  <img
+    *ngIf="showExplosion"
+    [src]="explosionGifUrl"
+    class="explosion-gif"
+    [style.left]="attackingArmy.x + 'px'"
+    [style.top]="attackingArmy.y + 'px'"
+  />
+
+  <img [src]="defendingArmy.gifUrl" class="army-gif defending" />
 </div>
