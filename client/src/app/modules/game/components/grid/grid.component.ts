@@ -20,6 +20,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./grid.component.scss'],
 })
 export class GridComponent implements OnInit, OnDestroy {
+  Math = Math;
   gridSize: number = 5;
   buildings: (BuildingData | null)[][] = [];
   readonly expansionCost = { wood: 50, clay: 30, iron: 20 };
@@ -29,20 +30,40 @@ export class GridComponent implements OnInit, OnDestroy {
 
   isOwnVillage: boolean = true;
 
-  isAttacking: boolean = false;
+  isAttacking = false;
+  private battleInterval: any = null;
+
   attackingArmy = {
-    units: 20,
+    totalHp: 0,
+    maxHp: 0,
+    damage: 0,
     gifUrl: 'assets/images/attacking-army.gif',
+    x: 50,
+    y: window.innerHeight - 150,
+    state: 'idle',
+    targetX: 0,
+    targetY: 0,
+  };
+
+  defendingArmy = {
+    totalHp: 0,
+    maxHp: 0,
+    damage: 0,
+    gifUrl: 'assets/images/defending-army.gif',
+    x: window.innerWidth - 150,
+    y: 100,
+    state: 'idle',
+    targetX: 0,
+    targetY: 0,
+  };
+
+  attackTarget: { row: number; col: number } | null = null;
+  explosion = {
+    gifUrl: 'assets/images/explosion.gif',
+    show: false,
     x: 0,
     y: 0,
   };
-  defendingArmy = {
-    units: 15,
-    gifUrl: 'assets/images/defending-army.gif',
-  };
-  attackTarget: { row: number; col: number } | null = null;
-  explosionGifUrl = 'assets/images/explosion.gif';
-  showExplosion = false;
 
   pendingExpansion: {
     side: 'left' | 'right';
@@ -153,7 +174,6 @@ export class GridComponent implements OnInit, OnDestroy {
     this.resourceService.resources$.subscribe((res) => {
       this.resources = res;
     });
-    // start gathering loop
     this.gatheringService.start(() => this.buildings);
     this._gatherSub = this.gatheringService.timeLeft$.subscribe(
       (s) => (this.gatherSecondsLeft = s)
@@ -403,7 +423,7 @@ export class GridComponent implements OnInit, OnDestroy {
 
     this.buildings = this.buildings.map((row) => [...row, null]);
     this.gridSize = this.gridSize + 1;
-    this.expansionMultiplier += 0.5; // increase future costs
+    this.expansionMultiplier += 0.5;
   }
 
   getCurrentExpansionCost(): Partial<Resources> {
@@ -490,60 +510,155 @@ export class GridComponent implements OnInit, OnDestroy {
   startAttack(): void {
     if (this.isAttacking) return;
     this.isAttacking = true;
+
+    this.attackingArmy.maxHp = 1000;
+    this.attackingArmy.totalHp = 1000;
+    this.attackingArmy.damage = 50;
+    this.attackingArmy.state = 'idle';
+    this.attackingArmy.x = 50;
+    this.attackingArmy.y = window.innerHeight - 150;
+
+    this.defendingArmy.maxHp = 800;
+    this.defendingArmy.totalHp = 800;
+    this.defendingArmy.damage = 40;
+    this.defendingArmy.state = 'marching';
+    this.defendingArmy.x = window.innerWidth - 150;
+    this.defendingArmy.y = 100;
+
     this.findNextTarget();
+
+    this.battleInterval = setInterval(() => this.battleTick(), 100);
   }
 
-  findNextTarget(): void {
+  private battleTick(): void {
+    this.moveArmy(this.attackingArmy, 5);
+    this.moveArmy(this.defendingArmy, 4);
+
+    const distance = this.calculateDistance(
+      this.attackingArmy,
+      this.defendingArmy
+    );
+
+    if (
+      distance < 100 &&
+      this.attackingArmy.totalHp > 0 &&
+      this.defendingArmy.totalHp > 0
+    ) {
+      this.attackingArmy.state = 'fighting_army';
+      this.defendingArmy.state = 'fighting_army';
+
+      this.attackingArmy.totalHp -= this.defendingArmy.damage / 10;
+      this.defendingArmy.totalHp -= this.attackingArmy.damage / 10;
+    } else {
+      if (this.defendingArmy.totalHp > 0) {
+        this.defendingArmy.state = 'marching';
+        this.defendingArmy.targetX = this.attackingArmy.x;
+        this.defendingArmy.targetY = this.attackingArmy.y;
+      }
+
+      if (this.attackingArmy.state !== 'attacking_building') {
+        this.attackingArmy.state = 'marching';
+      }
+    }
+
+    if (
+      this.attackingArmy.state === 'attacking_building' &&
+      this.attackTarget
+    ) {
+      const building =
+        this.buildings[this.attackTarget.row][this.attackTarget.col];
+      if (building && building.health) {
+        building.health -= this.attackingArmy.damage / 10;
+        this.showExplosion(
+          this.attackingArmy.targetX,
+          this.attackingArmy.targetY
+        );
+
+        if (building.health <= 0) {
+          this.buildings[this.attackTarget.row][this.attackTarget.col] = null;
+          this.findNextTarget();
+        }
+      }
+    }
+
+    if (this.attackingArmy.totalHp <= 0) {
+      this.endAttack('Porażka! Twoja armia została pokonana.');
+    } else if (this.defendingArmy.totalHp <= 0 && !this.findNextTarget(false)) {
+      this.endAttack('Zwycięstwo! Wioska została zniszczona.');
+    }
+  }
+
+  private moveArmy(army: any, speed: number): void {
+    if (army.state !== 'marching') return;
+
+    const dx = army.targetX - army.x;
+    const dy = army.targetY - army.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < speed) {
+      army.x = army.targetX;
+      army.y = army.targetY;
+      if (army === this.attackingArmy && this.defendingArmy.totalHp <= 0) {
+        army.state = 'attacking_building';
+      }
+    } else {
+      army.x += (dx / distance) * speed;
+      army.y += (dy / distance) * speed;
+    }
+  }
+
+  private findNextTarget(move: boolean = true): boolean {
     for (let i = 0; i < this.gridSize; i++) {
       for (let j = 0; j < this.gridSize; j++) {
         if (this.buildings[i][j]) {
           this.attackTarget = { row: i, col: j };
-          this.moveArmyToTarget();
-          return;
+          if (move) {
+            const targetCoords = this.getTargetBuildingCoords(i, j);
+            this.attackingArmy.targetX = targetCoords.x;
+            this.attackingArmy.targetY = targetCoords.y;
+            this.attackingArmy.state = 'marching';
+          }
+          return true;
         }
       }
     }
-    this.isAttacking = false;
-    this.toastr.success('Wszystkie budynki zostały zniszczone!');
+    this.attackTarget = null;
+    return false;
   }
 
-  moveArmyToTarget(): void {
-    if (!this.attackTarget) return;
-
-    const targetElement = this.elementRef.nativeElement.querySelector(
-      `.grid-row:nth-child(${this.attackTarget.row + 1}) .grid-cell:nth-child(${
-        this.attackTarget.col + 1
-      })`
+  private getTargetBuildingCoords(
+    row: number,
+    col: number
+  ): { x: number; y: number } {
+    const cellElement = this.elementRef.nativeElement.querySelector(
+      `.grid-row:nth-child(${row + 1}) .grid-cell:nth-child(${col + 1})`
     );
-
-    if (targetElement) {
-      const rect = targetElement.getBoundingClientRect();
-      this.attackingArmy.x = rect.left + window.scrollX + rect.width / 2 - 50;
-      this.attackingArmy.y = rect.top + window.scrollY + rect.height / 2 - 50;
-
-      setTimeout(() => this.attackBuilding(), 1000);
+    if (cellElement) {
+      const rect = cellElement.getBoundingClientRect();
+      return {
+        x: rect.left + window.scrollX + rect.width / 2 - 50,
+        y: rect.top + window.scrollY + rect.height / 2 - 50,
+      };
     }
+    return { x: 0, y: 0 };
   }
 
-  attackBuilding(): void {
-    if (!this.attackTarget || !this.isAttacking) return;
+  private showExplosion(x: number, y: number): void {
+    this.explosion.x = x;
+    this.explosion.y = y;
+    this.explosion.show = true;
+    setTimeout(() => (this.explosion.show = false), 500);
+  }
 
-    const building =
-      this.buildings[this.attackTarget.row][this.attackTarget.col];
-    if (building && building.health) {
-      this.showExplosion = true;
-      setTimeout(() => (this.showExplosion = false), 500);
+  private calculateDistance(entity1: any, entity2: any): number {
+    const dx = entity1.x - entity2.x;
+    const dy = entity1.y - entity2.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
 
-      building.health -= 20;
-
-      if (building.health <= 0) {
-        this.buildings[this.attackTarget.row][this.attackTarget.col] = null;
-        setTimeout(() => this.findNextTarget(), 500);
-      } else {
-        setTimeout(() => this.attackBuilding(), 1000);
-      }
-    } else {
-      this.findNextTarget();
-    }
+  private endAttack(message: string): void {
+    clearInterval(this.battleInterval);
+    this.isAttacking = false;
+    this.toastr.info(message);
   }
 }

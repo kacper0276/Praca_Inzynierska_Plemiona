@@ -123,40 +123,55 @@
   (upgrade)="upgradeBuilding($event)"
 ></app-building-details-popup>
 
-<div class="expansion-modal" *ngIf="pendingExpansion as pe">
-  <div class="expansion-modal-inner">
-    <h3>Rozszerzenie wioski</h3>
-    <p>
-      Chcesz rozszerzyć wioskę na <strong>{{ pe.side }}</strong> za:
-    </p>
-    <p>
-      {{ pe.cost.wood }} drewna, {{ pe.cost.clay }} gliny,
-      {{ pe.cost.iron }} żelaza
-    </p>
-    <div class="modal-actions">
-      <button class="confirm-btn" (click)="confirmExpansion()">
-        Tak, rozszerz
-      </button>
-      <button class="cancel-btn" (click)="cancelExpansion()">Anuluj</button>
-    </div>
-  </div>
-</div>
 <div *ngIf="isAttacking" class="attack-overlay">
-  <img
-    [src]="attackingArmy.gifUrl"
-    class="army-gif attacking"
+  <div
+    class="army-container"
     [style.transform]="
       'translate(' + attackingArmy.x + 'px, ' + attackingArmy.y + 'px)'
     "
-  />
+  >
+    <div class="hp-bar-container">
+      <div class="hp-bar-background">
+        <div
+          class="hp-bar-foreground"
+          [style.width.%]="(attackingArmy.totalHp / attackingArmy.maxHp) * 100"
+        ></div>
+      </div>
+      <span class="hp-bar-text"
+        >{{ Math.ceil(attackingArmy.totalHp) }} /
+        {{ attackingArmy.maxHp }}</span
+      >
+    </div>
+    <img [src]="attackingArmy.gifUrl" class="army-gif" />
+  </div>
+
+  <div
+    class="army-container"
+    *ngIf="defendingArmy.totalHp > 0"
+    [style.transform]="
+      'translate(' + defendingArmy.x + 'px, ' + defendingArmy.y + 'px)'
+    "
+  >
+    <div class="hp-bar-container">
+      <div class="hp-bar-background">
+        <div
+          class="hp-bar-foreground enemy"
+          [style.width.%]="(defendingArmy.totalHp / defendingArmy.maxHp) * 100"
+        ></div>
+      </div>
+      <span class="hp-bar-text"
+        >{{ Math.ceil(defendingArmy.totalHp) }} /
+        {{ defendingArmy.maxHp }}</span
+      >
+    </div>
+    <img [src]="defendingArmy.gifUrl" class="army-gif" />
+  </div>
 
   <img
-    *ngIf="showExplosion"
-    [src]="explosionGifUrl"
+    *ngIf="explosion.show"
+    [src]="explosion.gifUrl"
     class="explosion-gif"
-    [style.left]="attackingArmy.x + 'px'"
-    [style.top]="attackingArmy.y + 'px'"
+    [style.left.px]="explosion.x"
+    [style.top.px]="explosion.y"
   />
-
-  <img [src]="defendingArmy.gifUrl" class="army-gif defending" />
 </div>
