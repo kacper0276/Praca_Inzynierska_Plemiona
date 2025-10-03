@@ -3,12 +3,10 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { io, Socket } from 'socket.io-client';
 import { WebSocketEvent } from '../enums/websocket-event.enum';
-
 export interface WsMessage<T = any> {
   event: WebSocketEvent | string;
   payload?: T;
 }
-
 @Injectable({ providedIn: 'root' })
 export class WebSocketService {
   private socket: Socket | null = null;
