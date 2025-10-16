@@ -1,9 +1,12 @@
 .grid-layout {
+  max-width: calc(100px * 11 + 5px * 10 + 40px);
+  max-height: calc(100px * 11 + 5px * 10 + 40px);
+  overflow: auto;
   display: flex;
   flex-direction: column;
   gap: 5px;
   padding: 20px;
-  background: var(--game-bg, #a08a52);
+  background-image: url("/assets/img/background_playground.png");
   border: 2px solid var(--game-border, #5d4037);
   border-radius: 5px;
 }
@@ -65,16 +68,10 @@
   border-radius: 4px;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
 
-.expand-btn:hover {
-  transform: translateY(-2px);
-}
-
-.grid-layout {
-  max-width: calc(100px * 11 + 5px * 10 + 40px);
-  max-height: calc(100px * 11 + 5px * 10 + 40px);
-  overflow: auto;
+  &:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .expansion-modal {

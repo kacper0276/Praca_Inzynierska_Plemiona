@@ -236,15 +236,15 @@ export class GridComponent implements OnInit, OnDestroy {
       id: 1,
       name: 'Ratusz',
       level: 3,
-      imageUrl: 'assets/images/town_hall.png',
+      imageUrl: 'assets/buildings/Ratusz.png',
       maxHealth: 150,
       health: 150,
     };
     this.buildings[2][3] = {
       id: 2,
-      name: 'Koszary',
+      name: 'Młyn',
       level: 1,
-      imageUrl: 'assets/images/barracks.png',
+      imageUrl: 'assets/buildings/Młyn.png',
       maxHealth: 80,
       health: 80,
     };
@@ -252,7 +252,7 @@ export class GridComponent implements OnInit, OnDestroy {
       id: 3,
       name: 'Spichlerz',
       level: 5,
-      imageUrl: 'assets/images/storage.png',
+      imageUrl: 'assets/buildings/Spichlerz.png',
       maxHealth: 250,
       health: 200,
     };
@@ -264,7 +264,7 @@ export class GridComponent implements OnInit, OnDestroy {
         id: 0,
         name: 'Pusty plac',
         level: 0,
-        imageUrl: 'assets/images/empty_plot.png',
+        imageUrl: 'assets/img/background_playground.png',
       }
     );
   }
