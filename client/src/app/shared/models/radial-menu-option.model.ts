@@ -1,5 +1,6 @@
 export interface RadialMenuOption {
   action: string;
-  iconUrl: string;
+  iconName?: string;
+  iconUrl?: string;
   tooltip?: string;
 }

@@ -78,8 +78,19 @@ export class GridComponent implements OnInit, OnDestroy {
 
   resources: Resources;
   availableBuildings: BuildingData[] = [
-    { id: 4, name: 'Farma', level: 1, imageUrl: 'assets/images/farm.png' },
-    { id: 5, name: 'Kuźnia', level: 1, imageUrl: 'assets/images/forge.png' },
+    // { id: 4, name: 'Farma', level: 1, imageUrl: 'assets/buildings/farm.png' },
+    {
+      id: 5,
+      name: 'Kuźnia',
+      level: 1,
+      imageUrl: 'assets/buildings/Kowal.png',
+    },
+    {
+      id: 6,
+      name: 'Dom mieszkalny',
+      level: 1,
+      imageUrl: 'assets/buildings/Dom_mieszkalny.png',
+    },
   ];
   buildMode: boolean = false;
   buildRow: number | null = null;
@@ -90,28 +101,42 @@ export class GridComponent implements OnInit, OnDestroy {
   emptyPlotOptions: RadialMenuOption[] = [
     {
       action: 'build',
-      iconUrl: 'assets/images/build-icon.png',
+      // iconUrl: 'assets/images/build-icon.png',
+      iconName: 'build',
       tooltip: 'Zbuduj nowy budynek',
     },
     {
       action: 'inspect',
-      iconUrl: 'assets/images/inspect-icon.png',
+      // iconUrl: 'assets/images/inspect-icon.png',
+      iconName: 'search',
       tooltip: 'Informacje o polu',
     },
   ];
   buildingOptions: RadialMenuOption[] = [
     {
       action: 'details',
-      iconUrl: 'assets/icons/info.svg',
+      // iconUrl: 'assets/icons/info.svg',
+      iconName: 'info',
       tooltip: 'Szczegóły',
     },
     {
       action: 'upgrade',
-      iconUrl: 'assets/icons/upgrade.svg',
+      // iconUrl: 'assets/icons/upgrade.svg',
+      iconName: 'upgrade',
       tooltip: 'Rozbuduj',
     },
-    { action: 'destroy', iconUrl: 'assets/icons/trash.svg', tooltip: 'Usuń' },
-    { action: 'edit', iconUrl: 'assets/icons/edit.svg', tooltip: 'Edytuj' },
+    {
+      action: 'destroy',
+      // iconUrl: 'assets/icons/trash.svg',
+      iconName: 'delete',
+      tooltip: 'Usuń',
+    },
+    {
+      action: 'edit',
+      // iconUrl: 'assets/icons/edit.svg',
+      iconName: 'edit',
+      tooltip: 'Edytuj',
+    },
   ];
 
   constructor(

@@ -1,7 +1,7 @@
 .grid-layout {
   max-width: calc(100px * 11 + 5px * 10 + 40px);
   max-height: calc(100px * 11 + 5px * 10 + 40px);
-  overflow: auto;
+  // overflow: auto;
   display: flex;
   flex-direction: column;
   gap: 5px;

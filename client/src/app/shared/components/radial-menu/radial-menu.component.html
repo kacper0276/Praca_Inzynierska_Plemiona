@@ -1,7 +1,11 @@
 <div class="radial-menu">
   <div *ngIf="showToggle" class="menu-toggle" (click)="toggleMenu()">+</div>
 
-  <ul class="menu-items" [class.active]="isOpen" [ngStyle]="menuStyles">
+  <ul
+    class="menu-items"
+    [class.active]="isOpen"
+    [style.--item-count]="menuOptions.length"
+  >
     <li
       *ngFor="let option of menuOptions; let i = index"
       class="menu-item"
@@ -9,7 +13,18 @@
       (click)="selectOption(option.action)"
       [title]="option.tooltip"
     >
-      <img [src]="option.iconUrl" [alt]="option.action" />
+      <img
+        *ngIf="option.iconUrl"
+        class="menu-icon"
+        [src]="option.iconUrl"
+        [alt]="option.action"
+      />
+
+      <i
+        *ngIf="option.iconName && !option.iconUrl"
+        class="material-icons menu-icon"
+        >{{ option.iconName }}</i
+      >
     </li>
   </ul>
 </div>
