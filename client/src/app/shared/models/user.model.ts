@@ -1,4 +1,4 @@
-import { Role } from '../enums/role.enum';
+import { UserRole } from '../enums/user-role.enum';
 import { BaseModel } from './base.model';
 
 export interface User extends BaseModel {
@@ -6,7 +6,7 @@ export interface User extends BaseModel {
   login: string;
   firstName?: string;
   lastName?: string;
-  role: Role;
+  role: UserRole;
   profileImage?: string;
   backgroundImage?: string;
   isActive: boolean;
