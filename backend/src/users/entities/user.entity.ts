@@ -1,8 +1,8 @@
 import { Column, Entity, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { Clan } from '../../clans/entities/clan.entity';
 import { BaseEntity } from '../../core/entities/base.entity';
-import { Role } from '../../core/enums/role.enum';
 import { Resources } from 'src/resources/entities/resources.entity';
+import { UserRole } from 'src/core/enums/user-role.enum';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -21,8 +21,8 @@ export class User extends BaseEntity {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ type: 'enum', enum: Role, default: Role.USER })
-  role: Role;
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
+  role: UserRole;
 
   @Column({ type: 'longtext', nullable: true })
   profileImage: string;
