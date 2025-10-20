@@ -5,12 +5,13 @@ import {
   HttpInterceptor,
   HttpRequest,
   HttpErrorResponse,
+  HttpHeaders,
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment.prod';
+import { environment } from '../../../environments/environment';
 import { AuthService } from '../services/auth.service';
 
 @Injectable()
@@ -27,6 +28,10 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     const token = this.authService.getJwtToken();
 
+    if (req.url.includes('/auth/refresh')) {
+      return next.handle(req);
+    }
+
     let clonedRequest = req;
     if (token) {
       clonedRequest = req.clone({
@@ -38,11 +43,10 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(clonedRequest).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 || error.status === 403) {
+        if (error.status === 401 && !req.url.includes('/auth/refresh')) {
           return this.handleAuthError(req, next);
-        } else {
-          return throwError(() => error);
         }
+        return throwError(() => error);
       })
     );
   }
@@ -54,15 +58,17 @@ export class AuthInterceptor implements HttpInterceptor {
     const refreshToken = this.authService.getRefreshToken();
 
     if (refreshToken) {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${refreshToken}`,
+      });
+
       return this.http
-        .post<any>(`${environment.apiUrl}refresh-token`, { refreshToken })
+        .get<any>(`${environment.apiUrl}/auth/refresh`, { headers })
         .pipe(
           switchMap((response) => {
-            const newAccessToken = response.accessToken;
-            const newRefreshToken = response.refreshToken;
+            const newAccessToken = response.access_token;
 
             this.authService.setJwtToken(newAccessToken);
-            this.authService.setRefreshToken(newRefreshToken);
 
             const clonedRequest = req.clone({
               setHeaders: {
@@ -73,19 +79,17 @@ export class AuthInterceptor implements HttpInterceptor {
             return next.handle(clonedRequest);
           }),
           catchError(() => {
-            this.authService.clearStorage();
+            this.authService.logout();
             this.router.navigate(['/auth/login']);
             return throwError(
-              () => new Error('Session expired. Please log in again.')
+              () => new Error('Sesja wygasła. Zaloguj się ponownie.')
             );
           })
         );
     } else {
-      this.authService.clearStorage();
+      this.authService.logout();
       this.router.navigate(['/auth/login']);
-      return throwError(
-        () => new Error('Session expired. Please log in again.')
-      );
+      return throwError(() => new Error('Brak sesji. Zaloguj się ponownie.'));
     }
   }
 }
