@@ -21,6 +21,13 @@ const gameRoutes: Routes = [
       { path: 'chat', component: ChatComponent },
       { path: 'ranking', component: RankingComponent },
       { path: 'clan', component: ClanCreateComponent },
+      {
+        path: 'admin-panel',
+        loadChildren: () =>
+          import('./components/admin-panel/admin-panel.module').then(
+            (m) => m.AdminPanelModule
+          ),
+      },
       { path: '', redirectTo: 'village', pathMatch: 'full' },
     ],
   },
