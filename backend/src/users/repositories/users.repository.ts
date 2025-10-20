@@ -40,7 +40,7 @@ export class UsersRepository extends BaseRepository<User> {
     await this.repository.delete(id);
   }
 
-  findByEmail(email: string): Promise<User | null> {
+  findOneByEmail(email: string): Promise<User | null> {
     return this.repository.findOneBy({ email });
   }
 }

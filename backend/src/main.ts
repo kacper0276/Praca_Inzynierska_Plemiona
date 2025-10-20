@@ -17,6 +17,10 @@ async function bootstrap() {
     .setTitle('Pracownia Dyplomowa - Swagger')
     .setDescription('Swagger przygotowany dla testowania API')
     .setVersion('1.0')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
+      'access-token',
+    )
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
@@ -41,4 +45,8 @@ async function bootstrap() {
 
   await app.listen(port);
 }
-bootstrap();
+
+bootstrap().catch((err) => {
+  console.error('Error during application bootstrap', err);
+  process.exit(1);
+});
