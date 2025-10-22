@@ -8,8 +8,8 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersRepository } from 'src/users/repositories/users.repository';
 import { getActivationEmailTemplate } from 'src/users/templates/activation-email.template';
 import * as bcrypt from 'bcryptjs';
-import { TtlService } from 'src/ttl/services/ttl.service';
 import { User } from 'src/users/entities/user.entity';
+import { TtlService } from 'src/core/ttl/services/ttl.service';
 
 @Injectable()
 export class AuthService {
