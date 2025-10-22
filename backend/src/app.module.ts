@@ -15,6 +15,7 @@ import { WsGateway } from './core/gateways/ws.gateway';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CacheModule } from '@nestjs/cache-manager';
 import { TtlModule } from './core/ttl/ttl.module';
+import { JobsModule } from './jobs/jobs.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { TtlModule } from './core/ttl/ttl.module';
     VillagesModule,
     ReportsModule,
     TtlModule,
+    JobsModule,
   ],
   controllers: [],
   providers: [WsGateway],
