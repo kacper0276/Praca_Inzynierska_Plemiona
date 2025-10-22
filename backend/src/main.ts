@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import * as bodyParser from 'body-parser';
 import { ConfigService } from './core/config/config.service';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -17,6 +18,10 @@ async function bootstrap() {
     .setTitle('Pracownia Dyplomowa - Swagger')
     .setDescription('Swagger przygotowany dla testowania API')
     .setVersion('1.0')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
+      'access-token',
+    )
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
@@ -33,6 +38,8 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Accept, Authorization',
   });
 
+  app.useGlobalPipes(new ValidationPipe());
+
   app.useWebSocketAdapter(new IoAdapter(app));
 
   app.use(cookieParser());
@@ -41,4 +48,8 @@ async function bootstrap() {
 
   await app.listen(port);
 }
-bootstrap();
+
+bootstrap().catch((err) => {
+  console.error('Error during application bootstrap', err);
+  process.exit(1);
+});

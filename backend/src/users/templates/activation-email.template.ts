@@ -1,4 +1,7 @@
-export const getActivationEmailTemplate = (activationLink: string): string => `
+export const getActivationEmailTemplate = (
+  activationLink: string,
+  activationCode: string,
+): string => `
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -47,6 +50,18 @@ export const getActivationEmailTemplate = (activationLink: string): string => `
             line-height: 1.6;
         }
 
+        .activation-code {
+            background-color: #f1f1f1;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 2px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
         .email-body a {
             display: inline-block;
             background: linear-gradient(90deg, #080078, #be0533);
@@ -82,9 +97,12 @@ export const getActivationEmailTemplate = (activationLink: string): string => `
         </div>
         <div class="email-body">
             <p>Witaj, </p>
-            <p>Dziękujemy za rejestrację na naszej platformie. Aby aktywować swoje konto, kliknij poniższy przycisk:</p>
+            <p>Dziękujemy za rejestrację na naszej platformie. Aby aktywować swoje konto, przepisz poniższy kod na stronie aktywacji:</p>
+            
+            <div class="activation-code">${activationCode}</div>
+
             <p>
-                <a href="${activationLink}" target="_blank">Aktywuj konto</a>
+                <a href="${activationLink}" target="_blank">Przejdź do strony aktywacji</a>
             </p>
             <p>Jeśli nie rejestrowałeś/aś się w naszym serwisie, zignoruj tę wiadomość.</p>
         </div>

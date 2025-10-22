@@ -10,6 +10,13 @@ export class AuthService {
   private readonly USER = 'user';
   private currentUser: User | null = null;
 
+  constructor() {
+    const userJson = localStorage.getItem(this.USER);
+    if (userJson) {
+      this.currentUser = JSON.parse(userJson);
+    }
+  }
+
   public setJwtToken(token: string): void {
     localStorage.setItem(this.JWT_TOKEN, token);
   }
@@ -31,8 +38,18 @@ export class AuthService {
     localStorage.setItem(this.USER, JSON.stringify(user));
   }
 
-  public getUser(): any {
-    return this.currentUser;
+  public getUser(): User | null {
+    if (this.currentUser) {
+      return this.currentUser;
+    }
+
+    const userJson = localStorage.getItem(this.USER);
+    if (userJson) {
+      this.currentUser = JSON.parse(userJson);
+      return this.currentUser;
+    }
+
+    return null;
   }
 
   public getUserId(): number {
