@@ -17,6 +17,7 @@ import {
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
 import { Public } from 'src/core/decorators/public.decorator';
+import { ActivateAccountDto } from '../dto/activate-account.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -56,5 +57,19 @@ export class AuthController {
   @Get('refresh')
   refreshToken(@Request() req: any) {
     return this.authService.refreshToken(req.user);
+  }
+
+  @Public()
+  @Post('activate')
+  @ApiOkResponse({ description: 'Aktywuje konto użytkownika.' })
+  @ApiBadRequestResponse({
+    description: 'Nieprawidłowy lub wygasły kod aktywacyjny.',
+  })
+  async activateAccount(@Body() body: ActivateAccountDto) {
+    const user = await this.authService.activateAccount(
+      body.code.toUpperCase(),
+    );
+    const { password, ...result } = user;
+    return result;
   }
 }

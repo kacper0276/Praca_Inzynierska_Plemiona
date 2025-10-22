@@ -12,19 +12,28 @@ import { ClansModule } from './clans/clans.module';
 import { VillagesModule } from './villages/villages.module';
 import { ReportsModule } from './reports/reports.module';
 import { WsGateway } from './core/gateways/ws.gateway';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CacheModule } from '@nestjs/cache-manager';
+import { TtlModule } from './ttl/ttl.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    UsersModule,
     TypeOrmModule.forRootAsync(typeOrmConfigAsync),
     MailerModule.forRootAsync(mailerConfigAsync),
+    ScheduleModule.forRoot(),
+    CacheModule.register({
+      isGlobal: true,
+    }),
+
+    UsersModule,
     AuthModule,
     ResourcesModule,
     LoggerModule,
     ClansModule,
     VillagesModule,
     ReportsModule,
+    TtlModule,
   ],
   controllers: [],
   providers: [WsGateway],

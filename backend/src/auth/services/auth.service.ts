@@ -1,9 +1,15 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersRepository } from 'src/users/repositories/users.repository';
 import { getActivationEmailTemplate } from 'src/users/templates/activation-email.template';
 import * as bcrypt from 'bcryptjs';
+import { TtlService } from 'src/ttl/services/ttl.service';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -11,11 +17,15 @@ export class AuthService {
     private readonly usersRepository: UsersRepository,
     private readonly jwtService: JwtService,
     private readonly mailerService: MailerService,
+    private readonly ttlService: TtlService,
   ) {}
 
-  private async sendActivationEmail(email: string): Promise<void> {
-    const activationLink = `http://localhost:4200/auth/activate-account/${email}`;
-    const emailTemplate = getActivationEmailTemplate(activationLink);
+  private async sendActivationEmail(
+    email: string,
+    code: string,
+  ): Promise<void> {
+    const activationLink = `http://localhost:4200/auth/activate-account`;
+    const emailTemplate = getActivationEmailTemplate(activationLink, code);
 
     const message = {
       to: email,
@@ -97,8 +107,29 @@ export class AuthService {
       lastName: data.lastName,
     });
 
-    await this.sendActivationEmail(data.email);
+    const savedUser = await this.usersRepository.save(user);
 
+    const activationCode = await this.ttlService.generateActivationCode(
+      savedUser.id,
+    );
+
+    await this.sendActivationEmail(savedUser.email, activationCode);
+
+    return savedUser;
+  }
+
+  async activateAccount(code: string): Promise<User> {
+    const userId = await this.ttlService.verifyActivationCode(code);
+    if (!userId) {
+      throw new BadRequestException('Invalid or expired activation code');
+    }
+
+    const user = await this.usersRepository.findOneById(userId);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    user.isActive = true;
     return this.usersRepository.save(user);
   }
 }

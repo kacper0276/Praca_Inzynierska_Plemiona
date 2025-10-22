@@ -4,10 +4,12 @@ import { AuthService } from './services/auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { TtlModule } from 'src/ttl/ttl.module';
 
 @Module({
   imports: [
     PassportModule,
+    TtlModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'secretKey',
       signOptions: { expiresIn: '15m' },
