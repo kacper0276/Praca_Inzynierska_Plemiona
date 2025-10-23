@@ -9,6 +9,7 @@ import {
 import { AuthService } from '../services/auth.service';
 import {
   ApiBadRequestResponse,
+  ApiBody,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiTags,
@@ -24,12 +25,17 @@ import { ActivateAccountDto } from '../dto/activate-account.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('login')
+  @ApiBody({ type: LoginDto })
   @ApiOkResponse({
     description:
-      'Zwraca token JWT w polu access_token, refresh token i dane użytkownika',
+      'Zwraca token JWT w polu access_token, refresh token i dane użytkownika.',
   })
-  @ApiUnauthorizedResponse({ description: 'Nieprawidłowe dane logowania' })
+  @ApiUnauthorizedResponse({ description: 'Nieprawidłowe dane logowania.' })
+  @ApiBadRequestResponse({
+    description: 'Błędne dane wejściowe (np. zły format e-maila).',
+  })
   async login(@Body() body: LoginDto) {
     const user = await this.authService.validateUser(body.email, body.password);
     if (!user) {
@@ -38,11 +44,15 @@ export class AuthController {
     return this.authService.login(user);
   }
 
+  @Public()
   @Post('register')
+  @ApiBody({ type: RegisterDto })
   @ApiCreatedResponse({
-    description: 'Zwraca utworzonego użytkownika (bez hasła)',
+    description: 'Zwraca utworzonego użytkownika (bez hasła).',
   })
-  @ApiBadRequestResponse({ description: 'Błędne dane rejestracyjne' })
+  @ApiBadRequestResponse({
+    description: 'Błędne dane rejestracyjne lub hasła nie są zgodne.',
+  })
   async register(@Body() body: RegisterDto) {
     if (body.repeated_password !== body.password) {
       throw new BadRequestException('Passwords do not match');
@@ -55,13 +65,20 @@ export class AuthController {
 
   @Public()
   @Get('refresh')
+  @ApiOkResponse({ description: 'Zwraca nowy token dostępowy.' })
+  @ApiUnauthorizedResponse({
+    description: 'Brak lub nieprawidłowy token odświeżający.',
+  })
   refreshToken(@Request() req: any) {
     return this.authService.refreshToken(req.user);
   }
 
   @Public()
   @Post('activate')
-  @ApiOkResponse({ description: 'Aktywuje konto użytkownika.' })
+  @ApiBody({ type: ActivateAccountDto })
+  @ApiOkResponse({
+    description: 'Konto użytkownika zostało pomyślnie aktywowane.',
+  })
   @ApiBadRequestResponse({
     description: 'Nieprawidłowy lub wygasły kod aktywacyjny.',
   })
