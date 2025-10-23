@@ -1,34 +1,56 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Resources } from '../entities/resources.entity';
 import { ResourcesRepository } from '../repositories/resources.repository';
+import { CreateResourceDto } from '../dto/create-resource.dto';
+import { UpdateResourceDto } from '../dto/update-resource.dto';
+import { UsersRepository } from 'src/users/repositories/users.repository';
 
 @Injectable()
 export class ResourcesService {
-  constructor(private readonly repository: ResourcesRepository) {}
+  constructor(
+    private readonly repository: ResourcesRepository,
+    private readonly usersRepository: UsersRepository,
+  ) {}
 
   findAll() {
     return this.repository.findAll({ relations: ['user'] });
   }
 
-  findOne(id: number) {
-    return this.repository.findOne(
-      {
-        id,
-      },
+  async findOne(id: number) {
+    const resource = await this.repository.findOne(
+      { id },
       { relations: ['user'] },
     );
+    if (!resource) {
+      throw new NotFoundException(`Zasób o ID ${id} nie został znaleziony.`);
+    }
+    return resource;
   }
 
-  create(data: Partial<Resources>) {
-    const resources = this.repository.create(data);
-    return resources;
+  async create(data: CreateResourceDto): Promise<Resources> {
+    const { userId, ...resourceData } = data;
+    const user = await this.usersRepository.findOneById(userId);
+
+    if (!user) {
+      throw new NotFoundException(
+        `Użytkownik o ID ${userId} nie został znaleziony.`,
+      );
+    }
+
+    const resource = this.repository.create({
+      ...resourceData,
+      user: user,
+    });
+
+    return this.repository.save(resource);
   }
 
-  update(id: number, data: Partial<Resources>) {
+  async update(id: number, data: UpdateResourceDto) {
+    await this.findOne(id);
     return this.repository.update(id, data);
   }
 
-  remove(id: number) {
-    return this.repository.delete(id);
+  async remove(id: number): Promise<void> {
+    await this.repository.delete(id);
   }
 }
