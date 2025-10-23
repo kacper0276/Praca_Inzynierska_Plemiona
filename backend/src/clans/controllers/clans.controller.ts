@@ -25,18 +25,18 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/core/guards/roles.guard';
 import { Roles } from 'src/core/decorators/roles.decorator';
 import { UserRole } from 'src/core/enums/user-role.enum';
 import { CreateClanDto } from '../dto/create-clan.dto';
 import { Public } from 'src/core/decorators/public.decorator';
 import { UpdateClanDto } from '../dto/update-clan.dto';
+import { JwtAuthGuard } from 'src/core/guards/jwt-auth.guard';
 
 @ApiTags('Clans')
 @ApiBearerAuth('access-token')
 @Controller('clans')
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ClansController {
   constructor(private readonly clansService: ClansService) {}
 

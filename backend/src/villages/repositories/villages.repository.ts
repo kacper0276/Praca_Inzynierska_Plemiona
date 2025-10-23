@@ -25,6 +25,17 @@ export class VillagesRepository extends BaseRepository<Village> {
     return this.repository.findOne({ where: { id }, ...options });
   }
 
+  findByUserId(userId: number): Promise<Village | null> {
+    return this.repository.findOne({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+      relations: ['user'],
+    });
+  }
+
   create(entity: Partial<Village>): Village {
     return this.repository.create(entity);
   }

@@ -1,7 +1,113 @@
-import { Controller } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Patch,
+  UseGuards,
+  ParseIntPipe,
+  HttpCode,
+  HttpStatus,
+  ForbiddenException,
+  Request,
+} from '@nestjs/common';
 import { UsersService } from '../services/users.service';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiConflictResponse,
+  ApiOkResponse,
+  ApiNotFoundResponse,
+  ApiNoContentResponse,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/core/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/core/guards/roles.guard';
+import { Roles } from 'src/core/decorators/roles.decorator';
+import { UserRole } from 'src/core/enums/user-role.enum';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
 
+@ApiTags('Users')
+@ApiBearerAuth('access-token')
 @Controller('users')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Post()
+  @Roles(UserRole.ADMIN)
+  @ApiCreatedResponse({ description: 'Użytkownik pomyślnie utworzony.' })
+  @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
+  @ApiConflictResponse({ description: 'Email lub login już istnieje.' })
+  async create(@Body() createUserDto: CreateUserDto) {
+    const user = await this.usersService.create(createUserDto);
+    const { password, ...result } = user;
+    return result;
+  }
+
+  @Get()
+  @Roles(UserRole.ADMIN)
+  @ApiOkResponse({ description: 'Lista wszystkich użytkowników.' })
+  async findAll() {
+    const users = await this.usersService.findAll();
+    return users.map(({ password, ...rest }) => rest);
+  }
+
+  @Get(':id')
+  @Roles(UserRole.ADMIN, UserRole.USER)
+  @ApiOkResponse({ description: 'Dane użytkownika.' })
+  @ApiNotFoundResponse({ description: 'Użytkownik nie znaleziony.' })
+  async findOne(@Param('id', ParseIntPipe) id: number, @Request() req) {
+    if (req.user.role !== UserRole.ADMIN && req.user.sub !== id) {
+      throw new ForbiddenException(
+        'Nie masz uprawnień do przeglądania tego profilu.',
+      );
+    }
+    const user = await this.usersService.findOne(id);
+    const { password, ...result } = user;
+    return result;
+  }
+
+  @Patch(':id')
+  @Roles(UserRole.ADMIN, UserRole.USER)
+  @ApiOkResponse({ description: 'Użytkownik pomyślnie zaktualizowany.' })
+  @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+    @Request() req: any,
+  ) {
+    const userMakingRequest = req.user;
+
+    if (
+      userMakingRequest.role !== UserRole.ADMIN &&
+      userMakingRequest.id !== id
+    ) {
+      throw new ForbiddenException(
+        'Nie masz uprawnień do edycji tego profilu.',
+      );
+    }
+
+    if (userMakingRequest.role !== UserRole.ADMIN && updateUserDto.role) {
+      throw new ForbiddenException('Nie możesz zmienić swojej roli.');
+    }
+
+    const updatedUser = await this.usersService.update(id, updateUserDto);
+    const { password, ...result } = updatedUser;
+    return result;
+  }
+
+  @Delete(':id')
+  @Roles(UserRole.ADMIN)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Użytkownik pomyślnie usunięty.' })
+  @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
+  @ApiNotFoundResponse({ description: 'Użytkownik nie znaleziony.' })
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.remove(id);
+  }
 }

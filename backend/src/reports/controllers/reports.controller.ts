@@ -24,17 +24,17 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/core/guards/roles.guard';
 import { CreateReportDto } from '../dto/create-report.dto';
 import { UserRole } from 'src/core/enums/user-role.enum';
 import { Roles } from 'src/core/decorators/roles.decorator';
 import { ListReportsQueryDto } from '../dto/list-reports.query.dto';
+import { JwtAuthGuard } from 'src/core/guards/jwt-auth.guard';
 
 @ApiTags('Reports')
 @ApiBearerAuth('access-token')
 @Controller('reports')
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
@@ -50,7 +50,7 @@ export class ReportsController {
     @Body() createReportDto: CreateReportDto,
     @Request() req: any,
   ): Promise<Report> {
-    const reporterId = req.user.id;
+    const reporterId = req.user.sub;
     return this.reportsService.createReport(reporterId, createReportDto);
   }
 

@@ -29,11 +29,12 @@ import { Public } from 'src/core/decorators/public.decorator';
 import { ServersService } from '../services/servers.service';
 import { CreateServerDto } from '../dto/create-server.dto';
 import { UpdateServerDto } from '../dto/update-server.dto';
+import { JwtAuthGuard } from 'src/core/guards/jwt-auth.guard';
 
 @ApiTags('Servers')
 @ApiBearerAuth('access-token')
 @Controller('servers')
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ServerController {
   constructor(private readonly serverService: ServersService) {}
 

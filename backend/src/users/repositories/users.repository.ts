@@ -24,6 +24,12 @@ export class UsersRepository extends BaseRepository<User> {
     return this.repository.findOne({ where: { id }, ...options });
   }
 
+  findOneByEmailOrLogin(email: string, login: string): Promise<User | null> {
+    return this.repository.findOne({
+      where: [{ email }, { login }],
+    });
+  }
+
   create(data: Partial<User>): User {
     return this.repository.create(data);
   }
