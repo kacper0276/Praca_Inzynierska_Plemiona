@@ -4,9 +4,10 @@ import { VillagesService } from './services/villages.service';
 import { VillagesRepository } from './repositories/villages.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Village } from './entities/village.entity';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Village])],
+  imports: [TypeOrmModule.forFeature([Village]), UsersModule],
   controllers: [VillagesController],
   providers: [VillagesService, VillagesRepository],
   exports: [VillagesService],

@@ -4,7 +4,7 @@ import * as cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import * as bodyParser from 'body-parser';
-import { ConfigService } from './core/config/config.service';
+import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
@@ -12,7 +12,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   const configService = app.get(ConfigService);
-  const port = parseInt(configService.get('PORT'), 10);
+  const port = configService.get<number>('PORT', 3000);
 
   const config = new DocumentBuilder()
     .setTitle('Pracownia Dyplomowa - Swagger')

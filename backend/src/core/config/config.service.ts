@@ -1,50 +1,48 @@
 import { MailerOptions } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
-import { ConfigService as NestConfigService } from '@nestjs/config';
+import { Inject, Injectable } from '@nestjs/common';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import {
+  DATABASE_CONFIG_TOKEN,
+  MAILER_CONFIG_TOKEN,
+} from '../consts/injection-tokens';
+import { DatabaseConfig } from '../json-config/interfaces/database-config.interface';
+import { MailerConfig } from '../json-config/interfaces/mailer-config.interface';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Injectable()
 export class ConfigService {
-  constructor(private readonly configService: NestConfigService) {}
-
-  get(key: string): string {
-    return this.configService.getOrThrow<string>(key, {
-      infer: true,
-    });
-  }
+  constructor(
+    @Inject(DATABASE_CONFIG_TOKEN)
+    private readonly dbConfig: DatabaseConfig,
+    @Inject(MAILER_CONFIG_TOKEN)
+    private readonly mailerConfig: MailerConfig,
+  ) {}
 
   getDatabaseConfig(): TypeOrmModuleOptions {
     return {
       type: 'mysql',
-      host: this.get('DB_HOST'),
-      port: parseInt(this.get('DB_PORT'), 10),
-      username: this.get('DB_USER'),
-      password: this.get('DB_PASSWORD'),
-      database: this.get('DB_NAME'),
+      host: this.dbConfig.host,
+      port: this.dbConfig.port,
+      username: this.dbConfig.username,
+      password: this.dbConfig.password,
+      database: this.dbConfig.database,
+      synchronize: this.dbConfig.synchronize,
       entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
-      synchronize: true,
     };
   }
 
-  getMailerConfig(): MailerOptions {
+  public getMailerConfig(): MailerOptions {
     return {
       transport: {
-        host: this.get('MAIL_HOST'),
-        port: parseInt(this.get('MAIL_PORT'), 10),
-        secure: this.get('MAIL_SECURE') === 'true',
-        auth: {
-          user: this.get('MAIL_USER'),
-          pass: this.get('MAIL_PASSWORD'),
-        },
+        host: this.mailerConfig.host,
+        port: this.mailerConfig.port,
+        secure: this.mailerConfig.secure,
+        auth: this.mailerConfig.auth,
       },
-      defaults: {
-        from: `"No Reply" <${this.get('MAIL_FROM')}>`,
-      },
+      defaults: this.mailerConfig.defaults,
       template: {
         dir: __dirname + '/../../templates/mails',
-        adapter:
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          new (require('@nestjs-modules/mailer/dist/adapters/handlebars.adapter').HandlebarsAdapter)(),
+        adapter: new HandlebarsAdapter(),
         options: {
           strict: true,
         },

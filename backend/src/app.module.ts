@@ -2,9 +2,7 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from './core/config/config.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeOrmConfigAsync } from './core/config/typeorm/typeorm.config';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { mailerConfigAsync } from './core/config/mailer/mailer.config';
 import { AuthModule } from './auth/auth.module';
 import { ResourcesModule } from './resources/resources.module';
 import { LoggerModule } from './core/logger/logger.module';
@@ -16,12 +14,59 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { CacheModule } from '@nestjs/cache-manager';
 import { TtlModule } from './core/ttl/ttl.module';
 import { JobsModule } from './jobs/jobs.module';
+import { JsonConfigModule } from './core/json-config/json-config.module';
+import {
+  DATABASE_CONFIG_TOKEN,
+  MAILER_CONFIG_TOKEN,
+} from './core/consts/injection-tokens';
+import * as Joi from 'joi';
+import { ConfigService } from './core/config/config.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forRootAsync(typeOrmConfigAsync),
-    MailerModule.forRootAsync(mailerConfigAsync),
+    JsonConfigModule.register({
+      fileName: 'database',
+      providerToken: DATABASE_CONFIG_TOKEN,
+      validationSchema: Joi.object({
+        host: Joi.string().required(),
+        port: Joi.number().port().required(),
+        username: Joi.string().required(),
+        password: Joi.string().allow('').required(),
+        database: Joi.string().required(),
+        synchronize: Joi.boolean().default(false),
+      }),
+    }),
+    JsonConfigModule.register({
+      fileName: 'mailer',
+      providerToken: MAILER_CONFIG_TOKEN,
+      validationSchema: Joi.object({
+        host: Joi.string().required(),
+        port: Joi.number().port().required(),
+        secure: Joi.boolean().required(),
+        auth: Joi.object({
+          user: Joi.string().required(),
+          pass: Joi.string().required(),
+        }).required(),
+        defaults: Joi.object({
+          from: Joi.string().required(),
+        }).required(),
+      }),
+    }),
+
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) =>
+        configService.getDatabaseConfig(),
+    }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) =>
+        configService.getMailerConfig(),
+    }),
+
     ScheduleModule.forRoot(),
     CacheModule.register({
       isGlobal: true,

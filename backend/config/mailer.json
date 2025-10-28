@@ -1,0 +1,12 @@
+{
+  "host": "smtp.poczta.onet.pl",
+  "port": 465,
+  "secure": true,
+  "auth": {
+    "user": "mailtestowy1221@op.pl",
+    "pass": "Poczzta123"
+  },
+  "defaults": {
+    "from": "\"No Reply\" <mailtestowy1221@op.pl>"
+  }
+}

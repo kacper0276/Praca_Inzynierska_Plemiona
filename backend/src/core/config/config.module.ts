@@ -12,6 +12,7 @@ export class ConfigModule {
           isGlobal: true,
         }),
       ],
+      global: true,
       providers: [ConfigService],
       exports: [ConfigService],
     };
