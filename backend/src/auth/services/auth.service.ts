@@ -50,7 +50,12 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { sub: user.id, email: user.email, role: user.role };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      login: user.login,
+    };
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
@@ -76,6 +81,7 @@ export class AuthService {
     const payload = {
       sub: user.sub,
       email: user.email,
+      login: user.login,
       role: user.role,
     };
 
