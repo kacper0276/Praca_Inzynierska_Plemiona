@@ -6,7 +6,6 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  UseGuards,
   Request,
   ForbiddenException,
   Patch,
@@ -15,8 +14,6 @@ import {
 } from '@nestjs/common';
 import { VillagesService } from '../services/villages.service';
 import { VillageStateDto } from '../dto/village-state.dto';
-import { JwtAuthGuard } from 'src/core/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/core/guards/roles.guard';
 import {
   ApiTags,
   ApiBearerAuth,
@@ -30,16 +27,16 @@ import {
 } from '@nestjs/swagger';
 import { Roles } from 'src/core/decorators/roles.decorator';
 import { UserRole } from 'src/core/enums/user-role.enum';
+import { Authenticated } from 'src/core/decorators/authenticated.decorator';
 
 @ApiTags('Villages')
 @ApiBearerAuth('access-token')
 @Controller('villages')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class VillagesController {
   constructor(private readonly villagesService: VillagesService) {}
 
   @Get('user/:userId')
-  @Roles(UserRole.ADMIN, UserRole.USER)
+  @Authenticated()
   @ApiOkResponse({ description: 'Zwraca wioskę użytkownika.' })
   @ApiNotFoundResponse({
     description: 'Nie znaleziono wioski dla danego użytkownika.',
@@ -58,7 +55,7 @@ export class VillagesController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.ADMIN, UserRole.USER)
+  @Authenticated()
   @ApiOkResponse({ description: 'Wioska została pomyślnie zaktualizowana.' })
   @ApiNotFoundResponse({ description: 'Wioska o podanym ID nie istnieje.' })
   @ApiForbiddenResponse({ description: 'Brak uprawnień do edycji tej wioski.' })

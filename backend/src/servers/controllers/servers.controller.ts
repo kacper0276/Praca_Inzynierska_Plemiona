@@ -10,7 +10,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Roles } from 'src/core/decorators/roles.decorator';
-import { RolesGuard } from 'src/core/guards/roles.guard';
 import { UserRole } from 'src/core/enums/user-role.enum';
 import {
   Body,
@@ -23,19 +22,16 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import { Public } from 'src/core/decorators/public.decorator';
 import { ServersService } from '../services/servers.service';
 import { CreateServerDto } from '../dto/create-server.dto';
 import { UpdateServerDto } from '../dto/update-server.dto';
-import { JwtAuthGuard } from 'src/core/guards/jwt-auth.guard';
 
 @ApiTags('Servers')
 @ApiBearerAuth('access-token')
 @Controller('servers')
-@UseGuards(JwtAuthGuard, RolesGuard)
-export class ServerController {
+export class ServersController {
   constructor(private readonly serverService: ServersService) {}
 
   @Post()

@@ -6,7 +6,6 @@ import {
   Param,
   Delete,
   Patch,
-  UseGuards,
   ParseIntPipe,
   HttpCode,
   HttpStatus,
@@ -24,17 +23,15 @@ import {
   ApiNotFoundResponse,
   ApiNoContentResponse,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/core/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/core/guards/roles.guard';
 import { Roles } from 'src/core/decorators/roles.decorator';
 import { UserRole } from 'src/core/enums/user-role.enum';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
+import { Authenticated } from 'src/core/decorators/authenticated.decorator';
 
 @ApiTags('Users')
 @ApiBearerAuth('access-token')
 @Controller('users')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -58,7 +55,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN, UserRole.USER)
+  @Authenticated()
   @ApiOkResponse({ description: 'Dane użytkownika.' })
   @ApiNotFoundResponse({ description: 'Użytkownik nie znaleziony.' })
   async findOne(@Param('id', ParseIntPipe) id: number, @Request() req) {
@@ -73,7 +70,7 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.ADMIN, UserRole.USER)
+  @Authenticated()
   @ApiOkResponse({ description: 'Użytkownik pomyślnie zaktualizowany.' })
   @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
   async update(

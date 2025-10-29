@@ -9,7 +9,6 @@ import {
   HttpCode,
   HttpStatus,
   ParseIntPipe,
-  UseGuards,
 } from '@nestjs/common';
 import { ResourcesService } from '../services/resources.service';
 import { UserRole } from 'src/core/enums/user-role.enum';
@@ -27,13 +26,11 @@ import {
 } from '@nestjs/swagger';
 import { UpdateResourceDto } from '../dto/update-resource.dto';
 import { CreateResourceDto } from '../dto/create-resource.dto';
-import { RolesGuard } from 'src/core/guards/roles.guard';
-import { JwtAuthGuard } from 'src/core/guards/jwt-auth.guard';
+import { Authenticated } from 'src/core/decorators/authenticated.decorator';
 
 @ApiTags('Resources')
 @ApiBearerAuth('access-token')
 @Controller('resources')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 
@@ -51,7 +48,7 @@ export class ResourcesController {
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN, UserRole.USER)
+  @Authenticated()
   @ApiOkResponse({ description: 'Zwraca szczegóły surowców o podanym ID.' })
   @ApiNotFoundResponse({
     description: 'Surowce o podanym ID nie zostały znalezione.',

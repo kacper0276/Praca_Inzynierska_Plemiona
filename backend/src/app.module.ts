@@ -21,6 +21,11 @@ import {
 } from './core/consts/injection-tokens';
 import * as Joi from 'joi';
 import { ConfigService } from './core/config/config.service';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './core/guards/jwt-auth.guard';
+import { RolesGuard } from './core/guards/roles.guard';
+import { AuthenticatedGuard } from './core/guards/authenticated.guard';
+import { ServersModule } from './servers/servers.module';
 
 @Module({
   imports: [
@@ -81,8 +86,23 @@ import { ConfigService } from './core/config/config.service';
     ReportsModule,
     TtlModule,
     JobsModule,
+    ServersModule,
   ],
   controllers: [],
-  providers: [WsGateway],
+  providers: [
+    WsGateway,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticatedGuard,
+    },
+  ],
 })
 export class AppModule {}

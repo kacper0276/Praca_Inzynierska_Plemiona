@@ -5,15 +5,12 @@ import {
   Body,
   Param,
   Delete,
-  Put,
-  UseGuards,
   HttpCode,
   HttpStatus,
   ParseIntPipe,
   Patch,
 } from '@nestjs/common';
 import { ClansService } from '../services/clans.service';
-import { Clan } from '../entities/clan.entity';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -25,18 +22,15 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { RolesGuard } from 'src/core/guards/roles.guard';
 import { Roles } from 'src/core/decorators/roles.decorator';
 import { UserRole } from 'src/core/enums/user-role.enum';
 import { CreateClanDto } from '../dto/create-clan.dto';
 import { Public } from 'src/core/decorators/public.decorator';
 import { UpdateClanDto } from '../dto/update-clan.dto';
-import { JwtAuthGuard } from 'src/core/guards/jwt-auth.guard';
 
 @ApiTags('Clans')
 @ApiBearerAuth('access-token')
 @Controller('clans')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class ClansController {
   constructor(private readonly clansService: ClansService) {}
 
