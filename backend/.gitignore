@@ -3,6 +3,10 @@
 /node_modules
 /build
 
+# Config
+/config/database.json
+/config/mailer.json
+
 # Logs
 logs
 *.log
