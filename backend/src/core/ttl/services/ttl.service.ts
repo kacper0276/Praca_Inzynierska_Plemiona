@@ -8,7 +8,7 @@ export class TtlService {
 
   async generateActivationCode(userId: number): Promise<string> {
     const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-    await this.cacheManager.set(`activation-${code}`, userId, 300000);
+    await this.cacheManager.set(`activation-${code}`, userId, 5 * 60 * 1000);
     return code;
   }
 

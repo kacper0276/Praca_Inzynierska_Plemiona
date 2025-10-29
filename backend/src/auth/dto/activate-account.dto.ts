@@ -9,5 +9,5 @@ export class ActivateAccountDto {
   @IsString()
   @IsNotEmpty()
   @Length(6, 6)
-  readonly code: string;
+  code: string;
 }

@@ -10,6 +10,7 @@ import { getActivationEmailTemplate } from 'src/users/templates/activation-email
 import * as bcrypt from 'bcryptjs';
 import { User } from 'src/users/entities/user.entity';
 import { TtlService } from 'src/core/ttl/services/ttl.service';
+import { RegisterDto } from '../dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -88,12 +89,7 @@ export class AuthService {
     };
   }
 
-  async register(data: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-  }) {
+  async register(data: RegisterDto) {
     const existing = await this.usersRepository.findOneByEmail(data.email);
     if (existing) {
       throw new UnauthorizedException('Email already in use');
@@ -102,6 +98,7 @@ export class AuthService {
     const passwordHash = await bcrypt.hash(data.password, 10);
     const user = this.usersRepository.create({
       email: data.email,
+      login: data.login,
       password: passwordHash,
       firstName: data.firstName,
       lastName: data.lastName,

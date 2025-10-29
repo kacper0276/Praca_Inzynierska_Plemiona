@@ -10,6 +10,14 @@ export class RegisterDto {
   })
   email: string;
 
+  @IsString({ message: 'Login musi być ciągiem znaków' })
+  @IsNotEmpty({ message: 'Login nie może być pusty.' })
+  @ApiProperty({
+    example: 'login123',
+    description: 'Login użytkownika',
+  })
+  login: string;
+
   @IsString()
   @IsNotEmpty({ message: 'Hasło nie może być puste.' })
   @ApiProperty({ description: 'Hasło użytkownika', minLength: 8 })
