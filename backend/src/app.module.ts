@@ -21,11 +21,12 @@ import {
 } from './core/consts/injection-tokens';
 import * as Joi from 'joi';
 import { ConfigService } from './core/config/config.service';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtAuthGuard } from './core/guards/jwt-auth.guard';
 import { RolesGuard } from './core/guards/roles.guard';
 import { AuthenticatedGuard } from './core/guards/authenticated.guard';
 import { ServersModule } from './servers/servers.module';
+import { MessageInterceptor } from './core/interceptors/message.interceptor';
 
 @Module({
   imports: [
@@ -102,6 +103,10 @@ import { ServersModule } from './servers/servers.module';
     {
       provide: APP_GUARD,
       useClass: AuthenticatedGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: MessageInterceptor,
     },
   ],
 })
