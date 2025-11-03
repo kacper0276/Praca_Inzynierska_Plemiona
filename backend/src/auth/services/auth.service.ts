@@ -148,4 +148,15 @@ export class AuthService {
     user.isActive = true;
     return this.usersRepository.save(user);
   }
+
+  async getProfile(userId: number): Promise<Omit<User, 'password'>> {
+    const user = await this.usersRepository.findOneById(userId);
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const { password, ...result } = user;
+    return result;
+  }
 }

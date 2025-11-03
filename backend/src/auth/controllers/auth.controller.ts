@@ -10,6 +10,7 @@ import {
 import { AuthService } from '../services/auth.service';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
   ApiOkResponse,
@@ -21,6 +22,8 @@ import { LoginDto } from '../dto/login.dto';
 import { Public } from 'src/core/decorators/public.decorator';
 import { ActivateAccountDto } from '../dto/activate-account.dto';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
+import { Authenticated } from 'src/core/decorators/authenticated.decorator';
+import { Message } from 'src/core/decorators/message.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -73,10 +76,10 @@ export class AuthController {
   })
   @ApiBody({ type: RefreshTokenDto })
   async refreshToken(@Body() body: RefreshTokenDto) {
-    if (!body.refresh_token) {
+    if (!body.refreshToken) {
       throw new UnauthorizedException('No refresh token provided');
     }
-    return this.authService.refreshToken(body.refresh_token);
+    return this.authService.refreshToken(body.refreshToken);
   }
 
   @Public()
@@ -94,5 +97,18 @@ export class AuthController {
     );
     const { password, ...result } = user;
     return result;
+  }
+
+  @Get('profile')
+  @Authenticated()
+  @Message('received-user-profile-data')
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Zwraca dane profilu zalogowanego użytkownika.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Brak lub nieprawidłowy token.' })
+  async getProfile(@Request() req) {
+    const userId = req.user.sub;
+    return this.authService.getProfile(userId);
   }
 }
