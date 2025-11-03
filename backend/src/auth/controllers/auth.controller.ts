@@ -5,6 +5,7 @@ import {
   Get,
   Post,
   Request,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import {
@@ -19,6 +20,7 @@ import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
 import { Public } from 'src/core/decorators/public.decorator';
 import { ActivateAccountDto } from '../dto/activate-account.dto';
+import { RefreshTokenDto } from '../dto/refresh-token.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -64,13 +66,17 @@ export class AuthController {
   }
 
   @Public()
-  @Get('refresh')
+  @Post('refresh')
   @ApiOkResponse({ description: 'Zwraca nowy token dostępowy.' })
   @ApiUnauthorizedResponse({
     description: 'Brak lub nieprawidłowy token odświeżający.',
   })
-  refreshToken(@Request() req: any) {
-    return this.authService.refreshToken(req.user);
+  @ApiBody({ type: RefreshTokenDto })
+  async refreshToken(@Body() body: RefreshTokenDto) {
+    if (!body.refresh_token) {
+      throw new UnauthorizedException('No refresh token provided');
+    }
+    return this.authService.refreshToken(body.refresh_token);
   }
 
   @Public()

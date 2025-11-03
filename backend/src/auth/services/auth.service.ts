@@ -77,22 +77,35 @@ export class AuthService {
     };
   }
 
-  async refreshToken(user: any) {
-    const payload = {
-      sub: user.sub,
-      email: user.email,
-      login: user.login,
-      role: user.role,
-    };
+  async refreshToken(token: string) {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
 
-    const newAccessToken = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_SECRET,
-      expiresIn: '15m',
-    });
+      const user = await this.usersRepository.findOneById(payload.sub);
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
 
-    return {
-      access_token: newAccessToken,
-    };
+      const newPayload = {
+        sub: user.id,
+        email: user.email,
+        login: user.login,
+        role: user.role,
+      };
+
+      const newAccessToken = await this.jwtService.signAsync(newPayload, {
+        secret: process.env.JWT_SECRET,
+        expiresIn: '15m',
+      });
+
+      return {
+        access_token: newAccessToken,
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
   }
 
   async register(data: RegisterDto) {
