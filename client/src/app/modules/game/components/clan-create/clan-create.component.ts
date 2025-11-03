@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ResourceService } from '../../../../shared/services/resource.service';
+import { ResourceService } from '../../services/resource.service';
 import { Resources } from '../../../../shared/models/resources.model';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';

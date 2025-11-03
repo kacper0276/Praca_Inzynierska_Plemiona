@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, interval, Subscription, timer } from 'rxjs';
 import { ResourceService } from './resource.service';
-import { BuildingData } from '../models/building.model';
+import { BuildingData } from '../../../shared/models';
 
 export interface GatheringConfig {
   tickIntervalMs: number;

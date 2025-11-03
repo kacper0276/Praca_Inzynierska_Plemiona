@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ResourceService } from '../../../../shared/services/resource.service';
+import { ResourceService } from '../../services/resource.service';
 import { UnitType } from '../../../../shared/enums/unit-type.enum';
 import { Unit } from '../../../../shared/models';
 

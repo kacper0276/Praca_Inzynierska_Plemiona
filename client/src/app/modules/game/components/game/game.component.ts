@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Resources } from '../../../../shared/models/resources.model';
-import { ResourceService } from '../../../../shared/services/resource.service';
+import { ResourceService } from '../../services/resource.service';
 import { WebSocketService } from '../../../../shared/services/web-socket.service';
 import { WebSocketEvent } from '../../../../shared/enums/websocket-event.enum';
 

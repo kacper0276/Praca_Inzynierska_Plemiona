@@ -6,13 +6,13 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { GatheringService } from '../../../../shared/services/gathering.service';
-import { ResourceService } from '../../../../shared/services/resource.service';
+import { ResourceService } from '../../services/resource.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { Resources } from '../../../../shared/models/resources.model';
 import { BuildingData, RadialMenuOption } from '../../../../shared/models';
 import { ActivatedRoute } from '@angular/router';
+import { GatheringService } from '../../services/gathering.service';
 
 @Component({
   selector: 'app-grid',

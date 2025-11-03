@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,8 @@ export class LoginComponent {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly authService: AuthService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -23,7 +25,17 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.loginForm.valid) {
-      this.router.navigate(['/game/village/kacper0276@op.pl']);
+      const loginCredentials = this.loginForm.getRawValue();
+
+      this.authService.login(loginCredentials).subscribe({
+        next: (res) => {
+          console.log(res);
+          this.router.navigate(['/game/village/kacper0276@op.pl']);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
     }
   }
 }
