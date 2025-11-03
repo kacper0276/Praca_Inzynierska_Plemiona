@@ -56,7 +56,7 @@ export class AuthController {
     description: 'Błędne dane rejestracyjne lub hasła nie są zgodne.',
   })
   async register(@Body() body: RegisterDto) {
-    if (body.repeated_password !== body.password) {
+    if (body.repeatedPassword !== body.password) {
       throw new BadRequestException('Passwords do not match');
     }
 

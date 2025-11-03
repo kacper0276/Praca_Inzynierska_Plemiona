@@ -26,7 +26,7 @@ export class RegisterDto {
   @IsString()
   @IsNotEmpty({ message: 'Hasło nie może być puste.' })
   @ApiProperty({ description: 'Powtórzone hasło', minLength: 8 })
-  repeated_password: string;
+  repeatedPassword: string;
 
   @IsString()
   @IsNotEmpty({ message: 'Imie nie może być puste.' })

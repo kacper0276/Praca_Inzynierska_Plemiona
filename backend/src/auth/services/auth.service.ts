@@ -72,8 +72,8 @@ export class AuthService {
 
     return {
       user: userData,
-      access_token: accessToken,
-      refresh_token: refreshToken,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     };
   }
 
@@ -101,7 +101,7 @@ export class AuthService {
       });
 
       return {
-        access_token: newAccessToken,
+        accessToken: newAccessToken,
       };
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired refresh token');
