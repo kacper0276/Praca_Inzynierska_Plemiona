@@ -43,7 +43,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(clonedRequest).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 && !req.url.includes('/auth/refresh')) {
+        if (error.status === 401) {
           return this.handleAuthError(req, next);
         }
         return throwError(() => error);
@@ -58,16 +58,13 @@ export class AuthInterceptor implements HttpInterceptor {
     const refreshToken = this.authService.getRefreshToken();
 
     if (refreshToken) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${refreshToken}`,
-      });
-
       return this.http
-        .get<any>(`${environment.apiUrl}/auth/refresh`, { headers })
+        .post<any>(`${environment.apiUrl}/auth/refresh`, {
+          refresh_token: refreshToken,
+        })
         .pipe(
           switchMap((response) => {
             const newAccessToken = response.access_token;
-
             this.authService.setJwtToken(newAccessToken);
 
             const clonedRequest = req.clone({
