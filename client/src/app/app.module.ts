@@ -5,7 +5,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { ToastrModule } from 'ngx-toastr';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { AuthModule } from './modules/auth/auth.module';
@@ -22,7 +21,6 @@ export function HttpLoaderFactory(http: HttpClient) {
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ToastrModule.forRoot(),
     BrowserAnimationsModule,
     HttpClientModule,
     TranslateModule.forRoot({

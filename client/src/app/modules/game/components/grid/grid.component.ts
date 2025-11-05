@@ -7,12 +7,12 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ResourceService } from '../../services/resource.service';
-import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { Resources } from '../../../../shared/models/resources.model';
 import { BuildingData, RadialMenuOption } from '../../../../shared/models';
 import { ActivatedRoute } from '@angular/router';
 import { GatheringService } from '../../services/gathering.service';
+import { ToastrService } from '../../../../shared/services/toastr.service';
 
 @Component({
   selector: 'app-grid',
@@ -221,7 +221,9 @@ export class GridComponent implements OnInit, OnDestroy {
         this.buildMode = true;
         break;
       case 'inspect':
-        this.toastr.info(this.translate.instant('INFO_FIELD', { row, col }));
+        this.toastr.showInfo(
+          this.translate.instant('INFO_FIELD', { row, col })
+        );
         break;
       default:
         console.warn('Nieznana akcja:', action);
@@ -419,13 +421,13 @@ export class GridComponent implements OnInit, OnDestroy {
 
   expandLeft(): void {
     if (this.gridSize >= this.maxGridSize) {
-      this.toastr.error(this.translate.instant('MAX_GRID'));
+      this.toastr.showError(this.translate.instant('MAX_GRID'));
       return;
     }
 
     const cost = this.getCurrentExpansionCost();
     if (!this.resourceService.spendResources(cost)) {
-      this.toastr.error(this.translate.instant('NOT_ENOUGH_RES_EXPAND'));
+      this.toastr.showError(this.translate.instant('NOT_ENOUGH_RES_EXPAND'));
       return;
     }
 
@@ -436,13 +438,13 @@ export class GridComponent implements OnInit, OnDestroy {
 
   expandRight(): void {
     if (this.gridSize >= this.maxGridSize) {
-      this.toastr.error(this.translate.instant('MAX_GRID'));
+      this.toastr.showError(this.translate.instant('MAX_GRID'));
       return;
     }
 
     const cost = this.getCurrentExpansionCost();
     if (!this.resourceService.spendResources(cost)) {
-      this.toastr.error(this.translate.instant('NOT_ENOUGH_RES_EXPAND'));
+      this.toastr.showError(this.translate.instant('NOT_ENOUGH_RES_EXPAND'));
       return;
     }
 
@@ -467,7 +469,7 @@ export class GridComponent implements OnInit, OnDestroy {
 
   requestExpansion(side: 'left' | 'right') {
     if (this.gridSize >= this.maxGridSize) {
-      this.toastr.error(this.translate.instant('MAX_GRID'));
+      this.toastr.showError(this.translate.instant('MAX_GRID'));
       return;
     }
     this.pendingExpansion = { side, cost: this.getCurrentExpansionCost() };
@@ -505,7 +507,7 @@ export class GridComponent implements OnInit, OnDestroy {
         this.closePopup();
       }
     } else {
-      this.toastr.error(this.translate.instant('NOT_ENOUGH_RES'));
+      this.toastr.showError(this.translate.instant('NOT_ENOUGH_RES'));
     }
   }
 
@@ -529,7 +531,7 @@ export class GridComponent implements OnInit, OnDestroy {
         );
       }
     } else {
-      this.toastr.error(this.translate.instant('NOT_ENOUGH_RES_UPGRADE'));
+      this.toastr.showError(this.translate.instant('NOT_ENOUGH_RES_UPGRADE'));
     }
   }
 
@@ -685,6 +687,6 @@ export class GridComponent implements OnInit, OnDestroy {
   private endAttack(message: string): void {
     clearInterval(this.battleInterval);
     this.isAttacking = false;
-    this.toastr.info(message);
+    this.toastr.showInfo(message);
   }
 }

@@ -8,5 +8,9 @@
   "CLAN_CREATED": "Clan created! (simulation)",
   "CLAN_CREATED_SUBTITLE": "Invitations sent to selected players",
   "CLAN_COST_LABEL": "Cost",
-  "GATHER_TICK_INFO": "Next resources in {seconds}s"
+  "GATHER_TICK_INFO": "Next resources in {seconds}s",
+
+  "auth": {
+    "successfully-logged-in": "Successfully logged in!"
+  }
 }
