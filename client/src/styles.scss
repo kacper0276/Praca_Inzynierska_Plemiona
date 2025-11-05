@@ -1,4 +1,3 @@
-@import "ngx-toastr/toastr";
 @import "material-icons/iconfont/material-icons.css";
 @import "styles/variables";
 @import "styles/mixins";
@@ -28,6 +27,9 @@ body {
   --accent-strong: #e6b800;
   --success: #28a745;
   --danger: #dc3545;
+  --info: #17a2b8;
+  --warning-text: #212529;
+  --toast-default-text: #ffffff;
   --side-menu-bg: var(--panel);
   --game-bg: #efe6cf;
   --game-border: #5d4037;
@@ -48,6 +50,9 @@ body {
   --accent-strong: #ff9f1a;
   --success: #2ecc71;
   --danger: #ff6b6b;
+  --info: #3498db;
+  --warning-text: #0f1720;
+  --toast-default-text: #ffffff;
   --side-menu-bg: #071018;
   --game-bg: #1f2933;
   --game-border: #1b1b1b;

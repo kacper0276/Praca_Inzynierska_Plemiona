@@ -1,0 +1,11 @@
+<div class="toastr-container">
+  <div
+    *ngFor="let toast of toasts"
+    class="toast"
+    [ngClass]="getCssClass(toast)"
+    [@toastAnimation]
+  >
+    <span>{{ toast.message }}</span>
+    <button class="close-btn" (click)="removeToast(toast)">&times;</button>
+  </div>
+</div>

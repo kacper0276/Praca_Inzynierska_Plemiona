@@ -14,6 +14,7 @@ import { BuildingComponent } from './components/building/building.component';
 import { RadialMenuComponent } from './components/radial-menu/radial-menu.component';
 import { BugReportComponent } from './components/bug-report/bug-report.component';
 import { MultiSelectComponent } from './components/multi-select/multi-select.component';
+import { ToastrComponent } from './components/toastr/toastr.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { MultiSelectComponent } from './components/multi-select/multi-select.com
     RadialMenuComponent,
     BugReportComponent,
     MultiSelectComponent,
+    ToastrComponent,
   ],
   imports: [
     CommonModule,
@@ -51,6 +53,7 @@ import { MultiSelectComponent } from './components/multi-select/multi-select.com
     RadialMenuComponent,
     BugReportComponent,
     MultiSelectComponent,
+    ToastrComponent,
   ],
 })
 export class SharedModule {}
