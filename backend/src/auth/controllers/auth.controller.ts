@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Post,
   Request,
   UnauthorizedException,
@@ -32,6 +33,7 @@ export class AuthController {
 
   @Public()
   @Post('login')
+  @Message('auth.successfully-logged-in')
   @ApiBody({ type: LoginDto })
   @ApiOkResponse({
     description:
@@ -44,13 +46,14 @@ export class AuthController {
   async login(@Body() body: LoginDto) {
     const user = await this.authService.validateUser(body.email, body.password);
     if (!user) {
-      return { statusCode: 401, message: 'Invalid credentials' };
+      throw new BadRequestException('invalid-credentials');
     }
     return this.authService.login(user);
   }
 
   @Public()
   @Post('register')
+  @Message('auth.successfully-registered')
   @ApiBody({ type: RegisterDto })
   @ApiCreatedResponse({
     description: 'Zwraca utworzonego użytkownika (bez hasła).',
@@ -60,7 +63,7 @@ export class AuthController {
   })
   async register(@Body() body: RegisterDto) {
     if (body.repeatedPassword !== body.password) {
-      throw new BadRequestException('Passwords do not match');
+      throw new BadRequestException('passwords-do-not-match');
     }
 
     const user = await this.authService.register(body);
