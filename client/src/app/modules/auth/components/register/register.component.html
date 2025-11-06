@@ -1,28 +1,100 @@
 <div class="register-form-wrapper">
-  <form
-    [formGroup]="registerForm"
-    (ngSubmit)="onSubmit()"
-    class="register-form"
-  >
-    <h2>Rejestracja</h2>
+  <div class="register-card">
+    <h2>{{ "register" | translate }}</h2>
+    <form (ngSubmit)="onSubmit()" [formGroup]="registerForm">
+      <div class="form-group">
+        <label for="email">{{ "email" | translate }}</label>
+        <input id="email" type="email" formControlName="email" />
+        @if (registerForm.get('email')?.invalid &&
+        registerForm.get('email')?.touched) {
+        <div class="error">{{ "user-email-is-required" | translate }}</div>
+        }
+      </div>
 
-    <label>
-      <span>Nazwa użytkownika:</span>
-      <input formControlName="username" type="text" />
-    </label>
+      <div class="form-group">
+        <label for="login">{{ "username" | translate }}</label>
+        <input id="login" type="text" formControlName="login" />
+        @if (registerForm.get('login')?.invalid &&
+        registerForm.get('login')?.touched) {
+        <div class="error">{{ "login-is-required" | translate }}</div>
+        }
+      </div>
 
-    <label>
-      <span>Email:</span>
-      <input formControlName="email" type="email" />
-    </label>
+      <div class="form-group">
+        <label for="firstName">{{ "first-name" | translate }}</label>
+        <input id="firstName" type="text" formControlName="firstName" />
+        @if (registerForm.get('firstName')?.invalid &&
+        registerForm.get('firstName')?.touched) {
+        <div class="error">{{ "first-name-is-required" | translate }}</div>
+        }
+      </div>
 
-    <label>
-      <span>Hasło:</span>
-      <input formControlName="password" type="password" />
-    </label>
+      <div class="form-group">
+        <label for="lastName">{{ "last-name" | translate }}</label>
+        <input id="lastName" type="text" formControlName="lastName" />
+        @if (registerForm.get('lastName')?.invalid &&
+        registerForm.get('lastName')?.touched) {
+        <div class="error">{{ "last-name-is-required" | translate }}</div>
+        }
+      </div>
 
-    <button type="submit" [disabled]="registerForm.invalid">
-      Zarejestruj się
-    </button>
-  </form>
+      <div class="form-group">
+        <label for="password">{{ "password" | translate }}</label>
+        <div class="password-wrapper">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePasswordVisibility()"
+          >
+            {{ showPassword ? ("hidden" | translate) : ("show" | translate) }}
+          </button>
+        </div>
+        @if (registerForm.get('password')?.invalid &&
+        registerForm.get('password')?.touched) {
+        <div class="error">{{ "password-is-required" | translate }}</div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="repeated_password">{{
+          "repeat-password" | translate
+        }}</label>
+        <div class="password-wrapper">
+          <input
+            id="repeated_password"
+            [type]="showRepeatedPassword ? 'text' : 'password'"
+            formControlName="repeatedPassword"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="toggleRepeatedPasswordVisibility()"
+          >
+            {{
+              showRepeatedPassword
+                ? ("hidden" | translate)
+                : ("show" | translate)
+            }}
+          </button>
+        </div>
+        @if (registerForm.get('repeatedPassword')?.invalid &&
+        registerForm.get('repeatedPassword')?.touched) {
+        <div class="error">{{ "repeat-password-is-required" | translate }}</div>
+        }
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="registerForm.invalid"
+        class="register-button"
+      >
+        {{ "register" | translate }}
+      </button>
+    </form>
+  </div>
 </div>

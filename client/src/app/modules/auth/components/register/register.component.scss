@@ -12,7 +12,7 @@
   backdrop-filter: blur(4px);
 }
 
-.register-form {
+.register-card {
   background: rgba(255, 255, 255, 0.08);
   padding: 2rem;
   border-radius: 1rem;
@@ -21,44 +21,86 @@
   color: $white;
   width: 100%;
   max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  height: 90%;
+  overflow-y: auto;
+  text-align: center;
 
   h2 {
-    text-align: center;
-    color: $primary-color;
-    margin-bottom: 1rem;
-    -webkit-text-stroke: 0.5px $black;
+    margin-bottom: 1.5rem;
+    color: #060606;
   }
 
-  label {
-    display: flex;
-    flex-direction: column;
-    font-weight: 500;
-    gap: 0.5rem;
+  .form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
 
-    span {
-      color: $gray-300;
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: #000000;
     }
 
     input {
-      padding: 0.6rem 1rem;
-      border-radius: 0.5rem;
-      border: none;
-      outline: none;
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #6f6f6f;
+      border-radius: 4px;
       font-size: 1rem;
-      background-color: rgba(255, 255, 255, 0.15);
-      color: $white;
-      transition: background-color 0.3s ease;
+      outline: none;
+      color: #000000;
 
       &:focus {
-        background-color: rgba(255, 255, 255, 0.25);
+        border-color: #007bff;
+      }
+    }
+
+    .error {
+      color: #d9534f;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+    }
+  }
+
+  .password-wrapper {
+    display: flex;
+    align-items: center;
+
+    input {
+      flex: 1;
+    }
+
+    .toggle-password {
+      margin-left: 0.5rem;
+      background: none;
+      border: none;
+      color: #007bff;
+      cursor: pointer;
+      font-size: 0.875rem;
+
+      &:hover {
+        text-decoration: underline;
       }
     }
   }
 
-  button {
-    @include form-button;
+  .register-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
   }
 }

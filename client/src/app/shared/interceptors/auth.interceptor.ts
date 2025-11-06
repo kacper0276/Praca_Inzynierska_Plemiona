@@ -61,11 +61,12 @@ export class AuthInterceptor implements HttpInterceptor {
     if (refreshToken) {
       return this.http
         .post<any>(`${environment.apiUrl}/auth/refresh`, {
-          refresh_token: refreshToken,
+          refreshToken,
         })
         .pipe(
           switchMap((response) => {
-            const newAccessToken = response.access_token;
+            const newAccessToken = response.data.accessToken;
+
             this.tokenService.setJwtToken(newAccessToken);
 
             const clonedRequest = req.clone({

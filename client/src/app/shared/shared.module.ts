@@ -15,6 +15,7 @@ import { RadialMenuComponent } from './components/radial-menu/radial-menu.compon
 import { BugReportComponent } from './components/bug-report/bug-report.component';
 import { MultiSelectComponent } from './components/multi-select/multi-select.component';
 import { ToastrComponent } from './components/toastr/toastr.component';
+import { SetTitleDirective } from './directives/set-title.directive';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { ToastrComponent } from './components/toastr/toastr.component';
     BugReportComponent,
     MultiSelectComponent,
     ToastrComponent,
+    SetTitleDirective,
   ],
   imports: [
     CommonModule,
@@ -54,6 +56,7 @@ import { ToastrComponent } from './components/toastr/toastr.component';
     BugReportComponent,
     MultiSelectComponent,
     ToastrComponent,
+    SetTitleDirective,
   ],
 })
 export class SharedModule {}
