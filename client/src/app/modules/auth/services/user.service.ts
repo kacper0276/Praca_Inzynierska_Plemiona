@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { User } from '../../../shared/models';
+import { ApiResponse, User } from '../../../shared/models';
+import { HttpService } from '../../../shared/services/http.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,8 @@ export class UserService {
   private currentUserSubject = new BehaviorSubject<User | null>(
     this.getUserFromStorage()
   );
+
+  constructor(private readonly http: HttpService) {}
 
   public currentUser$: Observable<User | null> =
     this.currentUserSubject.asObservable();
@@ -25,6 +28,10 @@ export class UserService {
       localStorage.removeItem(this.USER_KEY);
     }
     this.currentUserSubject.next(user);
+  }
+
+  getUserFromToken(): Observable<ApiResponse<User>> {
+    return this.http.get<User>('/auth/profile');
   }
 
   private getUserFromStorage(): User | null {

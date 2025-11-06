@@ -5,19 +5,20 @@ import {
   HttpInterceptor,
   HttpRequest,
   HttpErrorResponse,
-  HttpHeaders,
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../modules/auth/services/auth.service';
+import { TokenService } from '../../modules/auth/services/token.service';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private readonly authService: AuthService,
+    private readonly tokenService: TokenService,
     private readonly http: HttpClient,
     private readonly router: Router
   ) {}
@@ -26,7 +27,7 @@ export class AuthInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const token = this.authService.getJwtToken();
+    const token = this.tokenService.getJwtToken();
 
     if (req.url.includes('/auth/refresh')) {
       return next.handle(req);
@@ -36,7 +37,7 @@ export class AuthInterceptor implements HttpInterceptor {
     if (token) {
       clonedRequest = req.clone({
         setHeaders: {
-          Authorization: `Bearer ${token}`,
+          authorization: `Bearer ${token}`,
         },
       });
     }
@@ -55,7 +56,7 @@ export class AuthInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const refreshToken = this.authService.getRefreshToken();
+    const refreshToken = this.tokenService.getRefreshToken();
 
     if (refreshToken) {
       return this.http
@@ -65,7 +66,7 @@ export class AuthInterceptor implements HttpInterceptor {
         .pipe(
           switchMap((response) => {
             const newAccessToken = response.access_token;
-            this.authService.setJwtToken(newAccessToken);
+            this.tokenService.setJwtToken(newAccessToken);
 
             const clonedRequest = req.clone({
               setHeaders: {
