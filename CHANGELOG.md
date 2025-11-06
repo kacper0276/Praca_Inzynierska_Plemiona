@@ -21,10 +21,17 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 ### Added
 
 - Stworzenie toastr komponentu i serwisu
+- Dodano odświeżanie tokenu
+- Automatyczne logowanie, jeśli token jest ważny
+- Notyfikacje
+- Stworzenie modułu ttl, w celu generowania kodu do aktywowania konta
+- Usuwanie nieaktywnych kont
+- Wysyłanie maila dla zarejestrowanego użytkownika z kodem potrzebnym do aktywowania kodu
 
 ### Changed
 
 - Zmiana struktury projektu
+- Zmiana formularza rejestracji
 
 ### Removed
 
