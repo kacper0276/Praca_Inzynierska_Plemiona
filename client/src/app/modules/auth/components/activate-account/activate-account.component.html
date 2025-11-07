@@ -1,0 +1,22 @@
+<div class="activate-account-wrapper">
+  <form class="activate-account-form" (ngSubmit)="onActivate()">
+    <h2>Aktywuj swoje konto</h2>
+    <p>
+      Na Twój adres e-mail został wysłany 6-znakowy kod. Wpisz go poniżej, aby
+      zweryfikować swoje konto.
+    </p>
+
+    <div class="code-inputs-container">
+      <input
+        *ngFor="let i of [0, 1, 2, 3, 4, 5]"
+        #codeInput
+        type="text"
+        maxlength="1"
+        (keyup)="onKeyUp($event, i)"
+        required
+      />
+    </div>
+
+    <button type="submit">Aktywuj</button>
+  </form>
+</div>

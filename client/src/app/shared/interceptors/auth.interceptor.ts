@@ -6,7 +6,7 @@ import {
   HttpRequest,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { EMPTY, Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -87,7 +87,15 @@ export class AuthInterceptor implements HttpInterceptor {
         );
     } else {
       this.authService.logout();
-      this.router.navigate(['/auth/login']);
+      const currentUrl = this.router.url;
+      const isOnAuthPage =
+        currentUrl.includes('/register') ||
+        currentUrl.includes('/activate-account') ||
+        currentUrl.includes('/login');
+      if (!isOnAuthPage) {
+        this.router.navigate(['/auth/login']);
+        return EMPTY;
+      }
       return throwError(() => new Error('Brak sesji. Zaloguj się ponownie.'));
     }
   }
