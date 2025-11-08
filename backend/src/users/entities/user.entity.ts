@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Column, Entity, ManyToMany, JoinTable, OneToOne } from 'typeorm';
 import { Clan } from '../../clans/entities/clan.entity';
 import { BaseEntity } from '../../core/entities/base.entity';
 import { Resources } from 'src/resources/entities/resources.entity';
@@ -39,8 +39,8 @@ export class User extends BaseEntity {
   @Column({ default: '' })
   bio: string;
 
-  @OneToMany(() => Resources, (resources) => resources.user)
-  resources: Resources[];
+  @OneToOne(() => Resources, (resources) => resources.user)
+  resources: Resources;
 
   @ManyToMany(() => Clan, (clan) => clan.members)
   clans: Clan[];

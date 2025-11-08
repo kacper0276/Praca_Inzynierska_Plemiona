@@ -47,6 +47,20 @@ export class ResourcesController {
     return this.resourcesService.findAll();
   }
 
+  @Get('user/:email')
+  @Authenticated()
+  @ApiOkResponse({
+    description:
+      'Zwraca zasoby użytkownika. Jeśli nie istnieją, tworzy je i zwraca.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Użytkownik o podanym e-mailu nie został znaleziony.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Brak autoryzacji (niezalogowany).' })
+  findOrCreateByUserEmail(@Param('email') email: string) {
+    return this.resourcesService.findOrCreateByUserEmail(email);
+  }
+
   @Get(':id')
   @Authenticated()
   @ApiOkResponse({ description: 'Zwraca szczegóły surowców o podanym ID.' })

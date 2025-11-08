@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  JoinColumn,
+  OneToOne,
+} from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 
 @Entity()
@@ -21,6 +27,7 @@ export class Resources {
   @Column({ default: 0 })
   maxPopulation: number;
 
-  @ManyToOne(() => User, (user) => user.resources, { onDelete: 'CASCADE' })
+  @OneToOne(() => User, (user) => user.resources, { onDelete: 'CASCADE' })
+  @JoinColumn()
   user: User;
 }

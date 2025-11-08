@@ -27,6 +27,34 @@ export class ResourcesService {
     return resource;
   }
 
+  async findOrCreateByUserEmail(email: string): Promise<Resources> {
+    const user = await this.usersRepository.findOne(
+      { email },
+      { relations: ['resources'] },
+    );
+
+    if (!user) {
+      throw new NotFoundException(
+        `Użytkownik o emailu ${email} nie został znaleziony.`,
+      );
+    }
+
+    if (user.resources) {
+      return user.resources;
+    }
+
+    const newResource = this.repository.create({
+      user: user,
+      wood: 0,
+      clay: 0,
+      iron: 0,
+      population: 0,
+      maxPopulation: 0,
+    });
+
+    return this.repository.save(newResource);
+  }
+
   async create(data: CreateResourceDto): Promise<Resources> {
     const { userId, ...resourceData } = data;
     const user = await this.usersRepository.findOneById(userId);
