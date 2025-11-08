@@ -2,6 +2,8 @@ import { Component, ElementRef, QueryList, ViewChildren } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from '../../../../shared/services/toastr.service';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-activate-account',
@@ -14,7 +16,9 @@ export class ActivateAccountComponent {
   constructor(
     private readonly translateService: TranslateService,
     private readonly titleService: Title,
-    private readonly toastrService: ToastrService
+    private readonly toastrService: ToastrService,
+    private readonly authService: AuthService,
+    private readonly router: Router
   ) {
     this.titleService.setTitle(
       this.translateService.instant('activate-account')
@@ -45,9 +49,23 @@ export class ActivateAccountComponent {
     });
 
     if (code.length === 6) {
-      console.log('Wprowadzony kod aktywacyjny:', code);
+      this.authService.activateAccount(code).subscribe({
+        next: () => {
+          this.toastrService.showSuccess(
+            this.translateService.instant('success-activate-account-message')
+          );
+          this.router.navigate(['/login']);
+        },
+        error: () => {
+          this.toastrService.showSuccess(
+            this.translateService.instant('error-activate-account-message')
+          );
+        },
+      });
     } else {
-      console.error('Kod musi mieć 6 znaków.');
+      this.toastrService.showError(
+        this.translateService.instant('min-length-code-error')
+      );
     }
   }
 }

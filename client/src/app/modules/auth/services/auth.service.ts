@@ -38,7 +38,7 @@ export class AuthService {
   }
 
   activateAccount(code: string): Observable<ApiResponse<User>> {
-    return this.httpService.post<User>('', { code });
+    return this.httpService.post<User>('/auth/activate', { code });
   }
 
   logout(): void {
