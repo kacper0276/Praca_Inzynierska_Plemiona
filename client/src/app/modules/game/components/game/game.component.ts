@@ -5,6 +5,7 @@ import { Resources } from '../../../../shared/models/resources.model';
 import { ResourceService } from '../../services/resource.service';
 import { WebSocketService } from '../../../../shared/services/web-socket.service';
 import { WebSocketEvent } from '../../../../shared/enums/websocket-event.enum';
+import { UserService } from '../../../auth/services/user.service';
 
 @Component({
   selector: 'app-game',
@@ -33,8 +34,9 @@ export class GameComponent implements OnInit {
 
   constructor(
     private readonly resourceService: ResourceService,
-    private router: Router,
-    private webSocket: WebSocketService
+    private readonly router: Router,
+    private readonly webSocket: WebSocketService,
+    private readonly usersService: UserService
   ) {
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
@@ -45,8 +47,12 @@ export class GameComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.resourceService.resources$.subscribe((res) => {
-      this.resources = res;
+    const userEmail = this.usersService.getCurrentUser()?.email;
+    this.resourceService.fetchResources(userEmail ?? '').subscribe({
+      next: (res) => {
+        this.resourceService.setResources(res.data);
+        this.resources = res.data;
+      },
     });
     try {
       const origin = window.location.origin;
@@ -57,12 +63,6 @@ export class GameComponent implements OnInit {
     } catch (e) {
       console.warn('WS connect failed', e);
     }
-  }
-
-  ngOnDestroy(): void {
-    try {
-      this.webSocket.disconnect();
-    } catch {}
   }
 
   public buildFarm(): void {
@@ -88,5 +88,11 @@ export class GameComponent implements OnInit {
       this.isModalOpen = false;
       console.log(`Dołączono do serwera: ${this.joinedServerId}`);
     }
+  }
+
+  ngOnDestroy(): void {
+    try {
+      this.webSocket.disconnect();
+    } catch {}
   }
 }

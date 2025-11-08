@@ -1,28 +1,35 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Resources } from '../../../shared/models/resources.model';
+import { HttpService } from '../../../shared/services/http.service';
+import { ApiResponse } from '../../../shared/models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ResourceService {
   private resourcesSubject = new BehaviorSubject<Resources>({
-    wood: 1250,
-    clay: 1180,
-    iron: 980,
-    population: 120,
-    maxPopulation: 150,
+    wood: 0,
+    clay: 0,
+    iron: 0,
+    population: 0,
+    maxPopulation: 0,
   });
 
   public resources$: Observable<Resources> =
     this.resourcesSubject.asObservable();
 
-  constructor() {}
+  constructor(private readonly httpService: HttpService) {}
 
-  public addResource(
-    resource: keyof Omit<Resources, 'maxPopulation'>,
-    amount: number
-  ): void {
+  public fetchResources(email: string): Observable<ApiResponse<Resources>> {
+    return this.httpService.get<Resources>(`/resources/user/${email}`);
+  }
+
+  public setResources(resources: Resources): void {
+    this.resourcesSubject.next(resources);
+  }
+
+  public addResource(resource: keyof Resources, amount: number): void {
     const currentResources = this.resourcesSubject.getValue();
 
     const updatedResources: Resources = {
