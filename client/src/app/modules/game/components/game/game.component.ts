@@ -6,6 +6,8 @@ import { ResourceService } from '../../services/resource.service';
 import { WebSocketService } from '../../../../shared/services/web-socket.service';
 import { WebSocketEvent } from '../../../../shared/enums/websocket-event.enum';
 import { UserService } from '../../../auth/services/user.service';
+import { Server } from '../../../../shared/models';
+import { ServersService } from '../../services/servers.service';
 
 @Component({
   selector: 'app-game',
@@ -14,15 +16,11 @@ import { UserService } from '../../../auth/services/user.service';
 })
 export class GameComponent implements OnInit {
   isModalOpen = true;
-  joinedServerId: string | null = null;
+  joinedServerId: Server | null = null;
   activeTab: string = 'village';
 
-  servers = [
-    { id: 's1-alpha', name: 'Świat Alfa' },
-    { id: 's2-beta', name: 'Świat Beta' },
-    { id: 's3-gamma', name: 'Świat Gamma' },
-  ];
-  selectedServerInModal: string = this.servers[0].id;
+  servers: Server[] = [];
+  selectedServerInModal: Server = this.servers[0];
 
   resources: Resources = {
     wood: 0,
@@ -36,7 +34,8 @@ export class GameComponent implements OnInit {
     private readonly resourceService: ResourceService,
     private readonly router: Router,
     private readonly webSocket: WebSocketService,
-    private readonly usersService: UserService
+    private readonly usersService: UserService,
+    private readonly serversService: ServersService
   ) {
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
@@ -54,6 +53,7 @@ export class GameComponent implements OnInit {
         this.resources = res.data;
       },
     });
+
     try {
       const origin = window.location.origin;
       this.webSocket.connect(origin);
@@ -63,6 +63,13 @@ export class GameComponent implements OnInit {
     } catch (e) {
       console.warn('WS connect failed', e);
     }
+
+    this.serversService.getAll().subscribe({
+      next: (res) => {
+        this.servers = res.data;
+        this.selectedServerInModal = res.data[0];
+      },
+    });
   }
 
   public buildFarm(): void {

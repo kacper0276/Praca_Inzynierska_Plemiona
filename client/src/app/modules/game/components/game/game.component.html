@@ -7,7 +7,7 @@
   <div modal-body>
     <p>Aby kontynuować, wybierz serwer, na którym chcesz grać.</p>
     <select class="server-select" [(ngModel)]="selectedServerInModal">
-      <option *ngFor="let server of servers" [value]="server.id">
+      <option *ngFor="let server of servers" [value]="server.name">
         {{ server.name }}
       </option>
     </select>

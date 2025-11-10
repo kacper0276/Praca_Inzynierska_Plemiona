@@ -1,0 +1,13 @@
+import { Injectable } from '@angular/core';
+import { HttpService } from '../../../shared/services/http.service';
+import { Observable } from 'rxjs';
+import { ApiResponse, Server } from '../../../shared/models';
+
+@Injectable({ providedIn: 'root' })
+export class ServersService {
+  constructor(private readonly httpService: HttpService) {}
+
+  getAll(): Observable<ApiResponse<Server[]>> {
+    return this.httpService.get<Server[]>(`/servers`);
+  }
+}
