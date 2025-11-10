@@ -4,3 +4,5 @@ export * from './building.model';
 export * from './radial-menu-option.model';
 export * from './unit.model';
 export * from './resources.model';
+export * from './server.model';
+export * from './server-status-log.model';

@@ -1,5 +1,6 @@
-export interface BuildingData {
-  id: number;
+import { BaseModel } from './base.model';
+
+export interface BuildingData extends BaseModel {
   name: string;
   level: number;
   imageUrl: string;
