@@ -1,12 +1,20 @@
-import { DataSource } from 'typeorm';
+import 'reflect-metadata';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from '../../app.module';
+import { ConfigService } from '../config/config.service';
 
-export const AppDataSource = new DataSource({
-  type: 'mysql',
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT || '3306', 10),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
-  synchronize: true,
-});
+const getDataSource = async (): Promise<DataSource> => {
+  const app = await NestFactory.createApplicationContext(AppModule, {
+    logger: ['error'],
+  });
+
+  const configService = app.get(ConfigService);
+  const options = configService.getDatabaseConfig();
+
+  await app.close();
+
+  return new DataSource(options as DataSourceOptions);
+};
+
+export default getDataSource();
