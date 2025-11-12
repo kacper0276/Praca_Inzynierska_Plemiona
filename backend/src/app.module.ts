@@ -9,7 +9,6 @@ import { LoggerModule } from './core/logger/logger.module';
 import { ClansModule } from './clans/clans.module';
 import { VillagesModule } from './villages/villages.module';
 import { ReportsModule } from './reports/reports.module';
-import { WsGateway } from './core/gateways/ws.gateway';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CacheModule } from '@nestjs/cache-manager';
 import { TtlModule } from './core/ttl/ttl.module';
@@ -28,6 +27,7 @@ import { RolesGuard } from './core/guards/roles.guard';
 import { AuthenticatedGuard } from './core/guards/authenticated.guard';
 import { ServersModule } from './servers/servers.module';
 import { MessageInterceptor } from './core/interceptors/message.interceptor';
+import { CoreModule } from './core/core.module';
 
 @Module({
   imports: [
@@ -91,6 +91,8 @@ import { MessageInterceptor } from './core/interceptors/message.interceptor';
       isGlobal: true,
     }),
 
+    CoreModule,
+
     UsersModule,
     AuthModule,
     ResourcesModule,
@@ -104,7 +106,6 @@ import { MessageInterceptor } from './core/interceptors/message.interceptor';
   ],
   controllers: [],
   providers: [
-    WsGateway,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

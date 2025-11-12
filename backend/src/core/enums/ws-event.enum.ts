@@ -1,6 +1,6 @@
 export enum WsEvent {
-  CONNECT = 'connect',
-  DISCONNECT = 'disconnect',
+  USER_CONNECTED = 'userConnected',
+  USER_DISCONNECTED = 'userDisconnected',
   PING = 'ping',
   PONG = 'pong',
   CHAT_MESSAGE = 'chat_message',
