@@ -32,6 +32,7 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 - Zmiana struktury projektu
 - Zmiana formularza rejestracji
+- Poprawa w kodzie migracji
 
 ### Removed
 

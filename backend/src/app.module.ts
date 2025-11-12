@@ -18,6 +18,7 @@ import { JsonConfigModule } from './core/json-config/json-config.module';
 import {
   DATABASE_CONFIG_TOKEN,
   MAILER_CONFIG_TOKEN,
+  MIGRATION_CONFIG_TOKEN,
 } from './core/consts/injection-tokens';
 import * as Joi from 'joi';
 import { ConfigService } from './core/config/config.service';
@@ -34,6 +35,18 @@ import { MessageInterceptor } from './core/interceptors/message.interceptor';
     JsonConfigModule.register({
       fileName: 'database',
       providerToken: DATABASE_CONFIG_TOKEN,
+      validationSchema: Joi.object({
+        host: Joi.string().required(),
+        port: Joi.number().port().required(),
+        username: Joi.string().required(),
+        password: Joi.string().allow('').required(),
+        database: Joi.string().required(),
+        synchronize: Joi.boolean().default(false),
+      }),
+    }),
+    JsonConfigModule.register({
+      fileName: 'migrations',
+      providerToken: MIGRATION_CONFIG_TOKEN,
       validationSchema: Joi.object({
         host: Joi.string().required(),
         port: Joi.number().port().required(),

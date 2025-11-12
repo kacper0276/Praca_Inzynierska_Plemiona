@@ -10,7 +10,7 @@ const getDataSource = async (): Promise<DataSource> => {
   });
 
   const configService = app.get(ConfigService);
-  const options = configService.getDatabaseConfig();
+  const options = configService.getMigrationsConfig();
 
   await app.close();
 
