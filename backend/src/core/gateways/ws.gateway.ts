@@ -13,6 +13,13 @@ import { WsEvent } from '../enums/ws-event.enum';
 import { FileLogger } from '../logger/file-logger';
 import { JoinServerRoomDto } from 'src/servers/dto/join-server-room.dto';
 import { ServerStatus } from 'src/servers/enums/server-status.enum';
+import { JwtService } from '@nestjs/jwt';
+import { UsersService } from 'src/users/services/users.service';
+import { User } from 'src/users/entities/user.entity';
+
+export interface AuthenticatedSocket extends Socket {
+  user: User;
+}
 
 @WebSocketGateway({ cors: true })
 export class WsGateway
@@ -23,16 +30,69 @@ export class WsGateway
 
   private logger = new FileLogger('WsGateway');
 
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
+
   afterInit(server: Server) {
     this.logger.log('WebSocket Gateway Initialized and ready.');
   }
 
-  handleConnection(client: Socket) {
-    this.server.emit(WsEvent.USER_CONNECTED, { clientId: client.id });
+  async handleConnection(client: AuthenticatedSocket) {
+    const token = client.handshake.auth.token?.split(' ')[1];
+
+    if (!token) {
+      this.logger.warn(
+        `Client ${client.id} connected without token. Disconnecting.`,
+      );
+      return client.disconnect();
+    }
+
+    try {
+      const payload = await this.jwtService.verify(token);
+
+      const user = await this.usersService.findOneByEmail(payload.email);
+
+      if (!user) {
+        this.logger.warn(
+          `User not found for token. Disconnecting client ${client.id}`,
+        );
+        return client.disconnect();
+      }
+
+      client.user = user;
+      await this.usersService.setUserOnlineStatus(user.email, true);
+      this.logger.log(
+        `Client connected and authenticated: ${user.email} (ID: ${client.id})`,
+      );
+
+      this.server.emit(WsEvent.USER_CONNECTED, {
+        userId: user.id,
+        email: user.email,
+      });
+    } catch (error) {
+      console.log(error.message);
+      this.logger.error(
+        `Token validation failed. Disconnecting client ${client.id}`,
+      );
+      return client.disconnect();
+    }
   }
 
-  handleDisconnect(client: Socket) {
-    this.server.emit(WsEvent.USER_DISCONNECTED, { clientId: client.id });
+  async handleDisconnect(client: AuthenticatedSocket) {
+    if (client.user && client.user.email) {
+      await this.usersService.setUserOnlineStatus(client.user.email, false);
+      this.logger.log(
+        `Client disconnected: ${client.user.email} (ID: ${client.id})`,
+      );
+      this.server.emit(WsEvent.USER_DISCONNECTED, {
+        userId: client.user.id,
+        email: client.user.email,
+      });
+    } else {
+      this.logger.log(`Unauthenticated client disconnected (ID: ${client.id})`);
+    }
   }
 
   private getServerStatusRoomName(hostname: string, port: number): string {

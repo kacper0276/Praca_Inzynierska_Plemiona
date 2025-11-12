@@ -17,12 +17,18 @@ export class UsersService {
     return this.usersRepository.findAll();
   }
 
+  async findOneByEmail(email: string): Promise<User> {
+    const user = await this.usersRepository.findOneByEmail(email);
+    if (!user) {
+      throw new NotFoundException(`Użytkownik nie został znaleziony.`);
+    }
+    return user;
+  }
+
   async findOne(id: number): Promise<User> {
     const user = await this.usersRepository.findOneById(id);
     if (!user) {
-      throw new NotFoundException(
-        `Użytkownik o ID ${id} nie został znaleziony.`,
-      );
+      throw new NotFoundException(`Użytkownik nie został znaleziony.`);
     }
     return user;
   }
@@ -63,5 +69,17 @@ export class UsersService {
 
   async remove(id: number): Promise<void> {
     await this.usersRepository.delete(id);
+  }
+
+  async setUserOnlineStatus(email: string, isOnline: boolean): Promise<void> {
+    const user = await this.findOneByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException(`Użytkownik nie został znaleziony.`);
+    }
+
+    user.isOnline = isOnline;
+
+    await this.usersRepository.save(user);
   }
 }
