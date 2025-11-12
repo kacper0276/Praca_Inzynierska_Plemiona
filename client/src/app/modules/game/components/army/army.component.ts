@@ -18,21 +18,21 @@ export class ArmyComponent implements OnInit {
   ngOnInit(): void {
     this.units = [
       {
-        id: UnitType.WARRIOR,
+        unitType: UnitType.WARRIOR,
         name: 'Wojownik',
         level: 1,
         count: 10,
         cost: { wood: 10, clay: 0, iron: 5 },
       },
       {
-        id: UnitType.ARCHER,
+        unitType: UnitType.ARCHER,
         name: 'Łucznik',
         level: 1,
         count: 5,
         cost: { wood: 15, clay: 0, iron: 3 },
       },
       {
-        id: UnitType.PIKEMAN,
+        unitType: UnitType.PIKEMAN,
         name: 'Pikinier',
         level: 1,
         count: 2,
@@ -47,7 +47,9 @@ export class ArmyComponent implements OnInit {
 
   get selectedUnit() {
     return (
-      this.units.find((u) => u.id === (this.selectedUnitId as UnitType)) || null
+      this.units.find(
+        (u) => u.unitType === (this.selectedUnitId as UnitType)
+      ) || null
     );
   }
 

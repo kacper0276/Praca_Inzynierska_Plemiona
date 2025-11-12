@@ -5,8 +5,8 @@
     <div
       class="unit-card"
       *ngFor="let unit of units"
-      [class.selected]="unit.id === selectedUnitId"
-      (click)="selectUnit(unit.id)"
+      [class.selected]="unit.unitType"
+      (click)="selectUnit(unit.unitType)"
       role="button"
       tabindex="0"
     >
