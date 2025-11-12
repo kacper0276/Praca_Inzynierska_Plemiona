@@ -7,8 +7,8 @@
   <div modal-body>
     <p>Aby kontynuować, wybierz serwer, na którym chcesz grać.</p>
     <select class="server-select" [(ngModel)]="selectedServerInModal">
-      <option *ngFor="let server of servers" [value]="server.name">
-        {{ server.name }}
+      <option *ngFor="let server of servers" [ngValue]="server">
+        {{ server.name }} - ({{ server.hostname }}:{{ server.port }})
       </option>
     </select>
   </div>
@@ -18,7 +18,7 @@
     <button class="btn btn-primary" (click)="joinGame()">Dołącz do Gry</button>
   </div>
 </app-modal>
-} @if (joinedServerId) {
+} @if (joinedServer) {
 <div class="game-container">
   <header class="top-bar">
     <div class="logo">
@@ -33,7 +33,7 @@
       >
     </div>
     <div class="server-info">
-      Serwer: <strong>{{ joinedServerId }}</strong>
+      Serwer: <strong>{{ joinedServer.name }}</strong>
     </div>
   </header>
 
@@ -44,7 +44,7 @@
     </div>
   </main>
 </div>
-} @if (!isModalOpen && !joinedServerId) {
+} @if (!isModalOpen && !joinedServer) {
 <div class="info-message">
   <p>
     Musisz wybrać serwer, aby rozpocząć grę. Odśwież stronę, aby spróbować

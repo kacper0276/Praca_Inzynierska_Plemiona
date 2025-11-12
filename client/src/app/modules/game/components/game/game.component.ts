@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { Resources } from '../../../../shared/models/resources.model';
 import { ResourceService } from '../../services/resource.service';
 import { WebSocketService } from '../../../../shared/services/web-socket.service';
@@ -8,6 +8,9 @@ import { WebSocketEvent } from '../../../../shared/enums/websocket-event.enum';
 import { UserService } from '../../../auth/services/user.service';
 import { Server } from '../../../../shared/models';
 import { ServersService } from '../../services/servers.service';
+import { Subscription } from 'rxjs';
+import { ServerStatus } from '../../../../shared/enums/server-status.enum';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-game',
@@ -16,11 +19,16 @@ import { ServersService } from '../../services/servers.service';
 })
 export class GameComponent implements OnInit {
   isModalOpen = true;
-  joinedServerId: Server | null = null;
+  joinedServer: Server | null = null;
   activeTab: string = 'village';
 
   servers: Server[] = [];
   selectedServerInModal: Server = this.servers[0];
+
+  private statusSubscription: Subscription | null = null;
+  private connectionSubscription: Subscription | null = null;
+
+  private backendWsUrl = environment.wsUrl;
 
   resources: Resources = {
     wood: 0,
@@ -54,16 +62,6 @@ export class GameComponent implements OnInit {
       },
     });
 
-    try {
-      const origin = window.location.origin;
-      this.webSocket.connect(origin);
-      this.webSocket
-        .onEvent(WebSocketEvent.ARMY_UPDATE)
-        .subscribe((m) => console.log('Army update', m));
-    } catch (e) {
-      console.warn('WS connect failed', e);
-    }
-
     this.serversService.getAll().subscribe({
       next: (res) => {
         this.servers = res.data;
@@ -90,16 +88,79 @@ export class GameComponent implements OnInit {
   }
 
   joinGame(): void {
-    if (this.selectedServerInModal) {
-      this.joinedServerId = this.selectedServerInModal;
-      this.isModalOpen = false;
-      console.log(`Dołączono do serwera: ${this.joinedServerId}`);
+    if (!this.selectedServerInModal) {
+      console.error('Nie wybrano serwera.');
+      return;
     }
+
+    this.joinedServer = this.selectedServerInModal;
+    this.isModalOpen = false;
+    console.log(`Dołączono do serwera: ${this.joinedServer.name}`);
+
+    try {
+      this.webSocket.connect(this.backendWsUrl);
+
+      if (this.connectionSubscription) {
+        this.connectionSubscription.unsubscribe();
+      }
+
+      this.connectionSubscription = this.webSocket
+        .isConnected()
+        .pipe(
+          filter((connected) => connected),
+          take(1)
+        )
+        .subscribe(() => {
+          console.log(
+            'Połączenie WebSocket nawiązane. Dołączanie do pokoju statusu serwera...'
+          );
+
+          this.webSocket.joinServerStatusRoom(
+            this.joinedServer!.hostname,
+            this.joinedServer!.port
+          );
+
+          this.listenForStatusUpdates();
+        });
+    } catch (e) {
+      console.warn('WS connect failed', e);
+    }
+  }
+
+  private listenForStatusUpdates(): void {
+    if (this.statusSubscription) {
+      this.statusSubscription.unsubscribe();
+    }
+
+    this.statusSubscription = this.webSocket.onServerStatusUpdate().subscribe({
+      next: (update: {
+        hostname: string;
+        port: number;
+        status: string;
+        lastChecked: Date;
+      }) => {
+        console.log('Otrzymano aktualizację statusu:', update);
+
+        const serverToUpdate = this.servers.find(
+          (s) => s.hostname === update.hostname && s.port === update.port
+        );
+        if (serverToUpdate) {
+          serverToUpdate.status = update.status as ServerStatus;
+          serverToUpdate.lastChecked = update.lastChecked;
+        }
+      },
+    });
   }
 
   ngOnDestroy(): void {
     try {
       this.webSocket.disconnect();
+      if (this.statusSubscription) {
+        this.statusSubscription.unsubscribe();
+      }
+      if (this.connectionSubscription) {
+        this.connectionSubscription.unsubscribe();
+      }
     } catch {}
   }
 }

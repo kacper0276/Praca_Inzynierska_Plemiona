@@ -69,4 +69,23 @@ export class WebSocketService {
     }
     this.socket.emit(event as string, payload);
   }
+
+  public joinServerStatusRoom(hostname: string, port: number): void {
+    const payload = { hostname, port };
+    this.send('joinServerStatusRoom', payload);
+  }
+
+  public onServerStatusUpdate(): Observable<any> {
+    return this.onEvent('serverStatusUpdate').pipe(
+      filter((m) => !!m.payload),
+      (source) =>
+        new Observable((subscriber) => {
+          source.subscribe({
+            next: (v) => subscriber.next(v.payload),
+            error: (e) => subscriber.error(e),
+            complete: () => subscriber.complete(),
+          });
+        })
+    );
+  }
 }
