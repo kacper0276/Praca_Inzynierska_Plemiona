@@ -59,29 +59,29 @@ export class FileLogger extends Logger {
     fs.appendFileSync(filePath, logEntry);
   }
 
-  log(message: any, context?: string): void {
-    super.log(message, context);
-    this.writeToFile(this.logFilePath, message, 'log', context);
+  log(message: any): void {
+    super.log(message);
+    this.writeToFile(this.logFilePath, message, 'log');
   }
 
-  error(message: any, trace?: string, context?: string): void {
-    super.error(message, trace, context);
+  error(message: any, trace?: string): void {
+    super.error(message, trace);
     const errorMessage = trace ? `${message}\n${trace}` : message;
-    this.writeToFile(this.errorLogFilePath, errorMessage, 'error', context);
+    this.writeToFile(this.errorLogFilePath, errorMessage, 'error');
   }
 
-  warn(message: any, context?: string): void {
-    super.warn(message, context);
-    this.writeToFile(this.logFilePath, message, 'warn', context);
+  warn(message: any): void {
+    super.warn(message);
+    this.writeToFile(this.logFilePath, message, 'warn');
   }
 
-  debug(message: any, context?: string): void {
-    super.debug(message, context);
-    this.writeToFile(this.logFilePath, message, 'debug', context);
+  debug(message: any): void {
+    super.debug(message);
+    this.writeToFile(this.logFilePath, message, 'debug');
   }
 
-  verbose(message: any, context?: string): void {
-    super.verbose(message, context);
-    this.writeToFile(this.logFilePath, message, 'verbose', context);
+  verbose(message: any): void {
+    super.verbose(message);
+    this.writeToFile(this.logFilePath, message, 'verbose');
   }
 }

@@ -28,7 +28,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       this.logger.warn(
         `[HttpException] Path: ${request.url}, Status: ${status}`,
-        exception.stack,
       );
       message = exception.getResponse();
     } else if (exception instanceof DatabaseConnectionError) {
