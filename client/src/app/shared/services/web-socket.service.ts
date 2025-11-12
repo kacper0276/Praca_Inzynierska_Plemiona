@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { io, Socket } from 'socket.io-client';
 import { WebSocketEvent } from '../enums/websocket-event.enum';
+import { AuthService } from '../../modules/auth/services/auth.service';
 export interface WsMessage<T = any> {
   event: WebSocketEvent | string;
   payload?: T;
@@ -14,15 +15,30 @@ export class WebSocketService {
   private incoming$ = new Subject<WsMessage>();
   private connected$ = new BehaviorSubject<boolean>(false);
 
-  constructor(private ngZone: NgZone) {}
+  constructor(
+    private ngZone: NgZone,
+    private readonly authService: AuthService
+  ) {}
 
-  connect(url: string) {
+  async connect(url: string) {
     if (this.socket) {
       this.disconnect();
     }
 
+    const token = await this.authService.getValidAccessToken();
+
+    if (!token) {
+      console.error('WebSocket connection aborted: No valid token.');
+      return;
+    }
+
     this.url = url;
-    this.socket = io(this.url, { transports: ['websocket'] });
+    this.socket = io(this.url, {
+      transports: ['websocket'],
+      auth: {
+        token: `Bearer ${token}`,
+      },
+    });
 
     this.socket.on('connect', () => {
       this.ngZone.run(() => this.connected$.next(true));

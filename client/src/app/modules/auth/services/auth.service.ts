@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { lastValueFrom, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TokenService } from './token.service';
 import { UserService } from './user.service';
@@ -8,6 +8,7 @@ import { ApiResponse, User } from '../../../shared/models';
 import { LoginCredentials } from '../interfaces/login-credentials.interface';
 import { LoginResponse } from '../interfaces/login-response.interface';
 import { RegisterCredentials } from '../interfaces/register-credentials.interface copy';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -62,5 +63,29 @@ export class AuthService {
         this.tokenService.setJwtToken(response.data.accessToken);
       })
     );
+  }
+
+  async getValidAccessToken(): Promise<string | null> {
+    const accessToken = this.tokenService.getJwtToken();
+    if (!accessToken) {
+      return null;
+    }
+
+    try {
+      const decodedToken: { exp: number } = jwtDecode(accessToken);
+      const isExpired = Date.now() >= decodedToken.exp * 1000;
+
+      if (isExpired) {
+        console.log('Access token has expired. Refreshing...');
+        await lastValueFrom(this.refreshToken());
+        return this.tokenService.getJwtToken();
+      } else {
+        return accessToken;
+      }
+    } catch (error) {
+      console.error('Failed to get valid access token:', error);
+      this.logout();
+      return null;
+    }
   }
 }
