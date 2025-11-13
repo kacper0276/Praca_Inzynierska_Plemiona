@@ -14,6 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 import { GatheringService } from '../../services/gathering.service';
 import { ToastrService } from '../../../../shared/services/toastr.service';
 import { WebSocketService } from '../../../../shared/services/web-socket.service';
+import { availableBuildings } from '../../../../shared/consts/available-buildings';
 
 @Component({
   selector: 'app-grid',
@@ -86,21 +87,7 @@ export class GridComponent implements OnInit, OnDestroy {
   activeRadial: { row: number; col: number } | null = null;
   activeEmptyRadial: { row: number; col: number } | null = null;
 
-  availableBuildings: BuildingData[] = [
-    // { id: 4, name: 'Farma', level: 1, imageUrl: 'assets/buildings/farm.png' },
-    {
-      id: 5,
-      name: 'Kuźnia',
-      level: 1,
-      imageUrl: 'assets/buildings/Kowal.png',
-    },
-    {
-      id: 6,
-      name: 'Dom mieszkalny',
-      level: 1,
-      imageUrl: 'assets/buildings/Dom_mieszkalny.png',
-    },
-  ];
+  availableBuildings: BuildingData[] = availableBuildings;
 
   emptyPlotOptions: RadialMenuOption[] = [
     {
