@@ -28,6 +28,7 @@ import { AuthenticatedGuard } from './core/guards/authenticated.guard';
 import { ServersModule } from './servers/servers.module';
 import { MessageInterceptor } from './core/interceptors/message.interceptor';
 import { CoreModule } from './core/core.module';
+import { BuildingsModule } from './buildings/buildings.module';
 
 @Module({
   imports: [
@@ -103,6 +104,7 @@ import { CoreModule } from './core/core.module';
     TtlModule,
     JobsModule,
     ServersModule,
+    BuildingsModule,
   ],
   controllers: [],
   providers: [
