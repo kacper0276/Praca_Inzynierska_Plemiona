@@ -16,6 +16,7 @@ import { ServerStatus } from 'src/servers/enums/server-status.enum';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/services/users.service';
 import { User } from 'src/users/entities/user.entity';
+import { VillagesService } from 'src/villages/services/villages.service';
 
 export interface AuthenticatedSocket extends Socket {
   user: User;
@@ -33,6 +34,7 @@ export class WsGateway
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly villagesService: VillagesService,
   ) {}
 
   afterInit(server: Server) {
@@ -60,6 +62,9 @@ export class WsGateway
         );
         return client.disconnect();
       }
+
+      const userRoom = `user-${user.id}`;
+      client.join(userRoom);
 
       client.user = user;
       await this.usersService.setUserOnlineStatus(user.email, true);
@@ -93,6 +98,11 @@ export class WsGateway
     } else {
       this.logger.log(`Unauthenticated client disconnected (ID: ${client.id})`);
     }
+  }
+
+  public sendToUser(userId: number, event: WsEvent, payload: any): void {
+    const userRoom = `user-${userId}`;
+    this.server.to(userRoom).emit(event, payload);
   }
 
   private getServerStatusRoomName(hostname: string, port: number): string {
@@ -136,5 +146,30 @@ export class WsGateway
     console.log('Army upgrade received', payload);
     this.server.emit(WsEvent.ARMY_UPDATE, { action: 'upgrade', payload });
     return { status: 'ok' };
+  }
+
+  @SubscribeMessage(WsEvent.GET_VILLAGE_DATA)
+  async handleGetVillageData(@ConnectedSocket() client: AuthenticatedSocket) {
+    this.logger.log(`User ${client.user.email} requested village data.`);
+    try {
+      const villageData = await this.villagesService.getVillageForUser(
+        client.user.id,
+      );
+
+      console.log(villageData);
+
+      if (!villageData) {
+        throw new Error('Village not found for user.');
+      }
+
+      this.sendToUser(client.user.id, WsEvent.VILLAGE_DATA_UPDATE, villageData);
+    } catch (error) {
+      this.logger.error(
+        `Failed to get village data for ${client.user.email}: ${error.message}`,
+      );
+      this.sendToUser(client.user.id, WsEvent.VILLAGE_DATA_ERROR, {
+        message: 'Could not load village data.',
+      });
+    }
   }
 }
