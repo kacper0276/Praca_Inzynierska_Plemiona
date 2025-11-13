@@ -17,6 +17,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/services/users.service';
 import { User } from 'src/users/entities/user.entity';
 import { VillagesService } from 'src/villages/services/villages.service';
+import { forwardRef, Inject } from '@nestjs/common';
 
 export interface AuthenticatedSocket extends Socket {
   user: User;
@@ -29,12 +30,12 @@ export class WsGateway
   @WebSocketServer()
   server: Server;
 
-  private logger = new FileLogger('WsGateway');
-
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    @Inject(forwardRef(() => VillagesService))
     private readonly villagesService: VillagesService,
+    private readonly logger: FileLogger,
   ) {}
 
   afterInit(server: Server) {
@@ -155,8 +156,6 @@ export class WsGateway
       const villageData = await this.villagesService.getVillageForUser(
         client.user.id,
       );
-
-      console.log(villageData);
 
       if (!villageData) {
         throw new Error('Village not found for user.');

@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { BuildingsRepository } from '../repositories/buildings.repository';
 import { VillagesRepository } from 'src/villages/repositories/villages.repository';
 import { CreateBuildingDto } from '../dto/create-building.dto';
@@ -9,6 +14,7 @@ import { Building } from '../entities/building.entity';
 export class BuildingsService {
   constructor(
     private readonly buildingsRepository: BuildingsRepository,
+    @Inject(forwardRef(() => VillagesRepository))
     private readonly villagesRepository: VillagesRepository,
   ) {}
 

@@ -4,6 +4,12 @@ import { ServerStatus } from 'src/servers/enums/server-status.enum';
 import { ServersService } from 'src/servers/services/servers.service';
 import { UsersRepository } from 'src/users/repositories/users.repository';
 import * as net from 'net';
+import { WsGateway } from 'src/core/gateways/ws.gateway';
+import { ResourcesService } from 'src/resources/services/resources.service';
+import { BuildingsService } from 'src/buildings/services/buildings.service';
+import { WsEvent } from 'src/core/enums/ws-event.enum';
+import { Building } from 'src/buildings/entities/building.entity';
+import { BuildingName } from 'src/core/enums/building-name.enum';
 
 @Injectable()
 export class JobsService {
@@ -12,6 +18,9 @@ export class JobsService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly serversService: ServersService,
+    private readonly resourcesService: ResourcesService,
+    private readonly buildingsService: BuildingsService,
+    private readonly wsGateway: WsGateway,
   ) {}
 
   @Cron(CronExpression.EVERY_5_MINUTES)
@@ -36,6 +45,66 @@ export class JobsService {
     } else {
       this.logger.log('Nie znaleziono nieaktywnych użytkowników do usunięcia.');
     }
+  }
+
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  async handleResourceGeneration() {
+    this.logger.log('Uruchamianie zadania generowania surowców...');
+
+    const users = await this.usersRepository.findAll({
+      relations: ['villages', 'villages.buildings'],
+    });
+    if (users.length === 0) return;
+
+    for (const user of users) {
+      const village = user.villages?.[0];
+      if (!village || !village.buildings || village.buildings.length === 0) {
+        continue;
+      }
+      const buildings = user.villages[0].buildings;
+      if (buildings.length === 0) continue;
+      const production = this.calculateProduction(buildings);
+      if (Object.values(production).every((v) => v === 0)) continue;
+      const updatedResources = await this.resourcesService.updateResources(
+        user.id,
+        production,
+      );
+
+      if (updatedResources) {
+        this.wsGateway.sendToUser(
+          user.id,
+          WsEvent.RESOURCE_UPDATE,
+          updatedResources,
+        );
+      }
+    }
+  }
+
+  private calculateProduction(buildings: Building[]): {
+    wood: number;
+    clay: number;
+    iron: number;
+  } {
+    const production = { wood: 0, clay: 0, iron: 0 };
+
+    for (const building of buildings) {
+      const level = building.level || 1;
+
+      switch (building.name) {
+        case BuildingName.SAWMILL:
+          production.wood += 10 * level;
+          break;
+        case BuildingName.CLAY_PIT:
+          production.clay += 7 * level;
+          break;
+        case BuildingName.SMITHY:
+          production.iron += 5 * level;
+          break;
+        default:
+          break;
+      }
+    }
+    return production;
   }
 
   @Cron(CronExpression.EVERY_10_MINUTES)
