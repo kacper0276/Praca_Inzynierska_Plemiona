@@ -205,7 +205,6 @@ export class GridComponent implements OnInit, OnDestroy {
     this.villageDataSub = this.webSocketService
       .onVillageDataUpdate()
       .subscribe((data) => {
-        console.log('Otrzymano dane wioski przez WebSocket:', data);
         if (data && data.gridSize && data.buildings) {
           this.gridSize = data.gridSize;
           this.buildings = data.buildings;

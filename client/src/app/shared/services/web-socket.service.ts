@@ -14,6 +14,7 @@ export class WebSocketService {
   private url = '';
   private incoming$ = new Subject<WsMessage>();
   private connected$ = new BehaviorSubject<boolean>(false);
+  private authenticated$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private ngZone: NgZone,
@@ -48,6 +49,10 @@ export class WebSocketService {
       this.ngZone.run(() => this.connected$.next(false));
     });
 
+    this.socket.on(WebSocketEvent.USER_CONNECTED, (payload: any) => {
+      this.ngZone.run(() => this.authenticated$.next(true));
+    });
+
     this.socket.onAny((event: string, payload: any) => {
       this.ngZone.run(() => {
         this.incoming$.next({ event, payload });
@@ -63,6 +68,7 @@ export class WebSocketService {
       this.socket = null;
     }
     this.connected$.next(false);
+    this.authenticated$.next(false);
   }
 
   isConnected(): Observable<boolean> {
@@ -106,13 +112,15 @@ export class WebSocketService {
   }
 
   public requestVillageData(): void {
-    this.isConnected()
+    this.authenticated$
       .pipe(
-        filter((isConnected) => isConnected),
+        filter((isAuth) => isAuth),
         take(1)
       )
       .subscribe(() => {
-        console.log('Socket is connected, sending request for village data.');
+        console.log(
+          'Socket is authenticated, sending request for village data.'
+        );
         this.send(WebSocketEvent.GET_VILLAGE_DATA);
       });
   }
