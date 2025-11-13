@@ -27,6 +27,7 @@ export class GameComponent implements OnInit {
 
   private statusSubscription: Subscription | null = null;
   private connectionSubscription: Subscription | null = null;
+  private resourcesSubscription: Subscription | null = null;
 
   private backendWsUrl = environment.wsUrl;
 
@@ -66,6 +67,12 @@ export class GameComponent implements OnInit {
       next: (res) => {
         this.servers = res.data;
         this.selectedServerInModal = res.data[0];
+      },
+    });
+
+    this.resourcesSubscription = this.resourceService.resources$.subscribe({
+      next: (res) => {
+        this.resources = res;
       },
     });
   }
@@ -160,6 +167,9 @@ export class GameComponent implements OnInit {
       }
       if (this.connectionSubscription) {
         this.connectionSubscription.unsubscribe();
+      }
+      if (this.resourcesSubscription) {
+        this.resourcesSubscription.unsubscribe();
       }
     } catch {}
   }
