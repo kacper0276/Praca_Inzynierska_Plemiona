@@ -1,6 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { BuildingData } from '../../../../shared/models';
 import { Resources } from '../../../../shared/models/resources.model';
+import {
+  BUILDING_COSTS,
+  ResourceCost,
+} from '../../../../shared/consts/building-costs';
+import { BuildingName } from '../../../../shared/enums/building-name.enum';
 
 @Component({
   selector: 'app-build-modal',
@@ -19,9 +24,8 @@ export class BuildModalComponent {
   }>();
   @Output() close = new EventEmitter<void>();
 
-  getCost(building: BuildingData): Partial<Resources> {
-    // TODO: Dodać większą logikę
-    return { wood: 100, clay: 50, iron: 30, population: 5 };
+  getCost(building: BuildingData): Partial<ResourceCost> {
+    return BUILDING_COSTS[building.name as BuildingName];
   }
 
   canBuild(cost: Partial<Resources>): boolean {

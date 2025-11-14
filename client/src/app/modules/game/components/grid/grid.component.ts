@@ -504,6 +504,7 @@ export class GridComponent implements OnInit, OnDestroy {
   buildBuilding(building: BuildingData, cost: Partial<Resources>): void {
     if (this.buildRow === null || this.buildCol === null) return;
     if (this.resourceService.spendResources(cost)) {
+      console.log(building.name);
       this.webSocketService.send(WebSocketEvent.BUILDING_CREATE, {
         name: building.name,
         row: this.buildRow,
