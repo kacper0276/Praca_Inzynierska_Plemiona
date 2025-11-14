@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   forwardRef,
   Inject,
   Injectable,
@@ -9,6 +10,9 @@ import { VillagesRepository } from 'src/villages/repositories/villages.repositor
 import { CreateBuildingDto } from '../dto/create-building.dto';
 import { UpdateBuildingDto } from '../dto/update-building.dto';
 import { Building } from '../entities/building.entity';
+import { CreateBuildingWsDto } from '../dto/create-building-ws.dto';
+import { DeleteBuildingWsDto } from '../dto/delete-building-ws.dto';
+import { MoveBuildingWsDto } from '../dto/move-building-ws.dto';
 
 @Injectable()
 export class BuildingsService {
@@ -73,5 +77,98 @@ export class BuildingsService {
   async remove(id: number): Promise<void> {
     const building = await this.findOne(id);
     await this.buildingsRepository.delete(building.id);
+  }
+
+  async createForUser(
+    userId: number,
+    dto: CreateBuildingWsDto,
+  ): Promise<Building> {
+    const village = await this.villagesRepository.findByUserId(userId);
+    if (!village) {
+      throw new NotFoundException(
+        'Nie znaleziono wioski dla tego użytkownika.',
+      );
+    }
+
+    const existingBuilding =
+      await this.buildingsRepository.findByVillageIdAndCoords(
+        village.id,
+        dto.row,
+        dto.col,
+      );
+    if (existingBuilding) {
+      throw new ConflictException(
+        `Na polu [${dto.row}, ${dto.col}] już istnieje budynek.`,
+      );
+    }
+
+    const imageUrl = `assets/buildings/${dto.name}.png`;
+    const defaultHealth = 100;
+
+    const newBuilding = this.buildingsRepository.create({
+      name: dto.name,
+      level: 1,
+      row: dto.row,
+      col: dto.col,
+      imageUrl,
+      health: defaultHealth,
+      maxHealth: defaultHealth,
+      village: village,
+    });
+
+    return this.buildingsRepository.save(newBuilding);
+  }
+
+  async moveForUser(userId: number, dto: MoveBuildingWsDto): Promise<void> {
+    const village = await this.villagesRepository.findByUserId(userId);
+    if (!village) {
+      throw new NotFoundException(
+        'Nie znaleziono wioski dla tego użytkownika.',
+      );
+    }
+
+    const buildingToMove = await this.buildingsRepository.findByIdAndVillageId(
+      dto.buildingId,
+      village.id,
+    );
+    if (!buildingToMove) {
+      throw new NotFoundException(
+        'Budynek nie został znaleziony lub nie należy do Twojej wioski.',
+      );
+    }
+
+    const oldRow = buildingToMove.row;
+    const oldCol = buildingToMove.col;
+
+    const targetFieldBuilding =
+      await this.buildingsRepository.findByVillageIdAndCoords(
+        village.id,
+        dto.row,
+        dto.col,
+      );
+
+    if (targetFieldBuilding && targetFieldBuilding.id !== buildingToMove.id) {
+      targetFieldBuilding.row = oldRow;
+      targetFieldBuilding.col = oldCol;
+      await this.buildingsRepository.save(targetFieldBuilding);
+    }
+
+    buildingToMove.row = dto.row;
+    buildingToMove.col = dto.col;
+    await this.buildingsRepository.save(buildingToMove);
+  }
+
+  async removeForUser(userId: number, dto: DeleteBuildingWsDto): Promise<void> {
+    const village = await this.villagesRepository.findByUserId(userId);
+    if (!village) {
+      throw new NotFoundException(
+        'Nie znaleziono wioski dla tego użytkownika.',
+      );
+    }
+
+    this.buildingsRepository.deleteBy({
+      id: dto.buildingId,
+      village: { id: village.id },
+    });
   }
 }

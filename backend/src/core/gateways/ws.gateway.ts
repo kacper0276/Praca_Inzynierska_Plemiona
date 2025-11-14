@@ -18,6 +18,10 @@ import { UsersService } from 'src/users/services/users.service';
 import { User } from 'src/users/entities/user.entity';
 import { VillagesService } from 'src/villages/services/villages.service';
 import { forwardRef, Inject } from '@nestjs/common';
+import { BuildingsService } from 'src/buildings/services/buildings.service';
+import { CreateBuildingWsDto } from 'src/buildings/dto/create-building-ws.dto';
+import { DeleteBuildingWsDto } from 'src/buildings/dto/delete-building-ws.dto';
+import { MoveBuildingWsDto } from 'src/buildings/dto/move-building-ws.dto';
 
 export interface AuthenticatedSocket extends Socket {
   user: User;
@@ -35,6 +39,7 @@ export class WsGateway
     private readonly jwtService: JwtService,
     @Inject(forwardRef(() => VillagesService))
     private readonly villagesService: VillagesService,
+    private readonly buildingsService: BuildingsService,
     private readonly logger: FileLogger,
   ) {}
 
@@ -169,6 +174,58 @@ export class WsGateway
       this.sendToUser(client.user.id, WsEvent.VILLAGE_DATA_ERROR, {
         message: 'Could not load village data.',
       });
+    }
+  }
+
+  @SubscribeMessage(WsEvent.BUILDING_CREATE)
+  async handleBuildingCreate(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: CreateBuildingWsDto,
+  ) {
+    this.logger.log(
+      `User ${client.user.email} requested to create a building: ${payload.name}`,
+    );
+    try {
+      await this.buildingsService.createForUser(client.user.id, payload);
+      this.handleGetVillageData(client);
+    } catch (error) {
+      this.logger.error(
+        `Failed to create building for ${client.user.email}: ${error.message}`,
+      );
+    }
+  }
+
+  @SubscribeMessage(WsEvent.BUILDING_MOVE)
+  async handleBuildingMove(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: MoveBuildingWsDto,
+  ) {
+    this.logger.log(
+      `User ${client.user.email} requested to move building ${payload.buildingId}`,
+    );
+    try {
+      await this.buildingsService.moveForUser(client.user.id, payload);
+    } catch (error) {
+      this.logger.error(
+        `Failed to move building for ${client.user.email}: ${error.message}`,
+      );
+    }
+  }
+
+  @SubscribeMessage(WsEvent.BUILDING_DELETE)
+  async handleBuildingDelete(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: DeleteBuildingWsDto,
+  ) {
+    this.logger.log(
+      `User ${client.user.email} requested to delete building ${payload.buildingId}`,
+    );
+    try {
+      await this.buildingsService.removeForUser(client.user.id, payload);
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete building for ${client.user.email}: ${error.message}`,
+      );
     }
   }
 }

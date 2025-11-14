@@ -16,7 +16,7 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Podstawowe grafiki
 - Dodanie pliku `README.md` z podstawowym opisem projektu.
 
-## [0.0.2] - 05.11.2025 - 12.11.2025
+## [0.0.2] - 05.11.2025 - 13.11.2025
 
 ### Added
 
@@ -29,6 +29,10 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Wysyłanie maila dla zarejestrowanego użytkownika z kodem potrzebnym do aktywowania kodu
 - Ustawienie statusu online jeśli użytkownik wybierze serwer
 - Dodanie intervału który sprawdza dostępność serwerów
+- Pobieranie układu wioski z backendu za pomocą socketów
+- Interwał który dodaje surowce dla użytkownika, po stronie serwera
+- Odbieranie i wyświetlanie aktuanej ilości surowców na aplikacji klienta
+- Zapisywanie w bazie przesunięcia budynku, usunięcia i utworzenia nowego
 
 ### Changed
 

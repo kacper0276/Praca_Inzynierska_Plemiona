@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import {
+  DeleteResult,
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { BaseRepository } from 'src/core/repositories/base.repository';
 import { Building } from '../entities/building.entity';
 
@@ -37,6 +43,32 @@ export class BuildingsRepository extends BaseRepository<Building> {
     return this.repository.findOne({ where: { id }, ...options });
   }
 
+  findByIdAndVillageId(
+    buildingId: number,
+    villageId: number,
+  ): Promise<Building | null> {
+    return this.repository.findOne({
+      where: {
+        id: buildingId,
+        village: { id: villageId },
+      },
+    });
+  }
+
+  findByVillageIdAndCoords(
+    villageId: number,
+    row: number,
+    col: number,
+  ): Promise<Building | null> {
+    return this.repository.findOne({
+      where: {
+        village: { id: villageId },
+        row,
+        col,
+      },
+    });
+  }
+
   create(entity: Partial<Building>): Building {
     return this.repository.create(entity);
   }
@@ -51,5 +83,11 @@ export class BuildingsRepository extends BaseRepository<Building> {
 
   async delete(id: number): Promise<void> {
     await this.repository.delete(id);
+  }
+
+  deleteBy(
+    criteria: number | FindOptionsWhere<Building>,
+  ): Promise<DeleteResult> {
+    return this.repository.delete(criteria);
   }
 }

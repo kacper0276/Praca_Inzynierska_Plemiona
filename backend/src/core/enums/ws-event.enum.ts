@@ -17,4 +17,9 @@ export enum WsEvent {
   GET_VILLAGE_DATA = 'getVillageData',
   VILLAGE_DATA_UPDATE = 'villageDataUpdate',
   VILLAGE_DATA_ERROR = 'villageDataError',
+
+  // Building
+  BUILDING_CREATE = 'building_create',
+  BUILDING_MOVE = 'building_move',
+  BUILDING_DELETE = 'building_delete',
 }
