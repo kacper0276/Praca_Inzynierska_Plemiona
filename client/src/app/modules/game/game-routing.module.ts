@@ -9,6 +9,7 @@ import { RankingComponent } from './components/ranking/ranking.component';
 import { ClanCreateComponent } from './components/clan-create/clan-create.component';
 import { ArmyComponent } from './components/army/army.component';
 import { InvitesComponent } from './components/invites/invites.component';
+import { adminGuardGuard } from '../../shared/guards/admin-guard.guard';
 
 const gameRoutes: Routes = [
   {
@@ -28,6 +29,7 @@ const gameRoutes: Routes = [
           import('./components/admin-panel/admin-panel.module').then(
             (m) => m.AdminPanelModule
           ),
+        canActivate: [adminGuardGuard],
       },
       { path: 'invitations', component: InvitesComponent },
       { path: '', redirectTo: 'village', pathMatch: 'full' },
