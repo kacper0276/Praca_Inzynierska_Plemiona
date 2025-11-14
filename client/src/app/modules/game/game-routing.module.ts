@@ -8,6 +8,7 @@ import { GameComponent } from './components/game/game.component';
 import { RankingComponent } from './components/ranking/ranking.component';
 import { ClanCreateComponent } from './components/clan-create/clan-create.component';
 import { ArmyComponent } from './components/army/army.component';
+import { InvitesComponent } from './components/invites/invites.component';
 
 const gameRoutes: Routes = [
   {
@@ -28,6 +29,7 @@ const gameRoutes: Routes = [
             (m) => m.AdminPanelModule
           ),
       },
+      { path: 'invitations', component: InvitesComponent },
       { path: '', redirectTo: 'village', pathMatch: 'full' },
     ],
   },

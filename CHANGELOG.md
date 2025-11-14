@@ -34,7 +34,7 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Odbieranie i wyświetlanie aktuanej ilości surowców na aplikacji klienta
 - Zapisywanie w bazie przesunięcia budynku, usunięcia i utworzenia nowego
 - Dodanie kosztów budynków
-- Użycie tranzakcyjności dla tworzenia budynków
+- Użycie transakcyjności dla tworzenia budynków
 
 ### Changed
 
