@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Theme } from '../../../../shared/types/theme.type';
 import { ThemeService } from '../../../../shared/services/theme.service';
+import { UserService } from '../../../auth/services/user.service';
+import { User } from '../../../../shared/models';
 
 @Component({
   selector: 'app-side-menu',
@@ -20,10 +22,12 @@ export class SideMenuComponent {
     email: '',
   };
   bugSubmitted = false;
+  currentUser: User | null = null;
 
   constructor(
-    private translate: TranslateService,
-    private readonly themeService: ThemeService
+    private readonly translate: TranslateService,
+    private readonly themeService: ThemeService,
+    private readonly userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -37,6 +41,8 @@ export class SideMenuComponent {
 
     const serviceTheme = this.themeService.theme || 'light';
     this.currentTheme = serviceTheme;
+
+    this.currentUser = this.userService.getCurrentUser();
   }
 
   toggleCollapse() {

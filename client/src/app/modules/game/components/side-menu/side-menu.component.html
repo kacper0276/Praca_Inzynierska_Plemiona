@@ -130,6 +130,7 @@
       </a>
     </li>
 
+    @if (currentUser?.role === 'admin') {
     <li
       [class.active]="activeTab === 'admin'"
       [title]="isCollapsed ? 'Panel admina' : null"
@@ -139,6 +140,7 @@
         <span *ngIf="!isCollapsed">Panel admina</span>
       </a>
     </li>
+    }
   </ul>
 
   <app-bug-report
