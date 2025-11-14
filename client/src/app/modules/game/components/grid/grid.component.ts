@@ -15,6 +15,7 @@ import { GatheringService } from '../../services/gathering.service';
 import { ToastrService } from '../../../../shared/services/toastr.service';
 import { WebSocketService } from '../../../../shared/services/web-socket.service';
 import { availableBuildings } from '../../../../shared/consts/available-buildings';
+import { WebSocketEvent } from '../../../../shared/enums/websocket-event.enum';
 
 @Component({
   selector: 'app-grid',
@@ -341,6 +342,21 @@ export class GridComponent implements OnInit, OnDestroy {
     this.buildings[row][col] = draggedData;
     this.buildings[fromRow][fromCol] = targetData;
 
+    if (draggedData && draggedData.id) {
+      this.webSocketService.send(WebSocketEvent.BUILDING_MOVE, {
+        buildingId: draggedData.id,
+        row: row,
+        col: col,
+      });
+    }
+    if (targetData && targetData.id) {
+      this.webSocketService.send(WebSocketEvent.BUILDING_MOVE, {
+        buildingId: targetData.id,
+        row: fromRow,
+        col: fromCol,
+      });
+    }
+
     this.cleanupDragState(event);
   }
 
@@ -488,6 +504,12 @@ export class GridComponent implements OnInit, OnDestroy {
   buildBuilding(building: BuildingData, cost: Partial<Resources>): void {
     if (this.buildRow === null || this.buildCol === null) return;
     if (this.resourceService.spendResources(cost)) {
+      this.webSocketService.send(WebSocketEvent.BUILDING_CREATE, {
+        name: building.name,
+        row: this.buildRow,
+        col: this.buildCol,
+      });
+
       const newBuilding: BuildingData = {
         ...building,
         maxHealth: building.maxHealth ?? 100,
@@ -509,6 +531,13 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   demolishBuilding(row: number, col: number): void {
+    const buildingToDemolish = this.buildings[row][col];
+    if (!buildingToDemolish || !buildingToDemolish.id) return;
+
+    this.webSocketService.send(WebSocketEvent.BUILDING_DELETE, {
+      buildingId: buildingToDemolish.id,
+    });
+
     this.buildings[row][col] = null;
     this.closePopup();
   }
