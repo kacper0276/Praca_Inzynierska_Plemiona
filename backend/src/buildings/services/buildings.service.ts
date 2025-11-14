@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   forwardRef,
   Inject,
@@ -13,6 +14,15 @@ import { Building } from '../entities/building.entity';
 import { CreateBuildingWsDto } from '../dto/create-building-ws.dto';
 import { DeleteBuildingWsDto } from '../dto/delete-building-ws.dto';
 import { MoveBuildingWsDto } from '../dto/move-building-ws.dto';
+import { ResourcesRepository } from 'src/resources/repositories/resources.repository';
+import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { BUILDING_COSTS } from 'src/core/consts/building-costs';
+import { BuildingName } from 'src/core/enums/building-name.enum';
+import { Village } from 'src/villages/entities/village.entity';
+import { Resources } from 'src/resources/entities/resources.entity';
+import { WsGateway } from 'src/core/gateways/ws.gateway';
+import { WsEvent } from 'src/core/enums/ws-event.enum';
 
 @Injectable()
 export class BuildingsService {
@@ -20,6 +30,8 @@ export class BuildingsService {
     private readonly buildingsRepository: BuildingsRepository,
     @Inject(forwardRef(() => VillagesRepository))
     private readonly villagesRepository: VillagesRepository,
+    @InjectDataSource() private readonly dataSource: DataSource,
+    private readonly wsGateway: WsGateway,
   ) {}
 
   findAllForVillage(villageId: number) {
@@ -83,40 +95,97 @@ export class BuildingsService {
     userId: number,
     dto: CreateBuildingWsDto,
   ): Promise<Building> {
-    const village = await this.villagesRepository.findByUserId(userId);
-    if (!village) {
-      throw new NotFoundException(
-        'Nie znaleziono wioski dla tego użytkownika.',
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    let savedBuilding: Building;
+    let updatedResources: Resources;
+
+    try {
+      const villageRepository = queryRunner.manager.getRepository(Village);
+      const buildingRepository = queryRunner.manager.getRepository(Building);
+      const resourcesRepository = queryRunner.manager.getRepository(Resources);
+
+      const village = await villageRepository.findOne({
+        where: { user: { id: userId } },
+      });
+      if (!village) {
+        throw new NotFoundException(
+          'Nie znaleziono wioski dla tego użytkownika.',
+        );
+      }
+
+      const existingBuilding = await buildingRepository.findOne({
+        where: { village: { id: village.id }, row: dto.row, col: dto.col },
+      });
+      if (existingBuilding) {
+        throw new ConflictException(
+          `Na polu [${dto.row}, ${dto.col}] już istnieje budynek.`,
+        );
+      }
+
+      const buildingCost = BUILDING_COSTS[dto.name as BuildingName];
+      if (!buildingCost) {
+        throw new BadRequestException(
+          `Nieprawidłowa nazwa budynku: ${dto.name}`,
+        );
+      }
+
+      const userResources = await resourcesRepository.findOne({
+        where: { user: { id: userId } },
+      });
+      if (!userResources) {
+        throw new NotFoundException(
+          `Nie znaleziono zasobów dla użytkownika o ID: ${userId}`,
+        );
+      }
+
+      if (
+        userResources.wood < buildingCost.wood ||
+        userResources.clay < buildingCost.clay ||
+        userResources.iron < buildingCost.iron
+      ) {
+        throw new ConflictException('Niewystarczające zasoby do budowy.');
+      }
+
+      userResources.wood -= buildingCost.wood;
+      userResources.clay -= buildingCost.clay;
+      userResources.iron -= buildingCost.iron;
+      updatedResources = await resourcesRepository.save(userResources);
+
+      const imageUrl = `assets/buildings/${dto.name}.png`;
+      const defaultHealth = 100;
+
+      const newBuilding = buildingRepository.create({
+        name: dto.name,
+        level: 1,
+        row: dto.row,
+        col: dto.col,
+        imageUrl,
+        health: defaultHealth,
+        maxHealth: defaultHealth,
+        village: village,
+      });
+      savedBuilding = await buildingRepository.save(newBuilding);
+
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+
+    if (updatedResources) {
+      this.wsGateway.sendToUser(
+        userId,
+        WsEvent.RESOURCE_UPDATE,
+        updatedResources,
       );
     }
 
-    const existingBuilding =
-      await this.buildingsRepository.findByVillageIdAndCoords(
-        village.id,
-        dto.row,
-        dto.col,
-      );
-    if (existingBuilding) {
-      throw new ConflictException(
-        `Na polu [${dto.row}, ${dto.col}] już istnieje budynek.`,
-      );
-    }
-
-    const imageUrl = `assets/buildings/${dto.name}.png`;
-    const defaultHealth = 100;
-
-    const newBuilding = this.buildingsRepository.create({
-      name: dto.name,
-      level: 1,
-      row: dto.row,
-      col: dto.col,
-      imageUrl,
-      health: defaultHealth,
-      maxHealth: defaultHealth,
-      village: village,
-    });
-
-    return this.buildingsRepository.save(newBuilding);
+    return savedBuilding;
   }
 
   async moveForUser(userId: number, dto: MoveBuildingWsDto): Promise<void> {

@@ -6,7 +6,11 @@ import { BuildingsModule } from 'src/buildings/buildings.module';
 
 @Global()
 @Module({
-  imports: [UsersModule, forwardRef(() => VillagesModule), BuildingsModule],
+  imports: [
+    UsersModule,
+    forwardRef(() => VillagesModule),
+    forwardRef(() => BuildingsModule),
+  ],
   providers: [WsGateway],
   exports: [WsGateway],
 })

@@ -39,6 +39,7 @@ export class WsGateway
     private readonly jwtService: JwtService,
     @Inject(forwardRef(() => VillagesService))
     private readonly villagesService: VillagesService,
+    @Inject(forwardRef(() => BuildingsService))
     private readonly buildingsService: BuildingsService,
     private readonly logger: FileLogger,
   ) {}
