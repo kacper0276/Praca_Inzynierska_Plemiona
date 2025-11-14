@@ -1,13 +1,15 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { Resources } from '../../../shared/models/resources.model';
 import { HttpService } from '../../../shared/services/http.service';
 import { ApiResponse } from '../../../shared/models';
+import { WebSocketService } from '../../../shared/services/web-socket.service';
+import { WebSocketEvent } from '../../../shared/enums/websocket-event.enum';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ResourceService {
+export class ResourceService implements OnDestroy {
   private resourcesSubject = new BehaviorSubject<Resources>({
     wood: 0,
     clay: 0,
@@ -19,7 +21,20 @@ export class ResourceService {
   public resources$: Observable<Resources> =
     this.resourcesSubject.asObservable();
 
-  constructor(private readonly httpService: HttpService) {}
+  private resourceUpdateSub: Subscription | null = null;
+
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly webSocketService: WebSocketService
+  ) {
+    this.resourceUpdateSub = this.webSocketService
+      .onEvent<Resources>(WebSocketEvent.RESOURCE_UPDATE)
+      .subscribe((message) => {
+        if (message.payload) {
+          this.setResources(message.payload);
+        }
+      });
+  }
 
   public fetchResources(email: string): Observable<ApiResponse<Resources>> {
     return this.httpService.get<Resources>(`/resources/user/${email}`);
@@ -68,5 +83,11 @@ export class ResourceService {
 
     this.resourcesSubject.next(updatedResources);
     return true;
+  }
+
+  ngOnDestroy(): void {
+    if (this.resourceUpdateSub) {
+      this.resourceUpdateSub.unsubscribe();
+    }
   }
 }

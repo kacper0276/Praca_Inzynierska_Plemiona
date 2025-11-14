@@ -5,7 +5,7 @@ import {
   OnInit,
   OnDestroy,
 } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ResourceService } from '../../services/resource.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Resources } from '../../../../shared/models/resources.model';
@@ -13,6 +13,9 @@ import { BuildingData, RadialMenuOption } from '../../../../shared/models';
 import { ActivatedRoute } from '@angular/router';
 import { GatheringService } from '../../services/gathering.service';
 import { ToastrService } from '../../../../shared/services/toastr.service';
+import { WebSocketService } from '../../../../shared/services/web-socket.service';
+import { availableBuildings } from '../../../../shared/consts/available-buildings';
+import { WebSocketEvent } from '../../../../shared/enums/websocket-event.enum';
 
 @Component({
   selector: 'app-grid',
@@ -32,6 +35,7 @@ export class GridComponent implements OnInit, OnDestroy {
 
   isAttacking = false;
   private battleInterval: any = null;
+  private villageDataSub: Subscription | undefined;
 
   attackingArmy = {
     totalHp: 0,
@@ -77,26 +81,14 @@ export class GridComponent implements OnInit, OnDestroy {
   selectedBuildingCol: number | null = null;
 
   resources: Resources;
-  availableBuildings: BuildingData[] = [
-    // { id: 4, name: 'Farma', level: 1, imageUrl: 'assets/buildings/farm.png' },
-    {
-      id: 5,
-      name: 'Kuźnia',
-      level: 1,
-      imageUrl: 'assets/buildings/Kowal.png',
-    },
-    {
-      id: 6,
-      name: 'Dom mieszkalny',
-      level: 1,
-      imageUrl: 'assets/buildings/Dom_mieszkalny.png',
-    },
-  ];
+
   buildMode: boolean = false;
   buildRow: number | null = null;
   buildCol: number | null = null;
   activeRadial: { row: number; col: number } | null = null;
   activeEmptyRadial: { row: number; col: number } | null = null;
+
+  availableBuildings: BuildingData[] = availableBuildings;
 
   emptyPlotOptions: RadialMenuOption[] = [
     {
@@ -138,6 +130,7 @@ export class GridComponent implements OnInit, OnDestroy {
       tooltip: 'Edytuj',
     },
   ];
+  public timeLeft$: Observable<number>;
 
   constructor(
     private readonly resourceService: ResourceService,
@@ -145,7 +138,8 @@ export class GridComponent implements OnInit, OnDestroy {
     private readonly gatheringService: GatheringService,
     private readonly toastr: ToastrService,
     private readonly translate: TranslateService,
-    private readonly activatedRoute: ActivatedRoute
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly webSocketService: WebSocketService
   ) {
     this.resources = {
       wood: 0,
@@ -158,9 +152,9 @@ export class GridComponent implements OnInit, OnDestroy {
     this.userEmail = this.activatedRoute.snapshot.params['userEmail'];
 
     this.isOwnVillage = this.userEmail === 'kacper0276@op.pl';
+
+    this.timeLeft$ = this.gatheringService.timeLeft$;
   }
-  gatherSecondsLeft: number = 0;
-  private _gatherSub: Subscription | null = null;
 
   canAfford(cost: Partial<Resources>): boolean {
     const svc: any = this.resourceService as any;
@@ -195,22 +189,26 @@ export class GridComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeGrid();
-    this.loadPlayerBuildings();
+
+    this.villageDataSub = this.webSocketService
+      .onVillageDataUpdate()
+      .subscribe((data) => {
+        if (data && data.gridSize && data.buildings) {
+          this.gridSize = data.gridSize;
+          this.buildings = data.buildings;
+        }
+      });
+
+    this.webSocketService.onVillageDataError().subscribe((error) => {
+      this.toastr.showError(`Błąd ładowania wioski: ${error.message}`);
+    });
+
+    this.webSocketService.requestVillageData();
+
     this.resourceService.resources$.subscribe((res) => {
       this.resources = res;
     });
-    this.gatheringService.start(() => this.buildings);
-    this._gatherSub = this.gatheringService.timeLeft$.subscribe(
-      (s) => (this.gatherSecondsLeft = s)
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.gatheringService.stop();
-    if (this._gatherSub) {
-      this._gatherSub.unsubscribe();
-      this._gatherSub = null;
-    }
+    this.gatheringService.start(1000 * 10);
   }
 
   handleMenuOption(action: string, row: number, col: number): void {
@@ -343,6 +341,21 @@ export class GridComponent implements OnInit, OnDestroy {
 
     this.buildings[row][col] = draggedData;
     this.buildings[fromRow][fromCol] = targetData;
+
+    if (draggedData && draggedData.id) {
+      this.webSocketService.send(WebSocketEvent.BUILDING_MOVE, {
+        buildingId: draggedData.id,
+        row: row,
+        col: col,
+      });
+    }
+    if (targetData && targetData.id) {
+      this.webSocketService.send(WebSocketEvent.BUILDING_MOVE, {
+        buildingId: targetData.id,
+        row: fromRow,
+        col: fromCol,
+      });
+    }
 
     this.cleanupDragState(event);
   }
@@ -491,6 +504,12 @@ export class GridComponent implements OnInit, OnDestroy {
   buildBuilding(building: BuildingData, cost: Partial<Resources>): void {
     if (this.buildRow === null || this.buildCol === null) return;
     if (this.resourceService.spendResources(cost)) {
+      this.webSocketService.send(WebSocketEvent.BUILDING_CREATE, {
+        name: building.name,
+        row: this.buildRow,
+        col: this.buildCol,
+      });
+
       const newBuilding: BuildingData = {
         ...building,
         maxHealth: building.maxHealth ?? 100,
@@ -512,6 +531,13 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   demolishBuilding(row: number, col: number): void {
+    const buildingToDemolish = this.buildings[row][col];
+    if (!buildingToDemolish || !buildingToDemolish.id) return;
+
+    this.webSocketService.send(WebSocketEvent.BUILDING_DELETE, {
+      buildingId: buildingToDemolish.id,
+    });
+
     this.buildings[row][col] = null;
     this.closePopup();
   }
@@ -688,5 +714,12 @@ export class GridComponent implements OnInit, OnDestroy {
     clearInterval(this.battleInterval);
     this.isAttacking = false;
     this.toastr.showInfo(message);
+  }
+
+  ngOnDestroy(): void {
+    this.gatheringService.stop();
+    if (this.villageDataSub) {
+      this.villageDataSub.unsubscribe();
+    }
   }
 }

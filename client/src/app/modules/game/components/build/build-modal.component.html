@@ -2,11 +2,12 @@
   <div modal-header>
     <h2>Wybierz budynek do budowy</h2>
   </div>
-  <div modal-body>
+
+  <div modal-body class="scrollable-modal-body">
     <div class="build-options">
       <div *ngFor="let b of availableBuildings" class="build-option">
         <img [src]="b.imageUrl" [alt]="b.name" />
-        <div>{{ b.name }}</div>
+        <div class="name">{{ b.name }}</div>
         <div class="costs">
           <span *ngFor="let key of getCost(b) | keyvalue">
             {{ key.key }}: {{ key.value }}
@@ -21,6 +22,7 @@
       </div>
     </div>
   </div>
+
   <div modal-footer>
     <button class="btn btn-secondary" (click)="close.emit()">Anuluj</button>
   </div>

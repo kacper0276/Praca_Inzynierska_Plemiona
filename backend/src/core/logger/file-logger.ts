@@ -1,7 +1,8 @@
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger, Scope } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 
+@Injectable({ scope: Scope.TRANSIENT })
 export class FileLogger extends Logger {
   private logFilePath: string;
   private errorLogFilePath: string;

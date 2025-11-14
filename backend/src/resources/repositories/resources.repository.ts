@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { Resources } from '../entities/resources.entity';
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from 'src/core/repositories/base.repository';
@@ -23,6 +23,18 @@ export class ResourcesRepository extends BaseRepository<Resources> {
 
   findOneById(id: number, options?: any): Promise<Resources | null> {
     return this.repository.findOne({ where: { id }, ...options });
+  }
+
+  findOneByUserId(
+    userId: number,
+    options?: FindOneOptions<Resources>,
+  ): Promise<Resources | null> {
+    return this.repository.findOne({
+      where: {
+        user: { id: userId },
+      },
+      ...options,
+    });
   }
 
   create(entity: Partial<Resources>): Resources {

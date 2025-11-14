@@ -16,6 +16,12 @@ import { ServerStatus } from 'src/servers/enums/server-status.enum';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/services/users.service';
 import { User } from 'src/users/entities/user.entity';
+import { VillagesService } from 'src/villages/services/villages.service';
+import { forwardRef, Inject } from '@nestjs/common';
+import { BuildingsService } from 'src/buildings/services/buildings.service';
+import { CreateBuildingWsDto } from 'src/buildings/dto/create-building-ws.dto';
+import { DeleteBuildingWsDto } from 'src/buildings/dto/delete-building-ws.dto';
+import { MoveBuildingWsDto } from 'src/buildings/dto/move-building-ws.dto';
 
 export interface AuthenticatedSocket extends Socket {
   user: User;
@@ -28,11 +34,13 @@ export class WsGateway
   @WebSocketServer()
   server: Server;
 
-  private logger = new FileLogger('WsGateway');
-
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    @Inject(forwardRef(() => VillagesService))
+    private readonly villagesService: VillagesService,
+    private readonly buildingsService: BuildingsService,
+    private readonly logger: FileLogger,
   ) {}
 
   afterInit(server: Server) {
@@ -60,6 +68,9 @@ export class WsGateway
         );
         return client.disconnect();
       }
+
+      const userRoom = `user-${user.id}`;
+      client.join(userRoom);
 
       client.user = user;
       await this.usersService.setUserOnlineStatus(user.email, true);
@@ -93,6 +104,11 @@ export class WsGateway
     } else {
       this.logger.log(`Unauthenticated client disconnected (ID: ${client.id})`);
     }
+  }
+
+  public sendToUser(userId: number, event: WsEvent, payload: any): void {
+    const userRoom = `user-${userId}`;
+    this.server.to(userRoom).emit(event, payload);
   }
 
   private getServerStatusRoomName(hostname: string, port: number): string {
@@ -136,5 +152,80 @@ export class WsGateway
     console.log('Army upgrade received', payload);
     this.server.emit(WsEvent.ARMY_UPDATE, { action: 'upgrade', payload });
     return { status: 'ok' };
+  }
+
+  @SubscribeMessage(WsEvent.GET_VILLAGE_DATA)
+  async handleGetVillageData(@ConnectedSocket() client: AuthenticatedSocket) {
+    this.logger.log(`User ${client.user.email} requested village data.`);
+    try {
+      const villageData = await this.villagesService.getVillageForUser(
+        client.user.id,
+      );
+
+      if (!villageData) {
+        throw new Error('Village not found for user.');
+      }
+
+      this.sendToUser(client.user.id, WsEvent.VILLAGE_DATA_UPDATE, villageData);
+    } catch (error) {
+      this.logger.error(
+        `Failed to get village data for ${client.user.email}: ${error.message}`,
+      );
+      this.sendToUser(client.user.id, WsEvent.VILLAGE_DATA_ERROR, {
+        message: 'Could not load village data.',
+      });
+    }
+  }
+
+  @SubscribeMessage(WsEvent.BUILDING_CREATE)
+  async handleBuildingCreate(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: CreateBuildingWsDto,
+  ) {
+    this.logger.log(
+      `User ${client.user.email} requested to create a building: ${payload.name}`,
+    );
+    try {
+      await this.buildingsService.createForUser(client.user.id, payload);
+      this.handleGetVillageData(client);
+    } catch (error) {
+      this.logger.error(
+        `Failed to create building for ${client.user.email}: ${error.message}`,
+      );
+    }
+  }
+
+  @SubscribeMessage(WsEvent.BUILDING_MOVE)
+  async handleBuildingMove(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: MoveBuildingWsDto,
+  ) {
+    this.logger.log(
+      `User ${client.user.email} requested to move building ${payload.buildingId}`,
+    );
+    try {
+      await this.buildingsService.moveForUser(client.user.id, payload);
+    } catch (error) {
+      this.logger.error(
+        `Failed to move building for ${client.user.email}: ${error.message}`,
+      );
+    }
+  }
+
+  @SubscribeMessage(WsEvent.BUILDING_DELETE)
+  async handleBuildingDelete(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: DeleteBuildingWsDto,
+  ) {
+    this.logger.log(
+      `User ${client.user.email} requested to delete building ${payload.buildingId}`,
+    );
+    try {
+      await this.buildingsService.removeForUser(client.user.id, payload);
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete building for ${client.user.email}: ${error.message}`,
+      );
+    }
   }
 }

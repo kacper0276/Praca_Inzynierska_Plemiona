@@ -49,7 +49,7 @@ export class ResourcesService {
       clay: 0,
       iron: 0,
       population: 0,
-      maxPopulation: 0,
+      maxPopulation: 10,
     });
 
     return this.repository.save(newResource);
@@ -76,6 +76,28 @@ export class ResourcesService {
   async update(id: number, data: UpdateResourceDto) {
     await this.findOne(id);
     return this.repository.update(id, data);
+  }
+
+  async updateResources(
+    userId: number,
+    resourcesToAdd: {
+      wood: number;
+      clay: number;
+      iron: number;
+    },
+  ) {
+    const userResources = await this.repository.findOneByUserId(userId);
+
+    if (!userResources) {
+      console.error(`Nie znaleziono zasobów dla użytkownika o ID: ${userId}`);
+      return null;
+    }
+
+    userResources.wood += resourcesToAdd.wood;
+    userResources.clay += resourcesToAdd.clay;
+    userResources.iron += resourcesToAdd.iron;
+
+    return this.repository.save(userResources);
   }
 
   async remove(id: number): Promise<void> {

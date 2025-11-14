@@ -51,7 +51,7 @@ export class VillagesController {
     if (req.user.role !== UserRole.ADMIN && req.user.sub !== userId) {
       throw new ForbiddenException('Nie masz uprawnień do tego zasobu.');
     }
-    return this.villagesService.getByUserId(userId);
+    return this.villagesService.getVillageForUser(userId);
   }
 
   @Patch(':id')

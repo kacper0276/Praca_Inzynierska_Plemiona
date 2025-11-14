@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import { io, Socket } from 'socket.io-client';
 import { WebSocketEvent } from '../enums/websocket-event.enum';
 import { AuthService } from '../../modules/auth/services/auth.service';
@@ -14,6 +14,7 @@ export class WebSocketService {
   private url = '';
   private incoming$ = new Subject<WsMessage>();
   private connected$ = new BehaviorSubject<boolean>(false);
+  private authenticated$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private ngZone: NgZone,
@@ -48,6 +49,10 @@ export class WebSocketService {
       this.ngZone.run(() => this.connected$.next(false));
     });
 
+    this.socket.on(WebSocketEvent.USER_CONNECTED, (payload: any) => {
+      this.ngZone.run(() => this.authenticated$.next(true));
+    });
+
     this.socket.onAny((event: string, payload: any) => {
       this.ngZone.run(() => {
         this.incoming$.next({ event, payload });
@@ -63,6 +68,7 @@ export class WebSocketService {
       this.socket = null;
     }
     this.connected$.next(false);
+    this.authenticated$.next(false);
   }
 
   isConnected(): Observable<boolean> {
@@ -102,6 +108,32 @@ export class WebSocketService {
             complete: () => subscriber.complete(),
           });
         })
+    );
+  }
+
+  public requestVillageData(): void {
+    this.authenticated$
+      .pipe(
+        filter((isAuth) => isAuth),
+        take(1)
+      )
+      .subscribe(() => {
+        console.log(
+          'Socket is authenticated, sending request for village data.'
+        );
+        this.send(WebSocketEvent.GET_VILLAGE_DATA);
+      });
+  }
+
+  public onVillageDataUpdate(): Observable<any> {
+    return this.onEvent(WebSocketEvent.VILLAGE_DATA_UPDATE).pipe(
+      map((message) => message.payload)
+    );
+  }
+
+  public onVillageDataError(): Observable<any> {
+    return this.onEvent(WebSocketEvent.VILLAGE_DATA_ERROR).pipe(
+      map((message) => message.payload)
     );
   }
 }

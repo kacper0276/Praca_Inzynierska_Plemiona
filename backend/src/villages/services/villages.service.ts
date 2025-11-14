@@ -7,7 +7,7 @@ import { VillagesRepository } from '../repositories/villages.repository';
 import { Village } from '../entities/village.entity';
 import { VillageStateDto } from '../dto/village-state.dto';
 import { UsersRepository } from 'src/users/repositories/users.repository';
-import { User } from 'src/users/entities/user.entity';
+import { BuildingData } from 'src/core/models/building.model';
 
 @Injectable()
 export class VillagesService {
@@ -30,6 +30,43 @@ export class VillagesService {
       delete (village.user as any).hashedRefreshToken;
     }
     return village;
+  }
+
+  async getVillageForUser(userId: number): Promise<{
+    gridSize: number;
+    buildings: (BuildingData | null)[][];
+  } | null> {
+    const conditions = { user: { id: userId } } as any;
+
+    const options = { relations: ['buildings'] };
+
+    const village = await this.villagesRepository.findOne(conditions, options);
+
+    if (!village) {
+      return null;
+    }
+
+    const grid: (BuildingData | null)[][] = Array(village.gridSize)
+      .fill(null)
+      .map(() => Array(village.gridSize).fill(null));
+
+    for (const building of village.buildings) {
+      if (building.row < village.gridSize && building.col < village.gridSize) {
+        grid[building.row][building.col] = {
+          id: building.id,
+          name: building.name,
+          level: building.level,
+          imageUrl: building.imageUrl,
+          health: building.health,
+          maxHealth: building.maxHealth,
+        };
+      }
+    }
+
+    return {
+      gridSize: village.gridSize,
+      buildings: grid,
+    };
   }
 
   async createForUser(
