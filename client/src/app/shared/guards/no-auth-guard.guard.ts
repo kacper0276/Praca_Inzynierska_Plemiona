@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { map } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 import { UserService } from '../../modules/auth/services/user.service';
 
 export const noAuthGuardGuard: CanActivateFn = (route, state) => {
@@ -15,6 +15,10 @@ export const noAuthGuardGuard: CanActivateFn = (route, state) => {
         router.navigate([`/game/village/${res.data.email}`]);
         return false;
       }
+    }),
+    catchError(() => {
+      router.navigate([`/game/village/${userService.getCurrentUser()?.email}`]);
+      return of(true);
     })
   );
 };
