@@ -1,2 +1,44 @@
-<p>Panel administratora</p>
-<router-outlet></router-outlet>
+<div class="admin-panel-container">
+  <header class="admin-panel-header">
+    <h1>Panel Administracyjny</h1>
+  </header>
+
+  <nav class="admin-tabs">
+    <ul>
+      <li routerLinkActive="active">
+        <a routerLink="users">
+          <mat-icon>people</mat-icon>
+          <span>Użytkownicy</span>
+        </a>
+      </li>
+      <li routerLinkActive="active">
+        <a routerLink="buildings">
+          <mat-icon>location_city</mat-icon>
+          <span>Budynki</span>
+        </a>
+      </li>
+      <li routerLinkActive="active">
+        <a routerLink="resources">
+          <mat-icon>inventory</mat-icon>
+          <span>Surowce</span>
+        </a>
+      </li>
+      <li routerLinkActive="active">
+        <a routerLink="reports">
+          <mat-icon>flag</mat-icon>
+          <span>Zgłoszenia</span>
+        </a>
+      </li>
+      <li routerLinkActive="active">
+        <a routerLink="guilds">
+          <mat-icon>security</mat-icon>
+          <span>Gildie</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <main class="admin-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -1,0 +1,99 @@
+@use "../../../../../styles/variables.scss" as *;
+
+$admin-panel-bg: var(--panel, $white);
+$admin-panel-text: var(--text, $black-200);
+$admin-panel-header-border: $gray-300;
+$admin-tab-hover-bg: rgba($black, 0.05);
+$admin-tab-active-color: $blue-600;
+
+.admin-panel-container {
+  padding: 25px;
+  background-color: $admin-panel-bg;
+  color: $admin-panel-text;
+  height: 100%;
+}
+
+.admin-panel-header {
+  padding-bottom: 20px;
+  border-bottom: 1px solid $admin-panel-header-border;
+  margin-bottom: 20px;
+
+  h1 {
+    font-size: 28px;
+    font-weight: 500;
+    margin: 0 0 5px 0;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 0;
+
+    color: $admin-panel-text;
+    opacity: 0.75;
+  }
+}
+
+.admin-tabs {
+  margin-bottom: 25px;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 10px;
+  }
+
+  li {
+    a {
+      display: flex;
+      align-items: center;
+      padding: 10px 18px;
+      text-decoration: none;
+      color: $admin-panel-text;
+      border-radius: 6px;
+      transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+      white-space: nowrap;
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-size: 15px;
+      font-family: inherit;
+
+      mat-icon {
+        margin-right: 10px;
+      }
+
+      &:hover {
+        background-color: $admin-tab-hover-bg;
+      }
+    }
+
+    &.active a {
+      color: $admin-tab-active-color;
+      border-bottom: 2px solid $admin-tab-active-color;
+      border-radius: 6px 6px 0 0;
+    }
+  }
+}
+
+.admin-content {
+  background-color: $admin-panel-bg;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid $admin-panel-header-border;
+}
+body.dark-theme {
+  .admin-panel-header {
+    border-bottom-color: #022;
+  }
+
+  .admin-tabs li a:hover {
+    background-color: rgba($white, 0.1);
+  }
+
+  .admin-content {
+    background-color: #000;
+    border-color: #022;
+  }
+}
