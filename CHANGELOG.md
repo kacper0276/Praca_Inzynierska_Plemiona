@@ -16,7 +16,7 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Podstawowe grafiki
 - Dodanie pliku `README.md` z podstawowym opisem projektu.
 
-## [0.0.2] - 05.11.2025 - 13.11.2025
+## [0.0.2] - 05.11.2025 - 16.11.2025
 
 ### Added
 
@@ -35,6 +35,8 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Zapisywanie w bazie przesunięcia budynku, usunięcia i utworzenia nowego
 - Dodanie kosztów budynków
 - Użycie transakcyjności dla tworzenia budynków
+- Dodanie podstawowego wyglądu panela administratora
+- Rozszerzanie wioski i pobieranie jest z backendu
 
 ### Changed
 
