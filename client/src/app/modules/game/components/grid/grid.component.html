@@ -10,7 +10,7 @@
       class="expand-btn left"
       (click)="requestExpansion('left')"
       [disabled]="
-        gridSize >= maxGridSize || !canAfford(getCurrentExpansionCost())
+        gridWidth >= maxGridSize || !canAfford(getCurrentExpansionCost())
       "
       title="Rozszerz w lewo"
     >
@@ -27,7 +27,7 @@
       class="expand-btn right"
       (click)="requestExpansion('right')"
       [disabled]="
-        gridSize >= maxGridSize || !canAfford(getCurrentExpansionCost())
+        gridWidth >= maxGridSize || !canAfford(getCurrentExpansionCost())
       "
       title="Rozszerz w prawo"
     >

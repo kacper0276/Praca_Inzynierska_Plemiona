@@ -24,7 +24,8 @@ import { WebSocketEvent } from '../../../../shared/enums/websocket-event.enum';
 })
 export class GridComponent implements OnInit, OnDestroy {
   Math = Math;
-  gridSize: number = 5;
+  gridWidth: number = 7;
+  readonly gridHeight: number = 5;
   buildings: (BuildingData | null)[][] = [];
   readonly expansionCost = { wood: 50, clay: 30, iron: 20 };
   readonly maxGridSize = 11;
@@ -93,13 +94,11 @@ export class GridComponent implements OnInit, OnDestroy {
   emptyPlotOptions: RadialMenuOption[] = [
     {
       action: 'build',
-      // iconUrl: 'assets/images/build-icon.png',
       iconName: 'build',
       tooltip: 'Zbuduj nowy budynek',
     },
     {
       action: 'inspect',
-      // iconUrl: 'assets/images/inspect-icon.png',
       iconName: 'search',
       tooltip: 'Informacje o polu',
     },
@@ -107,25 +106,21 @@ export class GridComponent implements OnInit, OnDestroy {
   buildingOptions: RadialMenuOption[] = [
     {
       action: 'details',
-      // iconUrl: 'assets/icons/info.svg',
       iconName: 'info',
       tooltip: 'Szczegóły',
     },
     {
       action: 'upgrade',
-      // iconUrl: 'assets/icons/upgrade.svg',
       iconName: 'upgrade',
       tooltip: 'Rozbuduj',
     },
     {
       action: 'destroy',
-      // iconUrl: 'assets/icons/trash.svg',
       iconName: 'delete',
       tooltip: 'Usuń',
     },
     {
       action: 'edit',
-      // iconUrl: 'assets/icons/edit.svg',
       iconName: 'edit',
       tooltip: 'Edytuj',
     },
@@ -150,9 +145,7 @@ export class GridComponent implements OnInit, OnDestroy {
     };
 
     this.userEmail = this.activatedRoute.snapshot.params['userEmail'];
-
     this.isOwnVillage = this.userEmail === 'kacper0276@op.pl';
-
     this.timeLeft$ = this.gatheringService.timeLeft$;
   }
 
@@ -194,8 +187,9 @@ export class GridComponent implements OnInit, OnDestroy {
       .onVillageDataUpdate()
       .subscribe((data) => {
         if (data && data.gridSize && data.buildings) {
-          this.gridSize = data.gridSize;
-          this.buildings = data.buildings;
+          this.gridWidth = data.gridSize;
+
+          this.buildings = data.buildings.slice(0, this.gridHeight);
         }
       });
 
@@ -250,9 +244,45 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   initializeGrid(): void {
-    this.buildings = Array(this.gridSize)
+    this.buildings = Array(this.gridHeight)
       .fill(null)
-      .map(() => Array(this.gridSize).fill(null));
+      .map(() => Array(this.gridWidth).fill(null));
+  }
+
+  requestExpansion(side: 'left' | 'right') {
+    if (this.gridWidth >= this.maxGridSize) {
+      this.toastr.showError(this.translate.instant('MAX_GRID'));
+      return;
+    }
+    const cost = this.getCurrentExpansionCost();
+    if (!this.canAfford(cost)) {
+      this.toastr.showError(this.translate.instant('NOT_ENOUGH_RES_EXPAND'));
+      return;
+    }
+
+    this.webSocketService.send(WebSocketEvent.VILLAGE_EXPAND, {
+      side,
+      cost,
+    });
+  }
+
+  private findNextTarget(move: boolean = true): boolean {
+    for (let i = 0; i < this.gridHeight; i++) {
+      for (let j = 0; j < this.gridWidth; j++) {
+        if (this.buildings[i][j]) {
+          this.attackTarget = { row: i, col: j };
+          if (move) {
+            const targetCoords = this.getTargetBuildingCoords(i, j);
+            this.attackingArmy.targetX = targetCoords.x;
+            this.attackingArmy.targetY = targetCoords.y;
+            this.attackingArmy.state = 'marching';
+          }
+          return true;
+        }
+      }
+    }
+    this.attackTarget = null;
+    return false;
   }
 
   loadPlayerBuildings() {
@@ -432,40 +462,6 @@ export class GridComponent implements OnInit, OnDestroy {
     this.buildCol = col;
   }
 
-  expandLeft(): void {
-    if (this.gridSize >= this.maxGridSize) {
-      this.toastr.showError(this.translate.instant('MAX_GRID'));
-      return;
-    }
-
-    const cost = this.getCurrentExpansionCost();
-    if (!this.resourceService.spendResources(cost)) {
-      this.toastr.showError(this.translate.instant('NOT_ENOUGH_RES_EXPAND'));
-      return;
-    }
-
-    this.buildings = this.buildings.map((row) => [null, ...row]);
-    this.gridSize = this.gridSize + 1;
-    this.expansionMultiplier += 0.5;
-  }
-
-  expandRight(): void {
-    if (this.gridSize >= this.maxGridSize) {
-      this.toastr.showError(this.translate.instant('MAX_GRID'));
-      return;
-    }
-
-    const cost = this.getCurrentExpansionCost();
-    if (!this.resourceService.spendResources(cost)) {
-      this.toastr.showError(this.translate.instant('NOT_ENOUGH_RES_EXPAND'));
-      return;
-    }
-
-    this.buildings = this.buildings.map((row) => [...row, null]);
-    this.gridSize = this.gridSize + 1;
-    this.expansionMultiplier += 0.5;
-  }
-
   getCurrentExpansionCost(): Partial<Resources> {
     return {
       wood: Math.ceil(
@@ -478,27 +474,6 @@ export class GridComponent implements OnInit, OnDestroy {
         (this.expansionCost.iron || 0) * this.expansionMultiplier
       ),
     };
-  }
-
-  requestExpansion(side: 'left' | 'right') {
-    if (this.gridSize >= this.maxGridSize) {
-      this.toastr.showError(this.translate.instant('MAX_GRID'));
-      return;
-    }
-    this.pendingExpansion = { side, cost: this.getCurrentExpansionCost() };
-    this.confirmExpansion();
-  }
-
-  confirmExpansion() {
-    if (!this.pendingExpansion) return;
-    const { side, cost } = this.pendingExpansion;
-    this.pendingExpansion = null;
-    if (side === 'left') this.expandLeft();
-    else this.expandRight();
-  }
-
-  cancelExpansion() {
-    this.pendingExpansion = null;
   }
 
   buildBuilding(building: BuildingData, cost: Partial<Resources>): void {
@@ -660,25 +635,6 @@ export class GridComponent implements OnInit, OnDestroy {
       army.x += (dx / distance) * speed;
       army.y += (dy / distance) * speed;
     }
-  }
-
-  private findNextTarget(move: boolean = true): boolean {
-    for (let i = 0; i < this.gridSize; i++) {
-      for (let j = 0; j < this.gridSize; j++) {
-        if (this.buildings[i][j]) {
-          this.attackTarget = { row: i, col: j };
-          if (move) {
-            const targetCoords = this.getTargetBuildingCoords(i, j);
-            this.attackingArmy.targetX = targetCoords.x;
-            this.attackingArmy.targetY = targetCoords.y;
-            this.attackingArmy.state = 'marching';
-          }
-          return true;
-        }
-      }
-    }
-    this.attackTarget = null;
-    return false;
   }
 
   private getTargetBuildingCoords(

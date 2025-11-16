@@ -17,6 +17,7 @@ export enum WebSocketEvent {
   GET_VILLAGE_DATA = 'getVillageData',
   VILLAGE_DATA_UPDATE = 'villageDataUpdate',
   VILLAGE_DATA_ERROR = 'villageDataError',
+  VILLAGE_EXPAND = 'village_expand',
 
   // Building
   BUILDING_CREATE = 'building_create',
