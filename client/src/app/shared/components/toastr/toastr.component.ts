@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ToastrService } from '../../services/toastr.service';
 import { trigger, transition, animate, style } from '@angular/animations';
-import { Toast } from '../../models/toast.model';
-import { ToastType } from '../../enums/toast-type.enum';
+import { Toast } from '../../models';
+import { ToastType } from '../../enums';
 
 @Component({
   selector: 'app-toastr',

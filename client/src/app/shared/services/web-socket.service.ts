@@ -2,8 +2,8 @@ import { Injectable, NgZone } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 import { io, Socket } from 'socket.io-client';
-import { WebSocketEvent } from '../enums/websocket-event.enum';
 import { AuthService } from '../../modules/auth/services/auth.service';
+import { WebSocketEvent } from '../enums';
 export interface WsMessage<T = any> {
   event: WebSocketEvent | string;
   payload?: T;
@@ -133,6 +133,30 @@ export class WebSocketService {
 
   public onVillageDataError(): Observable<any> {
     return this.onEvent(WebSocketEvent.VILLAGE_DATA_ERROR).pipe(
+      map((message) => message.payload)
+    );
+  }
+
+  public requestVillageByEmail(email: string): void {
+    this.authenticated$
+      .pipe(
+        filter((isAuth) => isAuth),
+        take(1)
+      )
+      .subscribe(() => {
+        console.log(`Requesting village data for email: ${email}`);
+        this.send(WebSocketEvent.GET_VILLAGE_BY_EMAIL, { email });
+      });
+  }
+
+  public onVillageByEmailUpdate(): Observable<{ email: string; village: any }> {
+    return this.onEvent(WebSocketEvent.VILLAGE_BY_EMAIL_UPDATE).pipe(
+      map((message) => message.payload)
+    );
+  }
+
+  public onVillageByEmailError(): Observable<any> {
+    return this.onEvent(WebSocketEvent.VILLAGE_BY_EMAIL_ERROR).pipe(
       map((message) => message.payload)
     );
   }

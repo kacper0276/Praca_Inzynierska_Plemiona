@@ -8,14 +8,18 @@ import {
 import { Observable, Subscription } from 'rxjs';
 import { ResourceService } from '../../services/resource.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Resources } from '../../../../shared/models/resources.model';
-import { BuildingData, RadialMenuOption } from '../../../../shared/models';
+import {
+  BuildingData,
+  RadialMenuOption,
+  Resources,
+} from '../../../../shared/models';
 import { ActivatedRoute } from '@angular/router';
 import { GatheringService } from '../../services/gathering.service';
 import { ToastrService } from '../../../../shared/services/toastr.service';
 import { WebSocketService } from '../../../../shared/services/web-socket.service';
 import { availableBuildings } from '../../../../shared/consts/available-buildings';
 import { WebSocketEvent } from '../../../../shared/enums/websocket-event.enum';
+import { UserService } from '../../../auth/services/user.service';
 
 @Component({
   selector: 'app-grid',
@@ -30,13 +34,14 @@ export class GridComponent implements OnInit, OnDestroy {
   readonly expansionCost = { wood: 50, clay: 30, iron: 20 };
   readonly maxGridSize = 11;
   expansionMultiplier: number = 1;
-  userEmail: string = '';
+  userEmail: string | null = null;
 
   isOwnVillage: boolean = true;
 
   isAttacking = false;
   private battleInterval: any = null;
   private villageDataSub: Subscription | undefined;
+  private villageErrorSub: Subscription | undefined;
 
   attackingArmy = {
     totalHp: 0,
@@ -134,7 +139,8 @@ export class GridComponent implements OnInit, OnDestroy {
     private readonly toastr: ToastrService,
     private readonly translate: TranslateService,
     private readonly activatedRoute: ActivatedRoute,
-    private readonly webSocketService: WebSocketService
+    private readonly webSocketService: WebSocketService,
+    private readonly usersService: UserService
   ) {
     this.resources = {
       wood: 0,
@@ -145,8 +151,19 @@ export class GridComponent implements OnInit, OnDestroy {
     };
 
     this.userEmail = this.activatedRoute.snapshot.params['userEmail'];
-    this.isOwnVillage = this.userEmail === 'kacper0276@op.pl';
+    const currentUserEmail = this.usersService.getCurrentUser()?.email;
+    this.isOwnVillage = this.userEmail === currentUserEmail;
+
     this.timeLeft$ = this.gatheringService.timeLeft$;
+
+    if (!this.isOwnVillage) {
+      this.buildingOptions = this.buildingOptions.filter(
+        (opt) => opt.action === 'details'
+      );
+      this.emptyPlotOptions = this.emptyPlotOptions.filter(
+        (opt) => opt.action === 'inspect'
+      );
+    }
   }
 
   canAfford(cost: Partial<Resources>): boolean {
@@ -182,30 +199,60 @@ export class GridComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeGrid();
+    this.setupVillageDataListeners();
 
-    this.villageDataSub = this.webSocketService
-      .onVillageDataUpdate()
-      .subscribe((data) => {
-        if (data && data.gridSize && data.buildings) {
-          this.gridWidth = data.gridSize;
-
-          this.buildings = data.buildings.slice(0, this.gridHeight);
-        }
+    if (this.isOwnVillage) {
+      this.resourceService.resources$.subscribe((res) => {
+        this.resources = res;
       });
+      this.gatheringService.start(1000 * 10);
+    }
+  }
 
-    this.webSocketService.onVillageDataError().subscribe((error) => {
-      this.toastr.showError(`Błąd ładowania wioski: ${error.message}`);
-    });
+  private setupVillageDataListeners(): void {
+    const villageDataHandler = (data: any) => {
+      if (data && data.gridSize && data.buildings) {
+        this.gridWidth = data.gridSize;
+        this.buildings = data.buildings.slice(0, this.gridHeight);
+      }
+    };
 
-    this.webSocketService.requestVillageData();
+    if (this.isOwnVillage) {
+      this.villageDataSub = this.webSocketService
+        .onVillageDataUpdate()
+        .subscribe(villageDataHandler);
 
-    this.resourceService.resources$.subscribe((res) => {
-      this.resources = res;
-    });
-    this.gatheringService.start(1000 * 10);
+      this.villageErrorSub = this.webSocketService
+        .onVillageDataError()
+        .subscribe((error) => {
+          this.toastr.showError(`Błąd ładowania wioski: ${error.message}`);
+        });
+
+      this.webSocketService.requestVillageData();
+    } else if (this.userEmail) {
+      this.villageDataSub = this.webSocketService
+        .onVillageByEmailUpdate()
+        .subscribe((payload) => {
+          if (payload && payload.email === this.userEmail) {
+            villageDataHandler(payload.village);
+          }
+        });
+
+      this.villageErrorSub = this.webSocketService
+        .onVillageByEmailError()
+        .subscribe((error) => {
+          this.toastr.showError(
+            `Błąd ładowania wioski gracza: ${error.message}`
+          );
+        });
+
+      this.webSocketService.requestVillageByEmail(this.userEmail);
+    }
   }
 
   handleMenuOption(action: string, row: number, col: number): void {
+    if (!this.isOwnVillage && action !== 'inspect') return;
+
     switch (action) {
       case 'build':
         this.buildRow = row;
@@ -223,7 +270,9 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   handleBuildingMenuOption(action: string, row: number, col: number): void {
+    if (!this.isOwnVillage && action !== 'details') return;
     this.activeRadial = null;
+
     switch (action) {
       case 'details':
         this.selectedBuilding = this.buildings[row][col];
@@ -250,6 +299,7 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   requestExpansion(side: 'left' | 'right') {
+    if (!this.isOwnVillage) return;
     if (this.gridWidth >= this.maxGridSize) {
       this.toastr.showError(this.translate.instant('MAX_GRID'));
       return;
@@ -285,34 +335,6 @@ export class GridComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  loadPlayerBuildings() {
-    // Mock data (normal from API)
-    this.buildings[1][1] = {
-      id: 1,
-      name: 'Ratusz',
-      level: 3,
-      imageUrl: 'assets/buildings/Ratusz.png',
-      maxHealth: 150,
-      health: 150,
-    };
-    this.buildings[2][3] = {
-      id: 2,
-      name: 'Młyn',
-      level: 1,
-      imageUrl: 'assets/buildings/Młyn.png',
-      maxHealth: 80,
-      health: 80,
-    };
-    this.buildings[3][1] = {
-      id: 3,
-      name: 'Spichlerz',
-      level: 5,
-      imageUrl: 'assets/buildings/Spichlerz.png',
-      maxHealth: 250,
-      health: 200,
-    };
-  }
-
   getBuildingData(row: number, col: number): BuildingData {
     return (
       this.buildings[row][col] || {
@@ -325,12 +347,14 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   onDragStart(row: number, col: number): void {
+    if (!this.isOwnVillage) return;
     if (this.buildings[row][col]) {
       this.draggedBuilding = { row, col };
     }
   }
 
   onDragEnter(event: DragEvent, row: number, col: number): void {
+    if (!this.isOwnVillage) return;
     if (this.draggedBuilding) {
       const targetElement = event.target as HTMLElement;
       const cell = targetElement.closest('.grid-cell');
@@ -349,12 +373,13 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   onDragOver(event: DragEvent): void {
+    if (!this.isOwnVillage) return;
     event.preventDefault();
   }
 
   onDrop(event: DragEvent, row: number, col: number): void {
     event.preventDefault();
-    if (!this.draggedBuilding) {
+    if (!this.isOwnVillage || !this.draggedBuilding) {
       return;
     }
 
@@ -451,12 +476,14 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   demolishSelected(): void {
+    if (!this.isOwnVillage) return;
     if (this.selectedBuildingRow === null || this.selectedBuildingCol === null)
       return;
     this.demolishBuilding(this.selectedBuildingRow, this.selectedBuildingCol);
   }
 
   onEmptyPlotClick(row: number, col: number): void {
+    if (!this.isOwnVillage) return;
     this.buildMode = true;
     this.buildRow = row;
     this.buildCol = col;
@@ -477,9 +504,9 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   buildBuilding(building: BuildingData, cost: Partial<Resources>): void {
+    if (!this.isOwnVillage) return;
     if (this.buildRow === null || this.buildCol === null) return;
     if (this.resourceService.spendResources(cost)) {
-      console.log(building.name);
       this.webSocketService.send(WebSocketEvent.BUILDING_CREATE, {
         name: building.name,
         row: this.buildRow,
@@ -507,6 +534,7 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   demolishBuilding(row: number, col: number): void {
+    if (!this.isOwnVillage) return;
     const buildingToDemolish = this.buildings[row][col];
     if (!buildingToDemolish || !buildingToDemolish.id) return;
 
@@ -519,6 +547,7 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   upgradeBuilding(event: { cost: Partial<Resources> }) {
+    if (!this.isOwnVillage) return;
     if (this.selectedBuildingRow === null || this.selectedBuildingCol === null)
       return;
     if (this.resourceService.spendResources(event.cost)) {
@@ -538,7 +567,7 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   startAttack(): void {
-    if (this.isAttacking) return;
+    if (this.isAttacking || this.isOwnVillage) return;
     this.isAttacking = true;
 
     this.attackingArmy.maxHp = 1000;
@@ -674,9 +703,17 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.gatheringService.stop();
+    if (this.isOwnVillage) {
+      this.gatheringService.stop();
+    }
     if (this.villageDataSub) {
       this.villageDataSub.unsubscribe();
+    }
+    if (this.villageErrorSub) {
+      this.villageErrorSub.unsubscribe();
+    }
+    if (this.battleInterval) {
+      clearInterval(this.battleInterval);
     }
   }
 }

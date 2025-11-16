@@ -1,4 +1,4 @@
-import { BuildingName } from '../enums/building-name.enum';
+import { BuildingName } from '../enums';
 import { BuildingData } from '../models';
 
 export const availableBuildings: BuildingData[] = [

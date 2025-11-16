@@ -1,4 +1,4 @@
-import { ServerStatus } from '../enums/server-status.enum';
+import { ServerStatus } from '../enums';
 import { BaseModel } from './base.model';
 import { ServerStatusLog } from './server-status-log.model';
 

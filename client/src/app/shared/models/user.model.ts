@@ -1,4 +1,4 @@
-import { UserRole } from '../enums/user-role.enum';
+import { UserRole } from '../enums';
 import { BaseModel } from './base.model';
 
 export interface User extends BaseModel {

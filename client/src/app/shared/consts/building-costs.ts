@@ -1,4 +1,4 @@
-import { BuildingName } from '../enums/building-name.enum';
+import { BuildingName } from '../enums';
 
 export interface ResourceCost {
   wood: number;

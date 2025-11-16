@@ -1,6 +1,6 @@
 export enum WebSocketEvent {
-  USER_CONNECTED = 'userConnected',
-  USER_DISCONNECTED = 'userDisconnected',
+  USER_CONNECTED = 'user_connected',
+  USER_DISCONNECTED = 'user_disconnected',
   PING = 'ping',
   PONG = 'pong',
   CHAT_MESSAGE = 'chat_message',
@@ -14,10 +14,13 @@ export enum WebSocketEvent {
   ARMY_UPGRADE = 'army_upgrade',
 
   // Village
-  GET_VILLAGE_DATA = 'getVillageData',
-  VILLAGE_DATA_UPDATE = 'villageDataUpdate',
-  VILLAGE_DATA_ERROR = 'villageDataError',
+  GET_VILLAGE_DATA = 'get_village_data',
+  VILLAGE_DATA_UPDATE = 'village_data_update',
+  VILLAGE_DATA_ERROR = 'village_data_error',
   VILLAGE_EXPAND = 'village_expand',
+  GET_VILLAGE_BY_EMAIL = 'get_village_by_email',
+  VILLAGE_BY_EMAIL_UPDATE = 'village_by_email_update',
+  VILLAGE_BY_EMAIL_ERROR = 'village_by_email_error',
 
   // Building
   BUILDING_CREATE = 'building_create',

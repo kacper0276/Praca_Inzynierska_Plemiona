@@ -1,4 +1,4 @@
-import { UnitType } from '../enums/unit-type.enum';
+import { UnitType } from '../enums';
 import { BaseModel } from './base.model';
 
 export interface Unit extends BaseModel {
