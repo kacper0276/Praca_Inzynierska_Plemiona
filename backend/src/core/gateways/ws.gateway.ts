@@ -257,4 +257,49 @@ export class WsGateway
       });
     }
   }
+
+  @SubscribeMessage(WsEvent.GET_VILLAGE_BY_EMAIL)
+  async handleGetVillageByEmail(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: { email: string },
+  ) {
+    this.logger.log(
+      `Użytkownik ${client.user.email} żąda danych wioski użytkownika: ${payload.email}`,
+    );
+
+    if (!payload.email) {
+      client.emit(WsEvent.VILLAGE_BY_EMAIL_ERROR, {
+        message: 'Nie podano adresu email.',
+      });
+      return;
+    }
+
+    try {
+      const targetUser = await this.usersService.findOneByEmail(payload.email);
+
+      if (!targetUser) {
+        throw new Error('Nie znaleziono użytkownika o podanym adresie email.');
+      }
+
+      const villageData = await this.villagesService.getVillageForUser(
+        targetUser.id,
+      );
+
+      if (!villageData) {
+        throw new Error('Użytkownik nie posiada wioski.');
+      }
+
+      client.emit(WsEvent.VILLAGE_BY_EMAIL_UPDATE, {
+        email: targetUser.email,
+        village: villageData,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Błąd pobierania wioski po mailu dla ${client.user.email}: ${error.message}`,
+      );
+      client.emit(WsEvent.VILLAGE_BY_EMAIL_ERROR, {
+        message: error.message || 'Wystąpił błąd podczas pobierania danych.',
+      });
+    }
+  }
 }
