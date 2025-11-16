@@ -4,6 +4,8 @@ import { ResourcesRepository } from '../repositories/resources.repository';
 import { CreateResourceDto } from '../dto/create-resource.dto';
 import { UpdateResourceDto } from '../dto/update-resource.dto';
 import { UsersRepository } from 'src/users/repositories/users.repository';
+import { EntityManager } from 'typeorm';
+import { ResourceCost } from 'src/core/consts/building-costs';
 
 @Injectable()
 export class ResourcesService {
@@ -102,5 +104,46 @@ export class ResourcesService {
 
   async remove(id: number): Promise<void> {
     await this.repository.delete(id);
+  }
+
+  async spendResources(
+    userId: number,
+    cost: Partial<Resources>,
+    transactionalManager?: EntityManager,
+  ): Promise<void> {
+    const repo = transactionalManager
+      ? transactionalManager.getRepository(Resources)
+      : this.repository;
+
+    const userResources = await repo.findOne({
+      where: { user: { id: userId } },
+    });
+    if (!userResources) {
+      throw new Error('Nie znaleziono zasobów użytkownika.');
+    }
+
+    userResources.wood -= cost.wood || 0;
+    userResources.clay -= cost.clay || 0;
+    userResources.iron -= cost.iron || 0;
+
+    await repo.save(userResources);
+  }
+
+  async hasEnoughResources(
+    userId: number,
+    cost: ResourceCost,
+  ): Promise<boolean> {
+    const userResources = await this.repository.findOneByUserId(userId);
+    if (!userResources) {
+      throw new NotFoundException(
+        `Nie znaleziono zasobów dla użytkownika o ID: ${userId}`,
+      );
+    }
+
+    const hasWood = userResources.wood >= (cost.wood || 0);
+    const hasClay = userResources.clay >= (cost.clay || 0);
+    const hasIron = userResources.iron >= (cost.iron || 0);
+
+    return hasWood && hasClay && hasIron;
   }
 }

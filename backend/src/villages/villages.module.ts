@@ -6,12 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Village } from './entities/village.entity';
 import { UsersModule } from 'src/users/users.module';
 import { BuildingsModule } from 'src/buildings/buildings.module';
+import { ResourcesModule } from 'src/resources/resources.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Village]),
     forwardRef(() => UsersModule),
     forwardRef(() => BuildingsModule),
+    ResourcesModule,
   ],
   controllers: [VillagesController],
   providers: [VillagesService, VillagesRepository],

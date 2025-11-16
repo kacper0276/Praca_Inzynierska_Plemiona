@@ -8,12 +8,19 @@ import { Village } from '../entities/village.entity';
 import { VillageStateDto } from '../dto/village-state.dto';
 import { UsersRepository } from 'src/users/repositories/users.repository';
 import { BuildingData } from 'src/core/models/building.model';
+import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { ExpandVillageWsDto } from '../dto/expand-village-ws.dto';
+import { ResourcesService } from 'src/resources/services/resources.service';
+import { Building } from 'src/buildings/entities/building.entity';
 
 @Injectable()
 export class VillagesService {
   constructor(
     private readonly villagesRepository: VillagesRepository,
     private readonly usersRepository: UsersRepository,
+    private readonly resourcesService: ResourcesService,
+    @InjectDataSource() private readonly dataSource: DataSource,
   ) {}
 
   async getByUserId(userId: number): Promise<Village> {
@@ -108,5 +115,68 @@ export class VillagesService {
 
   async deleteVillage(id: number): Promise<void> {
     await this.villagesRepository.delete(id);
+  }
+
+  async expandVillage(
+    userId: number,
+    expandDto: ExpandVillageWsDto,
+  ): Promise<Village> {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const villageRepo = queryRunner.manager.getRepository(Village);
+      const buildingRepo = queryRunner.manager.getRepository(Building);
+
+      const village = await villageRepo.findOne({
+        where: { user: { id: userId } },
+        relations: ['user', 'buildings'],
+      });
+
+      if (!village) {
+        throw new Error('Nie znaleziono wioski dla tego użytkownika.');
+      }
+
+      if (village.gridSize >= 11) {
+        throw new Error('Osiągnięto maksymalny rozmiar wioski.');
+      }
+
+      const canAfford = await this.resourcesService.hasEnoughResources(
+        village.user.id,
+        expandDto.cost,
+      );
+
+      if (!canAfford) {
+        throw new Error('Niewystarczające surowce do rozbudowy.');
+      }
+
+      await this.resourcesService.spendResources(
+        village.user.id,
+        expandDto.cost,
+        queryRunner.manager,
+      );
+
+      village.gridSize += 1;
+
+      if (expandDto.side === 'left') {
+        for (const building of village.buildings) {
+          building.col += 1;
+          await buildingRepo.save(building);
+        }
+      }
+
+      const updatedVillage = await villageRepo.save(village);
+
+      await queryRunner.commitTransaction();
+
+      return updatedVillage;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

@@ -22,6 +22,7 @@ import { BuildingsService } from 'src/buildings/services/buildings.service';
 import { CreateBuildingWsDto } from 'src/buildings/dto/create-building-ws.dto';
 import { DeleteBuildingWsDto } from 'src/buildings/dto/delete-building-ws.dto';
 import { MoveBuildingWsDto } from 'src/buildings/dto/move-building-ws.dto';
+import { ExpandVillageWsDto } from 'src/villages/dto/expand-village-ws.dto';
 
 export interface AuthenticatedSocket extends Socket {
   user: User;
@@ -227,6 +228,33 @@ export class WsGateway
       this.logger.error(
         `Failed to delete building for ${client.user.email}: ${error.message}`,
       );
+    }
+  }
+
+  @SubscribeMessage(WsEvent.VILLAGE_EXPAND)
+  async handleVillageExpand(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: ExpandVillageWsDto,
+  ) {
+    this.logger.log(
+      `Użytkownik ${client.user.email} zażądał rozszerzenia wioski w stronę: ${payload.side}`,
+    );
+
+    try {
+      await this.villagesService.expandVillage(client.user.id, payload);
+
+      this.logger.log(
+        `Pomyślnie rozszerzono wioskę dla ${client.user.email}. Wysyłanie aktualizacji.`,
+      );
+      await this.handleGetVillageData(client);
+    } catch (error) {
+      this.logger.error(
+        `Błąd podczas rozszerzania wioski dla ${client.user.email}: ${error.message}`,
+      );
+
+      this.sendToUser(client.user.id, WsEvent.VILLAGE_DATA_ERROR, {
+        message: error.message || 'Nie udało się rozszerzyć wioski.',
+      });
     }
   }
 }
