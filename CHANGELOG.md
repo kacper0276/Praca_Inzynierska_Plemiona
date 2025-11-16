@@ -44,6 +44,7 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Zmiana formularza rejestracji
 - Poprawa w kodzie migracji
 - Zmieniono sposób łączenia się po webSocket (dodano zabezpieczenie w postaci tokenu)
+- Poprawiono sprawdzenie czy dana wioska jest zalogowanego użytkownika
 
 ### Removed
 
