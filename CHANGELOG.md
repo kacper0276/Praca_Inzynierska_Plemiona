@@ -37,6 +37,8 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Użycie transakcyjności dla tworzenia budynków
 - Dodanie podstawowego wyglądu panela administratora
 - Rozszerzanie wioski i pobieranie jest z backendu
+- Wysyłanie zgłoszeń na backend
+- Pobieranie profilu użytkownika z backendu
 
 ### Changed
 
@@ -45,6 +47,7 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Poprawa w kodzie migracji
 - Zmieniono sposób łączenia się po webSocket (dodano zabezpieczenie w postaci tokenu)
 - Poprawiono sprawdzenie czy dana wioska jest zalogowanego użytkownika
+- Zmieniona nazwa gry
 
 ### Removed
 
