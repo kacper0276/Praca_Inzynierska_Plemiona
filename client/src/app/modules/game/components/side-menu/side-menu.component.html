@@ -1,147 +1,192 @@
 <nav class="side-menu" [class.collapsed]="isCollapsed">
-  <div class="toggle-button-container">
-    <button
-      class="toggle-btn"
-      (click)="toggleCollapse()"
-      aria-label="Zwiń/rozwiń menu"
-    >
-      <mat-icon>{{ isCollapsed ? "menu" : "chevron_left" }}</mat-icon>
-    </button>
-  </div>
-
-  <div class="side-controls">
-    <div class="lang-flags">
+  <div class="menu-content">
+    <div class="toggle-button-container">
       <button
-        class="flag-btn"
-        [class.active]="currentLang === 'pl'"
-        (click)="setLanguage('pl')"
-        title="Polski"
+        class="toggle-btn"
+        (click)="toggleCollapse()"
+        aria-label="Zwiń/rozwiń menu"
       >
-        <img src="/assets/icons/pl-flag.png" alt="PL" />
-      </button>
-      <button
-        class="flag-btn"
-        [class.active]="currentLang === 'en'"
-        (click)="setLanguage('en')"
-        title="English"
-      >
-        <img src="/assets/icons/en-flag.png" alt="EN" />
+        <mat-icon>{{ isCollapsed ? "menu" : "chevron_left" }}</mat-icon>
       </button>
     </div>
 
-    <div class="theme-toggle">
-      <button
-        class="theme-btn"
-        (click)="toggleTheme()"
-        [title]="currentTheme === 'dark' ? 'Jasny motyw' : 'Ciemny motyw'"
-      >
-        <mat-icon [ngClass]="{ 'dark-icon': currentTheme === 'dark' }">{{
-          currentTheme === "dark" ? "dark_mode" : "light_mode"
-        }}</mat-icon>
-      </button>
+    <div class="side-controls">
+      <div class="lang-flags">
+        <button
+          class="flag-btn"
+          [class.active]="currentLang === 'pl'"
+          (click)="setLanguage('pl')"
+          title="Polski"
+        >
+          <img src="/assets/icons/pl-flag.png" alt="PL" />
+        </button>
+        <button
+          class="flag-btn"
+          [class.active]="currentLang === 'en'"
+          (click)="setLanguage('en')"
+          title="English"
+        >
+          <img src="/assets/icons/en-flag.png" alt="EN" />
+        </button>
+      </div>
+
+      <div class="theme-toggle">
+        <button
+          class="theme-btn"
+          (click)="toggleTheme()"
+          [title]="currentTheme === 'dark' ? 'Jasny motyw' : 'Ciemny motyw'"
+        >
+          <mat-icon [ngClass]="{ 'dark-icon': currentTheme === 'dark' }">{{
+            currentTheme === "dark" ? "dark_mode" : "light_mode"
+          }}</mat-icon>
+        </button>
+      </div>
     </div>
+
+    <ul>
+      <li
+        [class.active]="activeTab === 'village'"
+        [title]="isCollapsed ? 'Wioska' : null"
+      >
+        <a routerLink="village/kacper0276@op.pl">
+          <mat-icon>cottage</mat-icon>
+          <span *ngIf="!isCollapsed">Wioska</span>
+        </a>
+      </li>
+
+      <li
+        [class.active]="activeTab === 'map'"
+        [title]="isCollapsed ? 'Mapa' : null"
+      >
+        <a routerLink="map">
+          <mat-icon>map</mat-icon>
+          <span *ngIf="!isCollapsed">Mapa</span>
+        </a>
+      </li>
+
+      <li
+        [class.active]="activeTab === 'barracks'"
+        [title]="isCollapsed ? 'Koszary' : null"
+      >
+        <a routerLink="barracks">
+          <mat-icon>fort</mat-icon>
+          <span *ngIf="!isCollapsed">Koszary</span>
+        </a>
+      </li>
+
+      <li
+        [class.active]="activeTab === 'army'"
+        [title]="isCollapsed ? 'Armia' : null"
+      >
+        <a routerLink="army">
+          <mat-icon>shield</mat-icon>
+          <span *ngIf="!isCollapsed">Armia</span>
+        </a>
+      </li>
+
+      <li
+        [class.active]="activeTab === 'chat'"
+        [title]="isCollapsed ? 'Wiadomości' : null"
+      >
+        <a routerLink="chat">
+          <mat-icon>chat</mat-icon>
+          <span *ngIf="!isCollapsed">Wiadomości</span>
+        </a>
+      </li>
+
+      <li
+        [class.active]="activeTab === 'ranking'"
+        [title]="isCollapsed ? 'Ranking' : null"
+      >
+        <a routerLink="ranking">
+          <mat-icon>leaderboard</mat-icon>
+          <span *ngIf="!isCollapsed">Ranking</span>
+        </a>
+      </li>
+
+      <li
+        [class.active]="activeTab === 'clan'"
+        [title]="isCollapsed ? 'Klan' : null"
+      >
+        <a routerLink="clan">
+          <mat-icon>groups</mat-icon>
+          <span *ngIf="!isCollapsed">Klan</span>
+        </a>
+      </li>
+
+      <li
+        [class.active]="activeTab === 'invitations'"
+        [title]="isCollapsed ? 'Zaproszenia' : null"
+      >
+        <a routerLink="invitations">
+          <mat-icon>person_add</mat-icon>
+          <span *ngIf="!isCollapsed">Zaproszenia</span>
+        </a>
+      </li>
+
+      <li class="report-bug">
+        <a (click)="openBugReport()" title="Zgłoś błąd">
+          <mat-icon>bug_report</mat-icon>
+          <span *ngIf="!isCollapsed">Zgłoś błąd</span>
+        </a>
+      </li>
+
+      @if (currentUser?.role === 'admin') {
+      <li
+        [class.active]="activeTab === 'admin'"
+        [title]="isCollapsed ? 'Panel admina' : null"
+      >
+        <a routerLink="admin-panel">
+          <mat-icon>admin_panel_settings</mat-icon>
+          <span *ngIf="!isCollapsed">Panel admina</span>
+        </a>
+      </li>
+      }
+    </ul>
   </div>
 
-  <ul>
-    <li
-      [class.active]="activeTab === 'village'"
-      [title]="isCollapsed ? 'Wioska' : null"
+  <div class="user-profile">
+    <div
+      class="user-info"
+      (click)="toggleUserMenu()"
+      [class.collapsed]="isCollapsed"
     >
-      <a routerLink="village/kacper0276@op.pl">
-        <mat-icon>cottage</mat-icon>
-        <span *ngIf="!isCollapsed">Wioska</span>
-      </a>
-    </li>
+      <div class="user-avatar">
+        <img
+          *ngIf="currentUser?.profileImage"
+          [src]="currentUser?.profileImage"
+          alt="User Avatar"
+        />
+        <span *ngIf="!currentUser?.profileImage">{{ getInitials() }}</span>
+      </div>
+      <span *ngIf="!isCollapsed" class="user-name">{{
+        currentUser?.login
+      }}</span>
+    </div>
 
-    <li
-      [class.active]="activeTab === 'map'"
-      [title]="isCollapsed ? 'Mapa' : null"
-    >
-      <a routerLink="map">
-        <mat-icon>map</mat-icon>
-        <span *ngIf="!isCollapsed">Mapa</span>
-      </a>
-    </li>
-
-    <li
-      [class.active]="activeTab === 'barracks'"
-      [title]="isCollapsed ? 'Koszary' : null"
-    >
-      <a routerLink="barracks">
-        <mat-icon>fort</mat-icon>
-        <span *ngIf="!isCollapsed">Koszary</span>
-      </a>
-    </li>
-
-    <li
-      [class.active]="activeTab === 'army'"
-      [title]="isCollapsed ? 'Armia' : null"
-    >
-      <a routerLink="army">
-        <mat-icon>shield</mat-icon>
-        <span *ngIf="!isCollapsed">Armia</span>
-      </a>
-    </li>
-
-    <li
-      [class.active]="activeTab === 'chat'"
-      [title]="isCollapsed ? 'Wiadomości' : null"
-    >
-      <a routerLink="chat">
-        <mat-icon>chat</mat-icon>
-        <span *ngIf="!isCollapsed">Wiadomości</span>
-      </a>
-    </li>
-
-    <li
-      [class.active]="activeTab === 'ranking'"
-      [title]="isCollapsed ? 'Ranking' : null"
-    >
-      <a routerLink="ranking">
-        <mat-icon>leaderboard</mat-icon>
-        <span *ngIf="!isCollapsed">Ranking</span>
-      </a>
-    </li>
-
-    <li
-      [class.active]="activeTab === 'clan'"
-      [title]="isCollapsed ? 'Klan' : null"
-    >
-      <a routerLink="clan">
-        <mat-icon>groups</mat-icon>
-        <span *ngIf="!isCollapsed">Klan</span>
-      </a>
-    </li>
-
-    <li
-      [class.active]="activeTab === 'invitations'"
-      [title]="isCollapsed ? 'Zaproszenia' : null"
-    >
-      <a routerLink="invitations">
-        <mat-icon>person_add</mat-icon>
-        <span *ngIf="!isCollapsed">Zaproszenia</span>
-      </a>
-    </li>
-
-    <li class="report-bug">
-      <a (click)="openBugReport()" title="Zgłoś błąd">
-        <mat-icon>bug_report</mat-icon>
-        <span *ngIf="!isCollapsed">Zgłoś błąd</span>
-      </a>
-    </li>
-
-    @if (currentUser?.role === 'admin') {
-    <li
-      [class.active]="activeTab === 'admin'"
-      [title]="isCollapsed ? 'Panel admina' : null"
-    >
-      <a routerLink="admin-panel">
-        <mat-icon>admin_panel_settings</mat-icon>
-        <span *ngIf="!isCollapsed">Panel admina</span>
-      </a>
-    </li>
-    }
-  </ul>
+    <div class="user-menu" *ngIf="userMenuOpen && !isCollapsed">
+      <ul>
+        <li>
+          <a routerLink="/profile/edit">
+            <mat-icon>edit</mat-icon>
+            <span>Edycja konta</span>
+          </a>
+        </li>
+        <li>
+          <a [routerLink]="['/profile', currentUser?.email]">
+            <mat-icon>visibility</mat-icon>
+            <span>Widok profilu</span>
+          </a>
+        </li>
+        <li>
+          <a (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Wyloguj</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
 
   <app-bug-report
     *ngIf="bugModalOpen"

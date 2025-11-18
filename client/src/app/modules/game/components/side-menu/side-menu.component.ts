@@ -4,6 +4,8 @@ import { Theme } from '../../../../shared/types/theme.type';
 import { ThemeService } from '../../../../shared/services/theme.service';
 import { UserService } from '../../../auth/services/user.service';
 import { User } from '../../../../shared/models';
+import { AuthService } from '../../../auth/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-side-menu',
@@ -12,22 +14,25 @@ import { User } from '../../../../shared/models';
 })
 export class SideMenuComponent {
   @Input() activeTab: string = 'village';
-  isCollapsed = false;
-  currentLang = 'pl';
+  isCollapsed: boolean = false;
+  currentLang: string = 'pl';
   currentTheme: Theme = 'light';
-  bugModalOpen = false;
+  bugModalOpen: boolean = false;
   bug = {
     title: '',
     description: '',
     email: '',
   };
-  bugSubmitted = false;
+  bugSubmitted: boolean = false;
   currentUser: User | null = null;
+  userMenuOpen: boolean = false;
 
   constructor(
     private readonly translate: TranslateService,
     private readonly themeService: ThemeService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -80,5 +85,25 @@ export class SideMenuComponent {
 
   onBugSubmitted() {
     this.bugSubmitted = true;
+  }
+
+  toggleUserMenu() {
+    if (!this.isCollapsed) {
+      this.userMenuOpen = !this.userMenuOpen;
+    }
+  }
+
+  getInitials(): string {
+    if (this.currentUser) {
+      const firstName = this.currentUser.firstName || '';
+      const lastName = this.currentUser.lastName || '';
+      return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+    }
+    return '';
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/']);
   }
 }

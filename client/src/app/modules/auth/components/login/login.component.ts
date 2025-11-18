@@ -37,7 +37,6 @@ export class LoginComponent {
 
       this.authService.login(loginCredentials).subscribe({
         next: (res) => {
-          console.log(res);
           this.toastr.showSuccess(
             this.translateService.instant('auth.successfully-logged-in')
           );

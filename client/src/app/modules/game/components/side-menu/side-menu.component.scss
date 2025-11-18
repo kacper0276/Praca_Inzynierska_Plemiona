@@ -14,12 +14,82 @@ $theme-game-world-bg: $parchment-color;
 $side-menu-width: 200px;
 $side-menu-collapsed-width: 68px;
 
+.side-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: $side-menu-width;
+  background: var(--side-menu-bg, var(--panel));
+  padding: 15px;
+  border-right: 2px solid $theme-light-border;
+  height: 100%;
+  transition: width 0.3s ease-in-out;
+  overflow: hidden;
+
+  &.collapsed {
+    width: $side-menu-collapsed-width;
+    padding: 15px 10px;
+  }
+}
+
+.menu-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.toggle-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  height: 40px;
+
+  .side-menu.collapsed & {
+    justify-content: center;
+  }
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba($black, 0.08);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $theme-accent-color;
+    outline-offset: 2px;
+  }
+}
+
 .side-controls {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 8px 0;
   gap: 8px;
+
+  .side-menu.collapsed & {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 6px 0;
+    gap: 10px;
+  }
 }
 
 .lang-flags {
@@ -35,17 +105,28 @@ $side-menu-collapsed-width: 68px;
   background: transparent;
   border-radius: 3px;
   cursor: pointer;
-}
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
 
-.flag-btn img {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
+  img {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
 
-.flag-btn.active {
-  border-color: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.04) inset;
+  &.active {
+    border-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.04) inset;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  .side-menu.collapsed & {
+    width: 24px;
+    height: 16px;
+    padding: 1px;
+  }
 }
 
 .theme-toggle .theme-btn {
@@ -55,40 +136,15 @@ $side-menu-collapsed-width: 68px;
   padding: 4px;
   display: inline-flex;
   align-items: center;
-}
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
 
-.side-menu.collapsed {
-  .side-controls {
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 6px 0;
-    gap: 10px;
+  &:hover {
+    transform: translateY(-2px);
   }
 
-  .flag-btn {
-    width: 24px;
-    height: 16px;
-    padding: 1px;
-  }
-
-  .theme-toggle .theme-btn {
+  .side-menu.collapsed & {
     padding: 2px;
   }
-
-  ul li a mat-icon {
-    margin-right: 0;
-  }
-}
-
-.flag-btn,
-.theme-toggle .theme-btn {
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
-}
-
-.flag-btn:hover,
-.theme-toggle .theme-btn:hover {
-  transform: translateY(-2px);
 }
 
 body.dark-theme {
@@ -100,96 +156,128 @@ body.dark-theme {
   color: white;
 }
 
-.side-menu {
-  width: $side-menu-width;
-  background: var(--side-menu-bg, var(--panel));
-  padding: 15px;
-  border-right: 2px solid $theme-light-border;
-  flex-shrink: 0;
-  height: 100%;
-  transition: width 0.3s ease-in-out;
-  overflow: hidden;
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 
-  .toggle-button-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 10px;
-    height: 40px;
+  li {
+    margin-bottom: 5px;
+
+    a {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      text-decoration: none;
+      color: var(--text);
+      border-radius: 4px;
+      transition: background-color 0.2s, color 0.2s;
+      white-space: nowrap;
+
+      mat-icon {
+        margin-right: 15px;
+        transition: margin 0.3s ease-in-out;
+      }
+
+      .side-menu.collapsed & mat-icon {
+        margin-right: 0;
+      }
+    }
+
+    a:hover,
+    &.active a {
+      background-color: $theme-accent-color;
+      color: $theme-dark-text;
+    }
   }
 
-  .toggle-btn {
-    background: transparent;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    cursor: pointer;
+  .side-menu.collapsed & li a {
+    justify-content: center;
+  }
+}
+
+.user-profile {
+  margin-top: auto;
+  position: relative;
+
+  .user-info {
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: var(--text);
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
     transition: background-color 0.2s;
 
     &:hover {
       background-color: rgba($black, 0.08);
     }
 
-    &:focus {
-      outline: none;
-    }
-
-    &:focus-visible {
-      outline: 2px solid $theme-accent-color;
-      outline-offset: 2px;
+    &.collapsed {
+      justify-content: center;
     }
   }
 
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: $theme-accent-color;
+    color: $white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 10px;
+    overflow: hidden;
 
-    li {
-      margin-bottom: 5px;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-      a {
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        text-decoration: none;
-        color: var(--text);
-        border-radius: 4px;
-        transition: background-color 0.2s, color 0.2s;
-        white-space: nowrap;
-
-        mat-icon {
-          margin-right: 15px;
-          transition: margin 0.3s ease-in-out;
-        }
-      }
-
-      a:hover,
-      &.active a {
-        background-color: $theme-accent-color;
-        color: $theme-dark-text;
-      }
+    .side-menu.collapsed & {
+      margin-right: 0;
     }
   }
 
-  &.collapsed {
-    width: $side-menu-collapsed-width;
-    padding: 15px 10px;
+  .user-name {
+    color: var(--text);
+    font-weight: 500;
+  }
 
-    .toggle-button-container {
-      justify-content: center;
+  .user-menu {
+    position: absolute;
+    bottom: 60px;
+    left: 10px;
+    width: calc(100% - 20px);
+    background: var(--panel);
+    border: 1px solid $theme-light-border;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    overflow: hidden;
+
+    ul {
+      list-style: none;
+      padding: 5px 0;
+      margin: 0;
     }
 
-    ul li a {
-      justify-content: center;
+    li a {
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      color: var(--text);
+      text-decoration: none;
 
       mat-icon {
-        margin-right: 0;
+        margin-right: 10px;
+      }
+
+      &:hover {
+        background-color: $theme-accent-color;
+        color: $white;
       }
     }
   }
