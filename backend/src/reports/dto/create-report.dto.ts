@@ -1,14 +1,32 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
 export class CreateReportDto {
-  @ApiProperty({
-    description: 'ID użytkownika, który jest zgłaszany',
-    example: 2,
+  @ApiPropertyOptional({
+    description: 'email użytkownika, który jest zgłaszany',
+    example: 'email@example.com',
   })
-  @IsInt()
+  @IsOptional()
+  @IsEmail()
+  targetUser?: string;
+
+  @ApiProperty({
+    description: 'Tytuł opisu',
+    example: 'Obraźliwa wiadomość.',
+    minLength: 5,
+  })
+  @IsString()
   @IsNotEmpty()
-  targetUserId: number;
+  @MinLength(5, {
+    message: 'Tytuł zgłoszenia musi mieć co najmniej 5 znaków.',
+  })
+  title: string;
 
   @ApiProperty({
     description: 'Treść zgłoszenia, opis problemu',

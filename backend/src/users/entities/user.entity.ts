@@ -14,7 +14,7 @@ import { Village } from 'src/villages/entities/village.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   email: string;
 
   @Column({ nullable: false })

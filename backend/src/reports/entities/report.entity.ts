@@ -16,6 +16,9 @@ export class Report extends BaseEntity {
   })
   targetUser?: User;
 
+  @Column()
+  title: string;
+
   @Column({ type: 'longtext' })
   content: string;
 

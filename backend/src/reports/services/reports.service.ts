@@ -4,21 +4,40 @@ import { CreateReportDto } from '../dto/create-report.dto';
 import { ListReportsQueryDto } from '../dto/list-reports.query.dto';
 import { ReportsRepository } from '../repositories/reports.repository';
 import { Report } from '../entities/report.entity';
+import { UsersRepository } from 'src/users/repositories/users.repository';
 
 @Injectable()
 export class ReportsService {
-  constructor(private readonly reportsRepository: ReportsRepository) {}
+  constructor(
+    private readonly reportsRepository: ReportsRepository,
+    private readonly usersRepository: UsersRepository,
+  ) {}
 
   async createReport(
     reporterId: number,
     createReportDto: CreateReportDto,
   ): Promise<Report> {
-    const { targetUserId, content } = createReportDto;
+    const { targetUser, content, title } = createReportDto;
+
+    let targetUserEntity: User | null = null;
+
+    if (targetUser) {
+      targetUserEntity = await this.usersRepository.findOne({
+        email: targetUser,
+      });
+
+      if (!targetUserEntity) {
+        throw new NotFoundException(
+          `Użytkownik z adresem email '${targetUser}' nie został znaleziony.`,
+        );
+      }
+    }
 
     const entity = this.reportsRepository.create({
+      title,
       content,
       reporter: { id: reporterId } as User,
-      targetUser: { id: targetUserId } as User,
+      targetUser: targetUserEntity,
     });
 
     return this.reportsRepository.save(entity);

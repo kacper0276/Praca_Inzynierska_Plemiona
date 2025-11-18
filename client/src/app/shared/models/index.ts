@@ -9,3 +9,4 @@ export * from './server-status-log.model';
 export * from './resources.model';
 export * from './base.model';
 export * from './toast.model';
+export * from './report.model';
