@@ -54,6 +54,19 @@ export class UsersController {
     return users.map(({ password, ...rest }) => rest);
   }
 
+  @Get('by-email/:email')
+  @Authenticated()
+  @ApiOkResponse({ description: 'Dane użytkownika.' })
+  @ApiNotFoundResponse({
+    description: 'Użytkownik o podanym adresie email nie został znaleziony.',
+  })
+  @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
+  async findByEmail(@Param('email') email: string) {
+    const user = await this.usersService.findOneByEmail(email);
+    const { password, ...result } = user;
+    return result;
+  }
+
   @Get(':id')
   @Authenticated()
   @ApiOkResponse({ description: 'Dane użytkownika.' })

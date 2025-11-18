@@ -34,6 +34,10 @@ export class UserService {
     return this.http.get<User>('/auth/profile');
   }
 
+  getUserByEmail(email: string): Observable<ApiResponse<User>> {
+    return this.http.get<User>(`/users/by-email/${email}`);
+  }
+
   private getUserFromStorage(): User | null {
     const userJson = localStorage.getItem(this.USER_KEY);
     return userJson ? (JSON.parse(userJson) as User) : null;
