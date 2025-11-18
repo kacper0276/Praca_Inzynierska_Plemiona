@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../../../../shared/models';
 import { UserRole } from '../../../../shared/enums';
+import { ActivatedRoute } from '@angular/router';
+import { UserService } from '../../../auth/services/user.service';
 
 @Component({
   selector: 'app-profile',
@@ -8,23 +10,26 @@ import { UserRole } from '../../../../shared/enums';
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
-  user: User = {
-    email: 'anna.nowak@example.com',
-    login: 'annanowak',
-    firstName: 'Anna',
-    lastName: 'Nowak',
-    role: UserRole.USER,
-    backgroundImage: 'https://picsum.photos/id/1015/1000/300',
-    isActive: true,
-    isOnline: true,
-    bio: 'Entuzjastka gier RPG i podróży. Odkrywam nowe światy, zarówno w grach, jak i w rzeczywistości. Chętnie dzielę się swoimi doświadczeniami i poznaję nowych ludzi.',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+  user!: User;
 
-  constructor() {}
+  userEmail: string = '';
+
+  constructor(
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly userService: UserService
+  ) {
+    this.userEmail = this.activatedRoute.snapshot.params['userEmail'];
+  }
+
   ngOnInit(): void {
-    console.log('AAAA');
+    this.userService.getUserByEmail(this.userEmail).subscribe({
+      next: (res) => {
+        this.user = {
+          ...res.data,
+          backgroundImage: 'https://picsum.photos/id/1015/1000/300',
+        };
+      },
+    });
   }
 
   get userInitials(): string {

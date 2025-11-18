@@ -39,7 +39,10 @@
 
   <main class="main-content">
     <app-side-menu [activeTab]="activeTab"></app-side-menu>
-    <div class="game-world">
+    <div
+      class="game-world"
+      [ngStyle]="{ padding: router.url.includes('profile') ? '0' : null }"
+    >
       <router-outlet></router-outlet>
     </div>
   </main>

@@ -39,7 +39,7 @@ export class GameComponent implements OnInit {
 
   constructor(
     private readonly resourceService: ResourceService,
-    private readonly router: Router,
+    public readonly router: Router,
     private readonly webSocket: WebSocketService,
     private readonly usersService: UserService,
     private readonly serversService: ServersService
