@@ -3,6 +3,7 @@ import { UserService } from './modules/auth/services/user.service';
 import { Router } from '@angular/router';
 import { ToastrService } from './shared/services/toastr.service';
 import { TranslateService } from '@ngx-translate/core';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-root',
@@ -10,16 +11,20 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  title = 'Plemiona';
+  title: string = 'Plemiona';
+  isDesktopDevice: boolean = false;
 
   constructor(
     private readonly userService: UserService,
     private readonly router: Router,
     private readonly toastrService: ToastrService,
-    private readonly translateService: TranslateService
+    private readonly translateService: TranslateService,
+    private readonly deviceService: DeviceDetectorService
   ) {}
 
   ngOnInit(): void {
+    this.checkDevice();
+
     this.userService.getUserFromToken().subscribe({
       next: (res) => {
         this.userService.setUser(res.data);
@@ -32,5 +37,9 @@ export class AppComponent implements OnInit {
         );
       },
     });
+  }
+
+  private checkDevice(): void {
+    this.isDesktopDevice = this.deviceService.isDesktop();
   }
 }

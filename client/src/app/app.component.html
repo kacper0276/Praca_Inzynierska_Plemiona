@@ -1,4 +1,4 @@
-<div class="app-root">
+<div class="app-root" *ngIf="isDesktopDevice; else mobileContent">
   <main>
     <router-outlet></router-outlet>
   </main>
@@ -6,3 +6,13 @@
   <app-spinner />
   <app-toastr></app-toastr>
 </div>
+
+<ng-template #mobileContent>
+  <div class="mobile-message">
+    <h1>Aplikacja dostępna tylko na komputer</h1>
+    <p>
+      Przepraszamy, ta aplikacja nie jest dostępna na urządzenia mobilne i
+      tablety.
+    </p>
+  </div>
+</ng-template>
