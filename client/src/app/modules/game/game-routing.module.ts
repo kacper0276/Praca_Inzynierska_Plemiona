@@ -26,10 +26,15 @@ const gameRoutes: Routes = [
       {
         path: 'admin-panel',
         loadChildren: () =>
-          import('./components/admin-panel/admin-panel.module').then(
+          import('../admin-panel/admin-panel.module').then(
             (m) => m.AdminPanelModule
           ),
         canActivate: [adminGuardGuard],
+      },
+      {
+        path: 'profile',
+        loadChildren: () =>
+          import('../profile/profile.module').then((m) => m.ProfileModule),
       },
       { path: 'invitations', component: InvitesComponent },
       { path: '', redirectTo: 'village', pathMatch: 'full' },

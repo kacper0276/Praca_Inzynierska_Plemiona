@@ -1,0 +1,168 @@
+@use "../../../../../styles/variables.scss" as *;
+@use "../../../../../styles/mixins.scss" as *;
+
+$profile-bg: var(--panel, $white);
+$profile-text: var(--text, $black-200);
+$profile-border: var(--border, $gray-200);
+$online-color: $green-500;
+$offline-color: $gray-500;
+$avatar-size: 150px;
+$status-size: 24px;
+
+.profile-container {
+  max-width: 850px;
+  margin: 3rem auto;
+  background-color: $profile-bg;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: $profile-text;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px -15px rgba(0, 0, 0, 0.25);
+  }
+}
+
+.profile-header {
+  height: 220px;
+  .background-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  padding: 0 2.5rem 2.5rem;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+}
+
+.profile-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: calc(-#{$avatar-size} / 2);
+  flex-shrink: 0;
+
+  @media (min-width: 768px) {
+    margin-right: 2.5rem;
+    width: 200px;
+  }
+}
+
+.avatar-container {
+  position: relative;
+  width: $avatar-size;
+  height: $avatar-size;
+  border-radius: 50%;
+  border: 6px solid $profile-bg;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.avatar-image,
+.initials-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.initials-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, $blue-500, $blue-700);
+  color: $white;
+  font-size: 3rem;
+  font-weight: 600;
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: $status-size;
+  height: $status-size;
+  border-radius: 50%;
+  background-color: $offline-color;
+  border: 4px solid $profile-bg;
+  transition: background-color 0.3s ease;
+
+  &.online {
+    background-color: $online-color;
+  }
+}
+
+.user-main-info {
+  text-align: center;
+  margin-top: 1rem;
+  .user-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+  }
+  .user-login {
+    font-size: 1.1rem;
+    color: $gray-600;
+    font-weight: 300;
+    margin-top: 0.25rem;
+  }
+}
+
+.profile-details {
+  flex-grow: 1;
+  padding-top: 2rem;
+}
+
+.details-section {
+  margin-bottom: 2rem;
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid $profile-border;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  p {
+    line-height: 1.7;
+    color: $gray-700;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    li {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid $gray-100;
+      &:last-child {
+        border-bottom: none;
+      }
+      .label {
+        font-weight: 600;
+        color: $gray-700;
+      }
+      .value {
+        color: $gray-600;
+      }
+    }
+  }
+}
+
+.footer-buttons {
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid $profile-border;
+}

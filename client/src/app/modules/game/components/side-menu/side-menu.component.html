@@ -127,7 +127,7 @@
       <li class="report-bug">
         <a (click)="openBugReport()" title="Zgłoś błąd">
           <mat-icon>bug_report</mat-icon>
-          <span *ngIf="!isCollapsed">Zgłoś błąd</span>
+          <span *ngIf="!isCollapsed">Zgłoś problem</span>
         </a>
       </li>
 
@@ -173,7 +173,7 @@
           </a>
         </li>
         <li>
-          <a [routerLink]="['/profile', currentUser?.email]">
+          <a [routerLink]="['profile', currentUser?.email]">
             <mat-icon>visibility</mat-icon>
             <span>Widok profilu</span>
           </a>

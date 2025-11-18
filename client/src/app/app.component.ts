@@ -11,7 +11,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  title: string = 'Plemiona';
+  title: string = 'Terra Bellum';
   isDesktopDevice: boolean = false;
 
   constructor(

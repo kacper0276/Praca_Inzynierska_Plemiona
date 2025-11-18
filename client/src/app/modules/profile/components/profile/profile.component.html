@@ -1,0 +1,64 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <img
+      [src]="user.backgroundImage || 'assets/images/default-background.jpg'"
+      alt="Tło profilu"
+      class="background-image"
+    />
+  </div>
+
+  <div class="profile-content">
+    <div class="profile-sidebar">
+      <div class="avatar-container">
+        <ng-container *ngIf="user.profileImage; else initialsAvatar">
+          <img
+            [src]="user.profileImage"
+            alt="Awatar użytkownika"
+            class="avatar-image"
+          />
+        </ng-container>
+        <ng-template #initialsAvatar>
+          <div class="initials-avatar">
+            <span>{{ userInitials }}</span>
+          </div>
+        </ng-template>
+
+        <div class="status-indicator" [class.online]="user.isOnline"></div>
+      </div>
+
+      <div class="user-main-info">
+        <h1 class="user-name">{{ user.firstName }} {{ user.lastName }}</h1>
+        <h2 class="user-login">{{ user.login }}</h2>
+      </div>
+    </div>
+
+    <div class="profile-details">
+      <div class="details-section">
+        <h3>O mnie</h3>
+        <p>{{ user.bio || "Brak opisu." }}</p>
+      </div>
+
+      <div class="details-section">
+        <h3>Informacje</h3>
+        <ul>
+          <li>
+            <span class="label">Email:</span>
+            <span class="value">{{ user.email }}</span>
+          </li>
+          <li>
+            <span class="label">Rola:</span>
+            <span class="value">{{ user.role }}</span>
+          </li>
+          <li>
+            <span class="label">Konto aktywne:</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-buttons">
+        <button class="btn btn-secondary">Wyślij wiadomość</button>
+        <button class="btn btn-primary">Edytuj profil</button>
+      </div>
+    </div>
+  </div>
+</div>

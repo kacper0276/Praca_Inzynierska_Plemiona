@@ -13,7 +13,6 @@ import { RankingComponent } from './components/ranking/ranking.component';
 import { BuildingDetailsPopupComponent } from './components/grid/components/building-details-popup/building-details-popup.component';
 import { BuildModalComponent } from './components/build/build-modal.component';
 import { UpgradeModalComponent } from './components/upgrade/upgrade-modal.component';
-import { MatIconModule } from '@angular/material/icon';
 import { ClanCreateComponent } from './components/clan-create/clan-create.component';
 import { ArmyComponent } from './components/army/army.component';
 import { InvitesComponent } from './components/invites/invites.component';
@@ -34,12 +33,6 @@ import { InvitesComponent } from './components/invites/invites.component';
     ArmyComponent,
     InvitesComponent,
   ],
-  imports: [
-    SharedModule,
-    FormsModule,
-    DragDropModule,
-    GameRoutingModule,
-    MatIconModule,
-  ],
+  imports: [SharedModule, FormsModule, DragDropModule, GameRoutingModule],
 })
 export class GameModule {}
