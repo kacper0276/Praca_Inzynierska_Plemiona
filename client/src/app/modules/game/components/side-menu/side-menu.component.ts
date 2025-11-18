@@ -18,11 +18,6 @@ export class SideMenuComponent {
   currentLang: string = 'pl';
   currentTheme: Theme = 'light';
   bugModalOpen: boolean = false;
-  bug = {
-    title: '',
-    description: '',
-    email: '',
-  };
   bugSubmitted: boolean = false;
   currentUser: User | null = null;
   userMenuOpen: boolean = false;
@@ -68,19 +63,10 @@ export class SideMenuComponent {
   openBugReport() {
     this.bugModalOpen = true;
     this.bugSubmitted = false;
-    this.bug = { title: '', description: '', email: '' };
   }
 
   closeBugModal() {
     this.bugModalOpen = false;
-  }
-
-  submitBugReport() {
-    console.log('Bug report submitted', this.bug);
-    this.bugSubmitted = true;
-    setTimeout(() => {
-      this.bugModalOpen = false;
-    }, 1200);
   }
 
   onBugSubmitted() {

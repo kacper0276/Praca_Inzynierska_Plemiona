@@ -16,14 +16,14 @@
         Opis
         <textarea
           name="description"
-          [(ngModel)]="bug.description"
+          [(ngModel)]="bug.content"
           required
         ></textarea>
       </label>
 
       <label>
         Email (opcjonalnie)
-        <input name="email" type="email" [(ngModel)]="bug.email" />
+        <input name="email" type="email" [(ngModel)]="bug.targetUser" />
       </label>
 
       <div class="modal-actions">

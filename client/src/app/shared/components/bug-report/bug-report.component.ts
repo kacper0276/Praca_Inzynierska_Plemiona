@@ -1,4 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { ReportsService } from '../../../modules/game/services/reports.service';
+import { CreateReport } from '../../../modules/game/interfaces/create-report.interface';
+import { ToastrService } from '../../services/toastr.service';
 
 @Component({
   selector: 'app-bug-report',
@@ -9,13 +12,18 @@ export class BugReportComponent {
   @Output() closed = new EventEmitter<void>();
   @Output() submitted = new EventEmitter<void>();
 
-  bug = {
+  bug: CreateReport = {
     title: '',
-    description: '',
-    email: '',
+    content: '',
+    targetUser: null,
   };
 
-  bugSubmitted = false;
+  bugSubmitted: boolean = false;
+
+  constructor(
+    private readonly reportsService: ReportsService,
+    private readonly toastrService: ToastrService
+  ) {}
 
   close() {
     this.closed.emit();
@@ -23,9 +31,24 @@ export class BugReportComponent {
 
   submit(form: any) {
     if (!form || !form.valid) return;
-    console.log('Bug report submitted', this.bug);
-    this.bugSubmitted = true;
-    this.submitted.emit();
-    setTimeout(() => this.closed.emit(), 1200);
+
+    const reportData: CreateReport = {
+      ...this.bug,
+      targetUser: this.bug.targetUser === '' ? null : this.bug.targetUser,
+    };
+
+    this.reportsService.generateReport(reportData).subscribe({
+      next: (res) => {
+        this.closed.emit();
+        this.toastrService.showSuccess('Wysłano zgłoszenie');
+      },
+      error: (err) => {
+        this.toastrService.showError(err.error.message[0]);
+      },
+      complete: () => {
+        this.bugSubmitted = true;
+        this.submitted.emit();
+      },
+    });
   }
 }
