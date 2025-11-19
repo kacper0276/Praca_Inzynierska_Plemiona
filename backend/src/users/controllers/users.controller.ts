@@ -11,6 +11,8 @@ import {
   HttpStatus,
   ForbiddenException,
   Request,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import {
@@ -28,12 +30,20 @@ import { UserRole } from 'src/core/enums/user-role.enum';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { Authenticated } from 'src/core/decorators/authenticated.decorator';
+import { AuthService } from 'src/auth/services/auth.service';
+import { ConfigService } from 'src/core/config/config.service';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { MulterConfigInterceptor } from 'src/core/interceptors/multer-config.interceptor';
 
 @ApiTags('Users')
 @ApiBearerAuth('access-token')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post()
   @Roles(UserRole.ADMIN)
@@ -82,20 +92,26 @@ export class UsersController {
     return result;
   }
 
-  @Patch(':id')
+  @Patch(':email')
   @Authenticated()
   @ApiOkResponse({ description: 'Użytkownik pomyślnie zaktualizowany.' })
   @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
+  @UseInterceptors(MulterConfigInterceptor)
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('email') email: string,
     @Body() updateUserDto: UpdateUserDto,
     @Request() req: any,
+    @UploadedFiles()
+    files: {
+      profileImage?: Express.Multer.File[];
+      backgroundImage?: Express.Multer.File[];
+    },
   ) {
     const userMakingRequest = req.user;
 
     if (
-      userMakingRequest.role !== UserRole.ADMIN &&
-      userMakingRequest.id !== id
+      userMakingRequest.role !== UserRole.ADMIN ||
+      userMakingRequest.email !== email
     ) {
       throw new ForbiddenException(
         'Nie masz uprawnień do edycji tego profilu.',
@@ -106,9 +122,21 @@ export class UsersController {
       throw new ForbiddenException('Nie możesz zmienić swojej roli.');
     }
 
-    const updatedUser = await this.usersService.update(id, updateUserDto);
+    const updatedUser = await this.usersService.update(
+      email,
+      updateUserDto,
+      files,
+    );
+
+    const tokens = await this.authService.login(updatedUser);
+
     const { password, ...result } = updatedUser;
-    return result;
+
+    return {
+      user: result,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    };
   }
 
   @Delete(':id')

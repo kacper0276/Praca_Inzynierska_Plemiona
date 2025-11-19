@@ -7,7 +7,7 @@ import { BuildingsModule } from 'src/buildings/buildings.module';
 @Global()
 @Module({
   imports: [
-    UsersModule,
+    forwardRef(() => UsersModule),
     forwardRef(() => VillagesModule),
     forwardRef(() => BuildingsModule),
   ],

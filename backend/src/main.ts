@@ -7,9 +7,13 @@ import * as bodyParser from 'body-parser';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './core/filters/all-exceptions.filter';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true,
+  });
   app.setGlobalPrefix('api');
 
   const configService = app.get(ConfigService);
@@ -48,6 +52,10 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.use(bodyParser.json({ limit: '10mb' }));
+
+  app.useStaticAssets(join(__dirname, '..', 'public'), {
+    prefix: '/public/',
+  });
 
   await app.listen(port);
 }

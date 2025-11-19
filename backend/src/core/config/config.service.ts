@@ -10,6 +10,10 @@ import { DatabaseConfig } from '../json-config/interfaces/database-config.interf
 import { MailerConfig } from '../json-config/interfaces/mailer-config.interface';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { MigrationConfig } from '../json-config/interfaces/migration-config.interface';
+import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { v4 as uuidvv4 } from 'uuid';
 
 @Injectable()
 export class ConfigService {
@@ -64,6 +68,27 @@ export class ConfigService {
         options: {
           strict: true,
         },
+      },
+    };
+  }
+
+  public getMulterConfigOptions(): MulterOptions {
+    return {
+      storage: diskStorage({
+        destination: './public/uploads',
+        filename: (req, file, cb) => {
+          const randomName = uuidvv4();
+          cb(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+          return cb(new Error('Tylko pliki graficzne są dozwolone!'), false);
+        }
+        cb(null, true);
+      },
+      limits: {
+        fileSize: 1024 * 1024 * 5,
       },
     };
   }

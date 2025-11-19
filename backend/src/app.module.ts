@@ -29,6 +29,8 @@ import { ServersModule } from './servers/servers.module';
 import { MessageInterceptor } from './core/interceptors/message.interceptor';
 import { CoreModule } from './core/core.module';
 import { BuildingsModule } from './buildings/buildings.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -90,6 +92,12 @@ import { BuildingsModule } from './buildings/buildings.module';
     ScheduleModule.forRoot(),
     CacheModule.register({
       isGlobal: true,
+    }),
+
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+
+      serveRoot: '/',
     }),
 
     CoreModule,
