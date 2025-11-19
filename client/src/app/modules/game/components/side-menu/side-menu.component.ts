@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Theme } from '../../../../shared/types/theme.type';
 import { ThemeService } from '../../../../shared/services/theme.service';
@@ -6,13 +6,15 @@ import { UserService } from '../../../auth/services/user.service';
 import { User } from '../../../../shared/models';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Router } from '@angular/router';
+import { environment } from '../../../../../environments/environment';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-side-menu',
   templateUrl: './side-menu.component.html',
   styleUrls: ['./side-menu.component.scss'],
 })
-export class SideMenuComponent {
+export class SideMenuComponent implements OnInit, OnDestroy {
   @Input() activeTab: string = 'village';
   isCollapsed: boolean = false;
   currentLang: string = 'pl';
@@ -21,6 +23,9 @@ export class SideMenuComponent {
   bugSubmitted: boolean = false;
   currentUser: User | null = null;
   userMenuOpen: boolean = false;
+  backendUrl: string = environment.serverBaseUrl;
+
+  userSub: Subscription | null = null;
 
   constructor(
     private readonly translate: TranslateService,
@@ -42,7 +47,11 @@ export class SideMenuComponent {
     const serviceTheme = this.themeService.theme || 'light';
     this.currentTheme = serviceTheme;
 
-    this.currentUser = this.userService.getCurrentUser();
+    this.userSub = this.userService.currentUser$.subscribe({
+      next: (res) => {
+        this.currentUser = res;
+      },
+    });
   }
 
   toggleCollapse() {
@@ -91,5 +100,9 @@ export class SideMenuComponent {
   logout() {
     this.authService.logout();
     this.router.navigate(['/']);
+  }
+
+  ngOnDestroy(): void {
+    this.userSub?.unsubscribe();
   }
 }

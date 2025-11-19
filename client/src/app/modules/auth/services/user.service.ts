@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { ApiResponse, User } from '../../../shared/models';
 import { HttpService } from '../../../shared/services/http.service';
+import { TokenService } from './token.service';
+import { UpdateUser } from '../interfaces/update-user.interface';
+import { UpdateUserResposne } from '../interfaces/update-user-response.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +15,10 @@ export class UserService {
     this.getUserFromStorage()
   );
 
-  constructor(private readonly http: HttpService) {}
+  constructor(
+    private readonly http: HttpService,
+    private readonly tokenService: TokenService
+  ) {}
 
   public currentUser$: Observable<User | null> =
     this.currentUserSubject.asObservable();
@@ -41,5 +47,41 @@ export class UserService {
   private getUserFromStorage(): User | null {
     const userJson = localStorage.getItem(this.USER_KEY);
     return userJson ? (JSON.parse(userJson) as User) : null;
+  }
+
+  updateUser(
+    originalEmail: string,
+    userData: UpdateUser,
+    profileImage?: File | null,
+    backgroundImage?: File | null
+  ): Observable<ApiResponse<UpdateUserResposne>> {
+    const formData = new FormData();
+
+    Object.keys(userData).forEach((key) => {
+      const value = (userData as any)[key];
+      if (value !== null && value !== undefined) {
+        formData.append(key, value);
+      }
+    });
+
+    if (profileImage) {
+      formData.append('profileImage', profileImage, profileImage.name);
+    }
+    if (backgroundImage) {
+      formData.append('backgroundImage', backgroundImage, backgroundImage.name);
+    }
+
+    return this.http
+      .patch<UpdateUserResposne>(`/users/${originalEmail}`, formData)
+      .pipe(
+        tap((response) => {
+          const { user, accessToken, refreshToken } = response.data;
+
+          this.setUser(user);
+
+          this.tokenService.setJwtToken(accessToken);
+          this.tokenService.setRefreshToken(refreshToken);
+        })
+      );
   }
 }

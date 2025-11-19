@@ -3,6 +3,7 @@ import { User } from '../../../../shared/models';
 import { UserRole } from '../../../../shared/enums';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../../auth/services/user.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-profile',
@@ -11,6 +12,7 @@ import { UserService } from '../../../auth/services/user.service';
 })
 export class ProfileComponent implements OnInit {
   user!: User;
+  backendUrl: string = environment.serverBaseUrl;
 
   userEmail: string = '';
 
@@ -24,10 +26,9 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.userService.getUserByEmail(this.userEmail).subscribe({
       next: (res) => {
-        this.user = {
-          ...res.data,
-          backgroundImage: 'https://picsum.photos/id/1015/1000/300',
-        };
+        this.user = res.data;
+
+        console.log(res.data);
       },
     });
   }

@@ -154,7 +154,7 @@
       <div class="user-avatar">
         <img
           *ngIf="currentUser?.profileImage"
-          [src]="currentUser?.profileImage"
+          [src]="backendUrl + currentUser?.profileImage"
           alt="User Avatar"
         />
         <span *ngIf="!currentUser?.profileImage">{{ getInitials() }}</span>
@@ -167,13 +167,16 @@
     <div class="user-menu" *ngIf="userMenuOpen && !isCollapsed">
       <ul>
         <li>
-          <a routerLink="/profile/edit">
+          <a routerLink="profile/edit" (click)="toggleUserMenu()">
             <mat-icon>edit</mat-icon>
             <span>Edycja konta</span>
           </a>
         </li>
         <li>
-          <a [routerLink]="['profile', currentUser?.email]">
+          <a
+            [routerLink]="['profile', currentUser?.email]"
+            (click)="toggleUserMenu()"
+          >
             <mat-icon>visibility</mat-icon>
             <span>Widok profilu</span>
           </a>

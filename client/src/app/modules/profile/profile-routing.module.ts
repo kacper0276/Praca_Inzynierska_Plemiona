@@ -9,8 +9,8 @@ const routes: Routes = [
     path: '',
     component: AppProfileComponent,
     children: [
-      { path: ':userEmail', component: ProfileComponent },
       { path: 'edit', component: EditProfileComponent },
+      { path: ':userEmail', component: ProfileComponent },
     ],
   },
 ];

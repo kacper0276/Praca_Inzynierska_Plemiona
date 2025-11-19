@@ -1,1 +1,131 @@
-<p>edit-profile works!</p>
+<div class="profile-container" *ngIf="user">
+  <div class="profile-header">
+    <img
+      [src]="
+        backgroundImagePreview ||
+        backendUrl + user.backgroundImage ||
+        'assets/images/default-background.jpg'
+      "
+      alt="Tło profilu"
+      class="background-image"
+    />
+    <button
+      type="button"
+      class="btn-change-bg"
+      (click)="backgroundInput.click()"
+    >
+      <i class="icon-camera"></i> Zmień tło
+    </button>
+    <input
+      type="file"
+      #backgroundInput
+      (change)="onFileSelected($event, 'background')"
+      accept="image/*"
+      hidden
+    />
+  </div>
+
+  <div class="profile-content">
+    <div class="profile-sidebar">
+      <div class="avatar-container" (click)="profileInput.click()">
+        <ng-container
+          *ngIf="profileImagePreview || user.profileImage; else initialsAvatar"
+        >
+          <img
+            [src]="profileImagePreview || backendUrl + user.profileImage"
+            alt="Awatar użytkownika"
+            class="avatar-image"
+          />
+        </ng-container>
+        <ng-template #initialsAvatar>
+          <div class="initials-avatar">
+            <span>{{ userInitials }}</span>
+          </div>
+        </ng-template>
+
+        <div class="upload-overlay">
+          <i class="icon-camera"></i>
+          <span>Zmień</span>
+        </div>
+
+        <div
+          [class.bind]="'status-indicator'"
+          [class.online]="user.isOnline"
+        ></div>
+        <input
+          type="file"
+          #profileInput
+          (change)="onFileSelected($event, 'profile')"
+          accept="image/*"
+          hidden
+        />
+      </div>
+
+      <div class="user-main-info">
+        <h1 class="user-name">{{ user.firstName }} {{ user.lastName }}</h1>
+        <h2 class="user-login">{{ user.login }}</h2>
+      </div>
+    </div>
+
+    <div class="profile-details">
+      <form
+        class="profile-form"
+        [formGroup]="profileForm"
+        (ngSubmit)="saveChanges()"
+      >
+        <h3>Edytuj profil</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">Imię</label>
+            <input
+              id="firstName"
+              type="text"
+              formControlName="firstName"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Nazwisko</label>
+            <input
+              id="lastName"
+              type="text"
+              formControlName="lastName"
+              class="form-control"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="login">Login</label>
+          <input
+            id="login"
+            type="text"
+            formControlName="login"
+            class="form-control"
+          />
+        </div>
+        <div class="form-group">
+          <label for="bio">O mnie</label>
+          <textarea
+            id="bio"
+            formControlName="bio"
+            class="form-control"
+            rows="5"
+            placeholder="Napisz coś o sobie..."
+          ></textarea>
+        </div>
+        <div class="footer-buttons">
+          <button type="button" class="btn btn-secondary">Anuluj</button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="
+              !profileForm.valid && !profileImageFile && !backgroundImageFile
+            "
+          >
+            Zapisz zmiany
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
