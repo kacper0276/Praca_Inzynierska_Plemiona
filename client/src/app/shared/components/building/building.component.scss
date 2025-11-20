@@ -4,13 +4,11 @@
   position: relative;
   width: 80px;
   height: 80px;
-  // border: 1px dashed $white-200;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  // background-color: $sand-color;
 
   &:hover {
     transform: scale(1.05);

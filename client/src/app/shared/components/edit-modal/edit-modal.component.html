@@ -1,0 +1,53 @@
+@if (isVisible) {
+<div class="modal-overlay" (click)="closeModal()">
+  <div class="modal-panel" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Edytuj element</h3>
+      <button class="icon-btn" (click)="closeModal()" aria-label="Zamknij">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="modal-content">
+      @for (col of formColumns; track col.key) {
+      <div class="form-group">
+        <label [for]="col.key">{{ col.header }}</label>
+
+        @if (isBooleanField(col.key)) {
+        <div class="checkbox-wrapper">
+          <input
+            type="checkbox"
+            class="styled-checkbox"
+            [id]="col.key"
+            [(ngModel)]="editableItem[col.key]"
+          />
+          <label [for]="col.key" class="checkbox-label">
+            {{ editableItem[col.key] ? "Rozwiązany" : "Nie rozwiązany" }}
+          </label>
+        </div>
+        }@else {
+        <input
+          type="text"
+          [id]="col.key"
+          [ngModel]="getValue(col)"
+          (ngModelChange)="updateValue(col, $event)"
+          [disabled]="col.isReadOnly ?? false"
+          class="form-control"
+        />
+        }
+      </div>
+      }
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-danger" (click)="deleteItem()">Usuń</button>
+      <div class="actions-right">
+        <button class="btn btn-secondary" (click)="closeModal()">Anuluj</button>
+        <button class="btn btn-primary" (click)="saveChanges()">
+          Zapisz zmiany
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+}

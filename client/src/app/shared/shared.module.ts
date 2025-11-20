@@ -16,6 +16,9 @@ import { BugReportComponent } from './components/bug-report/bug-report.component
 import { MultiSelectComponent } from './components/multi-select/multi-select.component';
 import { ToastrComponent } from './components/toastr/toastr.component';
 import { SetTitleDirective } from './directives/set-title.directive';
+import { TableComponent } from './components/table/table.component';
+import { EditModalComponent } from './components/edit-modal/edit-modal.component';
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +33,9 @@ import { SetTitleDirective } from './directives/set-title.directive';
     MultiSelectComponent,
     ToastrComponent,
     SetTitleDirective,
+    TableComponent,
+    EditModalComponent,
+    ConfirmationDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -57,6 +63,9 @@ import { SetTitleDirective } from './directives/set-title.directive';
     MultiSelectComponent,
     ToastrComponent,
     SetTitleDirective,
+    TableComponent,
+    EditModalComponent,
+    ConfirmationDialogComponent,
   ],
 })
 export class SharedModule {}
