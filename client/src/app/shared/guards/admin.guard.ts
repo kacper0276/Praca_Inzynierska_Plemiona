@@ -1,15 +1,15 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { catchError, map, of } from 'rxjs';
 import { UserService } from '../../modules/auth/services/user.service';
+import { catchError, map, of } from 'rxjs';
 
-export const noAuthGuardGuard: CanActivateFn = (route, state) => {
+export const adminGuard: CanActivateFn = (route, state) => {
   const userService = inject(UserService);
   const router = inject(Router);
 
   return userService.getUserFromToken().pipe(
     map((res) => {
-      if (!res.data) {
+      if (res.data && res.data.role === 'admin') {
         return true;
       } else {
         router.navigate([`/game/village/${res.data.email}`]);
@@ -17,8 +17,8 @@ export const noAuthGuardGuard: CanActivateFn = (route, state) => {
       }
     }),
     catchError(() => {
-      router.navigate([`/game/village/${userService.getCurrentUser()?.email}`]);
-      return of(true);
+      router.navigate(['/login']);
+      return of(false);
     })
   );
 };
