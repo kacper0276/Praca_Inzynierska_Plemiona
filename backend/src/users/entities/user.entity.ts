@@ -47,7 +47,7 @@ export class User extends BaseEntity {
   @Column({ default: '' })
   bio: string;
 
-  @Column()
+  @Column({ default: null })
   deleteAt: Date | null;
 
   @OneToOne(() => Resources, (resources) => resources.user)
