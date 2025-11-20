@@ -10,3 +10,4 @@ export * from './resources.model';
 export * from './base.model';
 export * from './toast.model';
 export * from './report.model';
+export * from './friend-request.model';

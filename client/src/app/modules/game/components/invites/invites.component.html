@@ -1,1 +1,35 @@
-<p>invites works!</p>
+<div class="invites-container">
+  <h2>Znajdź znajomych</h2>
+  <div class="search-box">
+    <input
+      type="text"
+      placeholder="Wpisz login użytkownika..."
+      class="search-input"
+      (keyup)="onSearch($event)"
+    />
+  </div>
+
+  @if (searchResults.length > 0) {
+  <ul class="results-list">
+    @for (user of searchResults; track user.id) {
+    <li class="result-item">
+      <div class="user-info">
+        <img
+          [src]="user.profileImage || 'assets/images/default-avatar.png'"
+          alt="Avatar użytkownika"
+          class="user-avatar"
+        />
+        <span class="user-login">{{ user.login }}</span>
+      </div>
+      <button
+        class="add-friend-btn"
+        [disabled]="sentInvites.has(user.email)"
+        (click)="sendInvite(user.email)"
+      >
+        {{ sentInvites.has(user.email) ? "Wysłano" : "Dodaj" }}
+      </button>
+    </li>
+    }
+  </ul>
+  }
+</div>
