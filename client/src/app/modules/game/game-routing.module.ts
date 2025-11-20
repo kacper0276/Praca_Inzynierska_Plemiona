@@ -9,7 +9,7 @@ import { RankingComponent } from './components/ranking/ranking.component';
 import { ClanCreateComponent } from './components/clan-create/clan-create.component';
 import { ArmyComponent } from './components/army/army.component';
 import { InvitesComponent } from './components/invites/invites.component';
-import { adminGuardGuard } from '../../shared/guards/admin-guard.guard';
+import { adminGuard } from '../../shared/guards/admin.guard';
 
 const gameRoutes: Routes = [
   {
@@ -29,7 +29,7 @@ const gameRoutes: Routes = [
           import('../admin-panel/admin-panel.module').then(
             (m) => m.AdminPanelModule
           ),
-        canActivate: [adminGuardGuard],
+        canActivate: [adminGuard],
       },
       {
         path: 'profile',
