@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ResourceService } from '../../services/resource.service';
+import { ResourcesService } from '../../services/resources.service';
 import { Unit } from '../../../../shared/models';
 import { UnitType } from '../../../../shared/enums';
 
@@ -13,7 +13,7 @@ export class ArmyComponent implements OnInit {
   selectedUnitId: UnitType | null = null;
   createAmount = 1;
 
-  constructor(private resourceService: ResourceService) {}
+  constructor(private resourcesService: ResourcesService) {}
 
   ngOnInit(): void {
     this.units = [
@@ -62,7 +62,7 @@ export class ArmyComponent implements OnInit {
       iron: this.selectedUnit.cost.iron * amount,
     };
 
-    const spent = this.resourceService.spendResources(totalCost as any);
+    const spent = this.resourcesService.spendResources(totalCost as any);
     if (!spent) return;
     this.selectedUnit.count += amount;
   }
@@ -74,7 +74,7 @@ export class ArmyComponent implements OnInit {
       iron: Math.round(unit.cost.iron * 2),
     };
 
-    const spent = this.resourceService.spendResources(upgradeCost as any);
+    const spent = this.resourcesService.spendResources(upgradeCost as any);
     if (!spent) return;
     unit.level += 1;
     unit.cost = upgradeCost;
@@ -83,7 +83,7 @@ export class ArmyComponent implements OnInit {
   private canAfford(cost: { wood: number; stone: number; iron: number }) {
     let current: any = null;
     try {
-      this.resourceService.resources$
+      this.resourcesService.resources$
         .subscribe((val) => (current = val))
         .unsubscribe();
     } catch (e) {

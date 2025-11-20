@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ResourceService } from '../../services/resource.service';
+import { ResourcesService } from '../../services/resources.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from '../../../../shared/services/toastr.service';
 import { Resources } from '../../../../shared/models';
@@ -23,7 +23,7 @@ export class ClanCreateComponent implements OnInit {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly resSvc: ResourceService,
+    private readonly resSvc: ResourcesService,
     private readonly toastr: ToastrService,
     private readonly translate: TranslateService
   ) {

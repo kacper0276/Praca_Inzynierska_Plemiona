@@ -6,7 +6,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { ResourceService } from '../../services/resource.service';
+import { ResourcesService } from '../../services/resources.service';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BuildingData,
@@ -133,7 +133,7 @@ export class GridComponent implements OnInit, OnDestroy {
   public timeLeft$: Observable<number>;
 
   constructor(
-    private readonly resourceService: ResourceService,
+    private readonly resourcesService: ResourcesService,
     private readonly elementRef: ElementRef,
     private readonly gatheringService: GatheringService,
     private readonly toastr: ToastrService,
@@ -167,7 +167,7 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   canAfford(cost: Partial<Resources>): boolean {
-    const svc: any = this.resourceService as any;
+    const svc: any = this.resourcesService as any;
     if (typeof svc.canAfford === 'function') {
       return svc.canAfford(cost);
     }
@@ -202,7 +202,7 @@ export class GridComponent implements OnInit, OnDestroy {
     this.setupVillageDataListeners();
 
     if (this.isOwnVillage) {
-      this.resourceService.resources$.subscribe((res) => {
+      this.resourcesService.resources$.subscribe((res) => {
         this.resources = res;
       });
       this.gatheringService.start(1000 * 10);
@@ -506,7 +506,7 @@ export class GridComponent implements OnInit, OnDestroy {
   buildBuilding(building: BuildingData, cost: Partial<Resources>): void {
     if (!this.isOwnVillage) return;
     if (this.buildRow === null || this.buildCol === null) return;
-    if (this.resourceService.spendResources(cost)) {
+    if (this.resourcesService.spendResources(cost)) {
       this.webSocketService.send(WebSocketEvent.BUILDING_CREATE, {
         name: building.name,
         row: this.buildRow,
@@ -550,7 +550,7 @@ export class GridComponent implements OnInit, OnDestroy {
     if (!this.isOwnVillage) return;
     if (this.selectedBuildingRow === null || this.selectedBuildingCol === null)
       return;
-    if (this.resourceService.spendResources(event.cost)) {
+    if (this.resourcesService.spendResources(event.cost)) {
       const building =
         this.buildings[this.selectedBuildingRow][this.selectedBuildingCol];
       if (building) {

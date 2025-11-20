@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, take } from 'rxjs/operators';
-import { ResourceService } from '../../services/resource.service';
+import { ResourcesService } from '../../services/resources.service';
 import { WebSocketService } from '../../../../shared/services/web-socket.service';
 import { UserService } from '../../../auth/services/user.service';
 import { Resources, Server } from '../../../../shared/models';
@@ -38,7 +38,7 @@ export class GameComponent implements OnInit {
   };
 
   constructor(
-    private readonly resourceService: ResourceService,
+    private readonly resourcesService: ResourcesService,
     public readonly router: Router,
     private readonly webSocket: WebSocketService,
     private readonly usersService: UserService,
@@ -54,9 +54,9 @@ export class GameComponent implements OnInit {
 
   ngOnInit(): void {
     const userEmail = this.usersService.getCurrentUser()?.email;
-    this.resourceService.fetchResources(userEmail ?? '').subscribe({
+    this.resourcesService.fetchResources(userEmail ?? '').subscribe({
       next: (res) => {
-        this.resourceService.setResources(res.data);
+        this.resourcesService.setResources(res.data);
         this.resources = res.data;
       },
     });
@@ -68,7 +68,7 @@ export class GameComponent implements OnInit {
       },
     });
 
-    this.resourcesSubscription = this.resourceService.resources$.subscribe({
+    this.resourcesSubscription = this.resourcesService.resources$.subscribe({
       next: (res) => {
         this.resources = res;
       },
@@ -77,14 +77,14 @@ export class GameComponent implements OnInit {
 
   public buildFarm(): void {
     const cost = { wood: 75, clay: 50, iron: 20, population: 5 };
-    if (this.resourceService.spendResources(cost)) {
+    if (this.resourcesService.spendResources(cost)) {
     } else {
       console.log('Nie udało się zbudować farmy - za mało surowców.');
     }
   }
 
   public collectWood(): void {
-    this.resourceService.addResource('wood', 100);
+    this.resourcesService.addResource('wood', 100);
   }
 
   closeModal(): void {

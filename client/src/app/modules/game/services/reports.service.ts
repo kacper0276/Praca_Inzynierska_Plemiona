@@ -14,7 +14,7 @@ export class ReportsService {
     return this.httpService.post<Report>('/reports', newReport);
   }
 
-  getAllReports(): Observable<ApiResponse<Report>> {
-    return this.httpService.get<Report>('/reports');
+  getAllReports(): Observable<ApiResponse<Report[]>> {
+    return this.httpService.get<Report[]>('/reports');
   }
 }

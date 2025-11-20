@@ -8,7 +8,7 @@ import { WebSocketEvent } from '../../../shared/enums';
 @Injectable({
   providedIn: 'root',
 })
-export class ResourceService implements OnDestroy {
+export class ResourcesService implements OnDestroy {
   private resourcesSubject = new BehaviorSubject<Resources>({
     wood: 0,
     clay: 0,
@@ -37,6 +37,10 @@ export class ResourceService implements OnDestroy {
 
   public fetchResources(email: string): Observable<ApiResponse<Resources>> {
     return this.httpService.get<Resources>(`/resources/user/${email}`);
+  }
+
+  public fetchAllResources(): Observable<ApiResponse<Resources[]>> {
+    return this.httpService.get<Resources[]>(`/resources`);
   }
 
   public setResources(resources: Resources): void {
