@@ -39,6 +39,9 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Rozszerzanie wioski i pobieranie jest z backendu
 - Wysyłanie zgłoszeń na backend
 - Pobieranie profilu użytkownika z backendu
+- Stworzenie własnego komponetu do potwierdzania informacji
+- Stworzenie własnego komponentu tabeli
+- Dodanie popupa dla edycji
 
 ### Changed
 
