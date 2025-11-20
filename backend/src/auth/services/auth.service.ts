@@ -146,6 +146,7 @@ export class AuthService {
     }
 
     user.isActive = true;
+    user.deleteAt = null;
     return this.usersRepository.save(user);
   }
 

@@ -23,27 +23,63 @@ export class JobsService {
     private readonly wsGateway: WsGateway,
   ) {}
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
-  async handleInactiveUsers() {
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async handleMarkInactiveUsersForDeletion() {
     this.logger.log(
-      'Uruchamianie zadania czyszczenia nieaktywnych użytkowników...',
+      'Uruchamianie zadania oznaczania nieaktywnych użytkowników do usunięcia...',
     );
 
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-
     const inactiveUsers =
-      await this.usersRepository.findInactiveUsersCreatedBefore(fiveMinutesAgo);
+      await this.usersRepository.findInactiveUsersNotMarkedForDeletion();
 
-    if (inactiveUsers.length > 0) {
+    if (inactiveUsers.length === 0) {
       this.logger.log(
-        `Znaleziono ${inactiveUsers.length} nieaktywnych użytkowników do usunięcia.`,
+        'Nie znaleziono nowych nieaktywnych użytkowników do oznaczenia.',
       );
-      for (const user of inactiveUsers) {
+      return;
+    }
+
+    this.logger.log(
+      `Znaleziono ${inactiveUsers.length} nieaktywnych użytkowników do oznaczenia.`,
+    );
+
+    const fiveDaysFromNow = new Date();
+    fiveDaysFromNow.setDate(fiveDaysFromNow.getDate() + 5);
+
+    for (const user of inactiveUsers) {
+      user.deleteAt = fiveDaysFromNow;
+      await this.usersRepository.save(user);
+      this.logger.log(
+        `Użytkownik o ID: ${user.id} został oznaczony do usunięcia w dniu ${fiveDaysFromNow.toISOString()}.`,
+      );
+    }
+  }
+
+  @Cron(CronExpression.EVERY_HOUR)
+  async handleDeleteMarkedUsers() {
+    this.logger.log(
+      'Uruchamianie zadania usuwania oznaczonych użytkowników...',
+    );
+
+    const now = new Date();
+
+    const usersToDelete =
+      await this.usersRepository.findInactiveUsersMarkedToDeleteBefore(now);
+
+    if (usersToDelete.length > 0) {
+      this.logger.log(
+        `Znaleziono ${usersToDelete.length} użytkowników do usunięcia.`,
+      );
+      for (const user of usersToDelete) {
         await this.usersRepository.delete(user.id);
-        this.logger.log(`Usunięto użytkownika o ID: ${user.id}`);
+        this.logger.log(
+          `Usunięto użytkownika o ID: ${user.id}, email: ${user.email}`,
+        );
       }
     } else {
-      this.logger.log('Nie znaleziono nieaktywnych użytkowników do usunięcia.');
+      this.logger.log(
+        'Nie znaleziono użytkowników, których termin usunięcia minął.',
+      );
     }
   }
 

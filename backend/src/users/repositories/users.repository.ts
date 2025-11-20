@@ -1,6 +1,6 @@
 import { BaseRepository } from 'src/core/repositories/base.repository';
 import { User } from '../entities/user.entity';
-import { LessThan, Repository } from 'typeorm';
+import { IsNull, LessThan, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -55,6 +55,24 @@ export class UsersRepository extends BaseRepository<User> {
       where: {
         isActive: false,
         createdAt: LessThan(date),
+      },
+    });
+  }
+
+  async findInactiveUsersMarkedToDeleteBefore(date: Date): Promise<User[]> {
+    return this.repository.find({
+      where: {
+        isActive: false,
+        deleteAt: LessThan(date),
+      },
+    });
+  }
+
+  async findInactiveUsersNotMarkedForDeletion(): Promise<User[]> {
+    return this.repository.find({
+      where: {
+        isActive: false,
+        deleteAt: IsNull(),
       },
     });
   }

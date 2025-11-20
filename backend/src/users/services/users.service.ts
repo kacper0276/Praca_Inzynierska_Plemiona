@@ -10,6 +10,7 @@ import { User } from '../entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import * as fs from 'fs/promises';
 import { join } from 'path';
+import { UpdateUserDeletionTimeDto } from '../dto/update-user-deletion-time.dto';
 
 @Injectable()
 export class UsersService {
@@ -127,5 +128,19 @@ export class UsersService {
     user.isOnline = isOnline;
 
     await this.usersRepository.save(user);
+  }
+
+  async setDeletionTime(
+    userId: number,
+    dto: UpdateUserDeletionTimeDto,
+  ): Promise<User> {
+    const user = await this.usersRepository.findOneById(userId);
+    if (!user) {
+      throw new NotFoundException('Użytkownik nie został znaleziony.');
+    }
+
+    user.deleteAt = dto.deleteAt;
+
+    return this.usersRepository.save(user);
   }
 }

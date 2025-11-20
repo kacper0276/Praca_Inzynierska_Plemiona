@@ -31,9 +31,8 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { Authenticated } from 'src/core/decorators/authenticated.decorator';
 import { AuthService } from 'src/auth/services/auth.service';
-import { ConfigService } from 'src/core/config/config.service';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { MulterConfigInterceptor } from 'src/core/interceptors/multer-config.interceptor';
+import { UpdateUserDeletionTimeDto } from '../dto/update-user-deletion-time.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth('access-token')
@@ -41,7 +40,6 @@ import { MulterConfigInterceptor } from 'src/core/interceptors/multer-config.int
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
-    private readonly configService: ConfigService,
     private readonly authService: AuthService,
   ) {}
 
@@ -137,6 +135,23 @@ export class UsersController {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
     };
+  }
+
+  @Patch(':id/set-deletion-time')
+  @HttpCode(HttpStatus.OK)
+  @Roles(UserRole.ADMIN)
+  @ApiOkResponse({
+    description: 'Data usunięcia użytkownika pomyślnie zaktualizowana.',
+  })
+  @ApiNotFoundResponse({ description: 'Użytkownik nie znaleziony.' })
+  @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
+  async setDeletionTime(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateUserDeletionTimeDto,
+  ) {
+    const user = await this.usersService.setDeletionTime(id, dto);
+    const { password, ...result } = user;
+    return result;
   }
 
   @Delete(':id')
