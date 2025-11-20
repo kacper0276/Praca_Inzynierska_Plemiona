@@ -54,6 +54,38 @@ export class UsersController {
     return result;
   }
 
+  @Post('friends/invite-by-email/:email')
+  @Authenticated()
+  @ApiCreatedResponse({
+    description: 'Zaproszenie do znajomych zostało wysłane.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Użytkownik o podanym e-mailu nie został znaleziony.',
+  })
+  @ApiConflictResponse({ description: 'Zaproszenie już istnieje.' })
+  async sendFriendRequestByEmail(
+    @Param('email') email: string,
+    @Request() req: any,
+  ) {
+    const senderId = req.user.sub;
+    return this.usersService.sendFriendRequestByEmail(senderId, email);
+  }
+
+  @Post('friends/invite/:receiverId')
+  @Authenticated()
+  @ApiCreatedResponse({
+    description: 'Zaproszenie do znajomych zostało wysłane.',
+  })
+  @ApiNotFoundResponse({ description: 'Użytkownik nie został znaleziony.' })
+  @ApiConflictResponse({ description: 'Zaproszenie już istnieje.' })
+  async sendFriendRequest(
+    @Param('receiverId', ParseIntPipe) receiverId: number,
+    @Request() req: any,
+  ) {
+    const senderId = req.user.sub;
+    return this.usersService.sendFriendRequest(senderId, receiverId);
+  }
+
   @Get()
   @Roles(UserRole.ADMIN)
   @ApiOkResponse({ description: 'Lista wszystkich użytkowników.' })
@@ -73,6 +105,15 @@ export class UsersController {
     const user = await this.usersService.findOneByEmail(email);
     const { password, ...result } = user;
     return result;
+  }
+
+  @Get('search/:query')
+  @Authenticated()
+  @ApiOkResponse({ description: 'Lista użytkowników pasujących do zapytania.' })
+  async searchUsers(@Param('query') query: string, @Request() req: any) {
+    const currentUserId = req.user.sub;
+    const users = await this.usersService.searchUsers(query, currentUserId);
+    return users;
   }
 
   @Get(':id')

@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { UsersRepository } from '../repositories/users.repository';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -11,10 +12,17 @@ import * as bcrypt from 'bcryptjs';
 import * as fs from 'fs/promises';
 import { join } from 'path';
 import { UpdateUserDeletionTimeDto } from '../dto/update-user-deletion-time.dto';
+import { FriendRequestsRepository } from 'src/friend-requests/repositories/friend-requests.repository';
+import { FriendRequestStatus } from 'src/core/enums/friend-request-status.enum';
+import { FriendRequest } from 'src/friend-requests/entities/friend-request.entity';
+import { ILike, In, Not } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly friendRequestsRepository: FriendRequestsRepository,
+  ) {}
 
   async findAll(): Promise<User[]> {
     return this.usersRepository.findAll();
@@ -142,5 +150,76 @@ export class UsersService {
     user.deleteAt = dto.deleteAt;
 
     return this.usersRepository.save(user);
+  }
+
+  async sendFriendRequestByEmail(
+    senderId: number,
+    receiverEmail: string,
+  ): Promise<FriendRequest> {
+    const receiver = await this.usersRepository.findOneByEmail(receiverEmail);
+    if (!receiver) {
+      throw new NotFoundException(
+        `User with email ${receiverEmail} not found.`,
+      );
+    }
+    return this.sendFriendRequest(senderId, receiver.id);
+  }
+
+  async searchUsers(query: string, currentUserId: number): Promise<User[]> {
+    if (!query) {
+      return [];
+    }
+    const currentUser = await this.usersRepository.findOneById(currentUserId, {
+      relations: ['friends'],
+    });
+    if (!currentUser) {
+      throw new NotFoundException('Current user not found');
+    }
+    const friendIds = currentUser.friends.map((friend) => friend.id);
+    const idsToExclude = [currentUserId, ...friendIds];
+
+    return this.usersRepository.find({
+      where: {
+        login: ILike(`%${query}%`),
+        id: Not(In(idsToExclude)),
+      },
+      select: ['id', 'login', 'profileImage', 'email'],
+      take: 10,
+    });
+  }
+
+  async sendFriendRequest(
+    senderId: number,
+    receiverId: number,
+  ): Promise<FriendRequest> {
+    if (senderId === receiverId) {
+      throw new BadRequestException(
+        'You cannot send a friend request to yourself.',
+      );
+    }
+
+    const sender = await this.findOne(senderId);
+    const receiver = await this.findOne(receiverId);
+
+    const existingRequests = await this.friendRequestsRepository.find({
+      where: [
+        { sender: { id: senderId }, receiver: { id: receiverId } },
+        { sender: { id: receiverId }, receiver: { id: senderId } },
+      ],
+    });
+
+    if (existingRequests.length > 0) {
+      throw new ConflictException(
+        'A friend request already exists between these users.',
+      );
+    }
+
+    const newRequest = this.friendRequestsRepository.create({
+      sender,
+      receiver,
+      status: FriendRequestStatus.PENDING,
+    });
+
+    return this.friendRequestsRepository.save(newRequest);
   }
 }

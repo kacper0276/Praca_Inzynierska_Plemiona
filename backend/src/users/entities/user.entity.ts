@@ -11,6 +11,7 @@ import { BaseEntity } from '../../core/entities/base.entity';
 import { Resources } from 'src/resources/entities/resources.entity';
 import { UserRole } from 'src/core/enums/user-role.enum';
 import { Village } from 'src/villages/entities/village.entity';
+import { FriendRequest } from '../../friend-requests/entities/friend-request.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -62,4 +63,10 @@ export class User extends BaseEntity {
   @ManyToMany(() => User, (user) => user.friends)
   @JoinTable({ name: 'user_friends' })
   friends: User[];
+
+  @OneToMany(() => FriendRequest, (request) => request.sender)
+  sentFriendRequests: FriendRequest[];
+
+  @OneToMany(() => FriendRequest, (request) => request.receiver)
+  receivedFriendRequests: FriendRequest[];
 }

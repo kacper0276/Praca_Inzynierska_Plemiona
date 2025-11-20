@@ -16,6 +16,10 @@ export class UsersRepository extends BaseRepository<User> {
     return this.repository.find(options);
   }
 
+  find(options?: any): Promise<User[]> {
+    return this.repository.find(options);
+  }
+
   findOne(where: Partial<User>, options?: any): Promise<User | null> {
     return this.repository.findOne({ where, ...options });
   }
