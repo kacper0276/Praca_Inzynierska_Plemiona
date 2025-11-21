@@ -26,4 +26,8 @@ export enum WsEvent {
   BUILDING_CREATE = 'building_create',
   BUILDING_MOVE = 'building_move',
   BUILDING_DELETE = 'building_delete',
+
+  // Friend
+  FRIEND_REQUEST_RECEIVED = 'friend_request_received',
+  PENDING_FRIEND_REQUESTS_COUNT = 'pending_friend_requests_count',
 }

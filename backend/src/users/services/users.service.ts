@@ -3,6 +3,8 @@ import {
   NotFoundException,
   ConflictException,
   BadRequestException,
+  forwardRef,
+  Inject,
 } from '@nestjs/common';
 import { UsersRepository } from '../repositories/users.repository';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -16,12 +18,16 @@ import { FriendRequestsRepository } from 'src/friend-requests/repositories/frien
 import { FriendRequestStatus } from 'src/core/enums/friend-request-status.enum';
 import { FriendRequest } from 'src/friend-requests/entities/friend-request.entity';
 import { ILike, In, Not } from 'typeorm';
+import { WsGateway } from 'src/core/gateways/ws.gateway';
+import { WsEvent } from 'src/core/enums/ws-event.enum';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly friendRequestsRepository: FriendRequestsRepository,
+    @Inject(forwardRef(() => WsGateway))
+    private readonly wsGateway: WsGateway,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -220,6 +226,17 @@ export class UsersService {
       status: FriendRequestStatus.PENDING,
     });
 
-    return this.friendRequestsRepository.save(newRequest);
+    const savedRequest = await this.friendRequestsRepository.save(newRequest);
+
+    this.wsGateway.sendToUser(receiverId, WsEvent.FRIEND_REQUEST_RECEIVED, {
+      id: savedRequest.id,
+      sender: {
+        id: sender.id,
+        login: sender.login,
+        profileImage: sender.profileImage,
+      },
+    });
+
+    return savedRequest;
   }
 }

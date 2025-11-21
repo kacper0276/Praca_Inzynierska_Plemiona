@@ -31,7 +31,7 @@ export class BuildingsService {
     @Inject(forwardRef(() => VillagesRepository))
     private readonly villagesRepository: VillagesRepository,
     @InjectDataSource() private readonly dataSource: DataSource,
-    private readonly wsGateway: WsGateway,
+    @Inject(forwardRef(() => WsGateway)) private readonly wsGateway: WsGateway,
   ) {}
 
   findAllForVillage(villageId: number) {

@@ -42,6 +42,10 @@ export class FriendRequestsRepository extends BaseRepository<FriendRequest> {
     return this.repository.save({ ...entity, id });
   }
 
+  count(options?: any): Promise<number> {
+    return this.repository.count(options);
+  }
+
   async delete(id: number): Promise<void> {
     await this.repository.delete(id);
   }

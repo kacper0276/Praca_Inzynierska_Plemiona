@@ -23,6 +23,8 @@ import { CreateBuildingWsDto } from 'src/buildings/dto/create-building-ws.dto';
 import { DeleteBuildingWsDto } from 'src/buildings/dto/delete-building-ws.dto';
 import { MoveBuildingWsDto } from 'src/buildings/dto/move-building-ws.dto';
 import { ExpandVillageWsDto } from 'src/villages/dto/expand-village-ws.dto';
+import { FriendRequestsRepository } from 'src/friend-requests/repositories/friend-requests.repository';
+import { FriendRequestStatus } from '../enums/friend-request-status.enum';
 
 export interface AuthenticatedSocket extends Socket {
   user: User;
@@ -36,12 +38,14 @@ export class WsGateway
   server: Server;
 
   constructor(
+    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     @Inject(forwardRef(() => VillagesService))
     private readonly villagesService: VillagesService,
     @Inject(forwardRef(() => BuildingsService))
     private readonly buildingsService: BuildingsService,
+    private readonly friendRequestsRepository: FriendRequestsRepository,
     private readonly logger: FileLogger,
   ) {}
 
@@ -79,6 +83,17 @@ export class WsGateway
       this.logger.log(
         `Client connected and authenticated: ${user.email} (ID: ${client.id})`,
       );
+
+      const pendingRequestsCount = await this.friendRequestsRepository.count({
+        where: {
+          receiver: { id: user.id },
+          status: FriendRequestStatus.PENDING,
+        },
+      });
+
+      this.sendToUser(user.id, WsEvent.PENDING_FRIEND_REQUESTS_COUNT, {
+        count: pendingRequestsCount,
+      });
 
       this.server.emit(WsEvent.USER_CONNECTED, {
         userId: user.id,

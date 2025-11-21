@@ -3,6 +3,7 @@ import { WsGateway } from './gateways/ws.gateway';
 import { UsersModule } from 'src/users/users.module';
 import { VillagesModule } from 'src/villages/villages.module';
 import { BuildingsModule } from 'src/buildings/buildings.module';
+import { FriendRequestsModule } from 'src/friend-requests/friend-requests.module';
 
 @Global()
 @Module({
@@ -10,6 +11,7 @@ import { BuildingsModule } from 'src/buildings/buildings.module';
     forwardRef(() => UsersModule),
     forwardRef(() => VillagesModule),
     forwardRef(() => BuildingsModule),
+    forwardRef(() => FriendRequestsModule),
   ],
   providers: [WsGateway],
   exports: [WsGateway],
