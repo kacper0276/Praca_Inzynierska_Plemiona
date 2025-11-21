@@ -16,7 +16,7 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Podstawowe grafiki
 - Dodanie pliku `README.md` z podstawowym opisem projektu.
 
-## [0.0.2] - 05.11.2025 - 16.11.2025
+## [0.0.2] - 05.11.2025 - 21.11.2025
 
 ### Added
 
@@ -42,6 +42,7 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Stworzenie własnego komponetu do potwierdzania informacji
 - Stworzenie własnego komponentu tabeli
 - Dodanie popupa dla edycji
+- Dodanie podstrony by wysłać zaproszenia do znajomych
 
 ### Changed
 

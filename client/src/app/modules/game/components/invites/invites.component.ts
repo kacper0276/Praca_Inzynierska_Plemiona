@@ -8,6 +8,8 @@ import {
 } from 'rxjs';
 import { UsersService } from '../../services/users.service';
 import { UserSearchResult } from '../../interfaces/user-search-result.interface';
+import { environment } from '../../../../../environments/environment';
+import { FriendRequestsService } from '../../services/friend-requests.service';
 
 @Component({
   selector: 'app-invites',
@@ -15,13 +17,18 @@ import { UserSearchResult } from '../../interfaces/user-search-result.interface'
   styleUrl: './invites.component.scss',
 })
 export class InvitesComponent {
+  backendUrl: string = environment.serverBaseUrl;
+
   public searchTerm = new Subject<string>();
   public searchResults: UserSearchResult[] = [];
   public sentInvites: Set<string> = new Set();
 
   private searchSubscription!: Subscription;
 
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly friendRequestsService: FriendRequestsService
+  ) {}
 
   ngOnInit(): void {
     this.searchSubscription = this.searchTerm
@@ -34,6 +41,14 @@ export class InvitesComponent {
         next: (users) => (this.searchResults = users.data),
         error: (err) => console.error('Błąd podczas wyszukiwania:', err),
       });
+
+    this.friendRequestsService.getSentFriendRequests().subscribe({
+      next: (res) => {
+        res.data.forEach((fr) => {
+          this.sentInvites.add(fr.receiver.email);
+        });
+      },
+    });
   }
 
   onSearch(event: Event): void {
@@ -42,13 +57,14 @@ export class InvitesComponent {
   }
 
   sendInvite(userEmail: string): void {
-    this.usersService.sendFriendInviteByEmail(userEmail).subscribe({
+    this.friendRequestsService.sendFriendInviteByEmail(userEmail).subscribe({
       next: () => {
         this.sentInvites.add(userEmail);
       },
       error: (err) => console.error('Błąd podczas wysyłania zaproszenia:', err),
     });
   }
+
   ngOnDestroy(): void {
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();

@@ -15,7 +15,9 @@
     <li class="result-item">
       <div class="user-info">
         <img
-          [src]="user.profileImage || 'assets/images/default-avatar.png'"
+          [src]="
+            backendUrl + user.profileImage || 'assets/images/default-avatar.png'
+          "
           alt="Avatar użytkownika"
           class="user-avatar"
         />

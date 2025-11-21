@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../../../shared/services/http.service';
 import { UserSearchResult } from '../interfaces/user-search-result.interface';
-import { ApiResponse, FriendRequest } from '../../../shared/models';
+import { ApiResponse } from '../../../shared/models';
 import { Observable, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -14,22 +14,5 @@ export class UsersService {
     }
 
     return this.httpService.get<UserSearchResult[]>(`/users/search/${query}`);
-  }
-
-  sendFriendInvite(receiverId: number): Observable<ApiResponse<FriendRequest>> {
-    return this.httpService.post<FriendRequest>(
-      `/users/friends/invite/${receiverId}`,
-      {}
-    );
-  }
-
-  sendFriendInviteByEmail(
-    receiverEmail: string
-  ): Observable<ApiResponse<FriendRequest>> {
-    const encodedEmail = encodeURIComponent(receiverEmail);
-    return this.httpService.post<FriendRequest>(
-      `/users/friends/invite-by-email/${encodedEmail}`,
-      {}
-    );
   }
 }
