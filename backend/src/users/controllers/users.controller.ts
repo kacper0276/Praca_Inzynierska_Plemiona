@@ -110,6 +110,7 @@ export class UsersController {
   @Get('search/:query')
   @Authenticated()
   @ApiOkResponse({ description: 'Lista użytkowników pasujących do zapytania.' })
+  @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
   async searchUsers(@Param('query') query: string, @Request() req: any) {
     const currentUserId = req.user.sub;
     const users = await this.usersService.searchUsers(query, currentUserId);
@@ -120,6 +121,7 @@ export class UsersController {
   @Authenticated()
   @ApiOkResponse({ description: 'Dane użytkownika.' })
   @ApiNotFoundResponse({ description: 'Użytkownik nie znaleziony.' })
+  @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
   async findOne(@Param('id', ParseIntPipe) id: number, @Request() req) {
     if (req.user.role !== UserRole.ADMIN && req.user.sub !== id) {
       throw new ForbiddenException(
