@@ -121,6 +121,12 @@
         <a routerLink="invitations">
           <mat-icon>person_add</mat-icon>
           <span *ngIf="!isCollapsed">Zaproszenia</span>
+
+          <ng-container *ngIf="pendingRequestsCount$ | async as count">
+            <span *ngIf="count > 0" class="notification-badge">{{
+              count
+            }}</span>
+          </ng-container>
         </a>
       </li>
 

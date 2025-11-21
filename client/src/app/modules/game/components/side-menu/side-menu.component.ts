@@ -7,7 +7,8 @@ import { User } from '../../../../shared/models';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Router } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { FriendRequestNotificationService } from '../../../../shared/services/friend-request-notification.service';
 
 @Component({
   selector: 'app-side-menu',
@@ -27,12 +28,15 @@ export class SideMenuComponent implements OnInit, OnDestroy {
 
   userSub: Subscription | null = null;
 
+  pendingRequestsCount$!: Observable<number>;
+
   constructor(
     private readonly translate: TranslateService,
     private readonly themeService: ThemeService,
     private readonly userService: UserService,
     private readonly authService: AuthService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly friendRequestNotificationService: FriendRequestNotificationService
   ) {}
 
   ngOnInit(): void {
@@ -52,6 +56,9 @@ export class SideMenuComponent implements OnInit, OnDestroy {
         this.currentUser = res;
       },
     });
+
+    this.pendingRequestsCount$ =
+      this.friendRequestNotificationService.pendingRequestsCount$;
   }
 
   toggleCollapse() {

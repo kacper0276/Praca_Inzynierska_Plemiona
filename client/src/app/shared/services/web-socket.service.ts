@@ -160,4 +160,16 @@ export class WebSocketService {
       map((message) => message.payload)
     );
   }
+
+  public onPendingRequestsCount(): Observable<{ count: number }> {
+    return this.onEvent(WebSocketEvent.PENDING_FRIEND_REQUESTS_COUNT).pipe(
+      map((message) => message.payload)
+    );
+  }
+
+  public onFriendRequestReceived(): Observable<any> {
+    return this.onEvent(WebSocketEvent.FRIEND_REQUEST_RECEIVED).pipe(
+      map((message) => message.payload)
+    );
+  }
 }
