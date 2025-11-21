@@ -11,6 +11,14 @@ export class FriendRequestsService {
     return this.httpService.get<FriendRequest[]>(`/friend-requests/sent`);
   }
 
+  getReceivedFriendRequests(): Observable<ApiResponse<FriendRequest[]>> {
+    return this.httpService.get<FriendRequest[]>(`/friend-requests/received`);
+  }
+
+  getAllFriendRequests(): Observable<ApiResponse<FriendRequest[]>> {
+    return this.httpService.get<FriendRequest[]>(`/friend-requests/all`);
+  }
+
   sendFriendInvite(receiverId: number): Observable<ApiResponse<FriendRequest>> {
     return this.httpService.post<FriendRequest>(
       `/users/friends/invite/${receiverId}`,

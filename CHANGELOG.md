@@ -43,6 +43,7 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Stworzenie własnego komponentu tabeli
 - Dodanie popupa dla edycji
 - Dodanie podstrony by wysłać zaproszenia do znajomych
+- Wysyłanie i odbieranie zaproszeń w trybie rzeczywistym
 
 ### Changed
 

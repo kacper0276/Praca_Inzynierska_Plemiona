@@ -9,7 +9,45 @@
     />
   </div>
 
-  @if (searchResults.length > 0) {
+  @if (invites.length > 0) {
+  <div class="received-invites">
+    <h3>Odebrane zaproszenia</h3>
+    <div class="invites-scroll-container">
+      @for (invite of invites; track invite.id) {
+      <div class="invite-card">
+        <img
+          [src]="
+            backendUrl + invite.sender.profileImage ||
+            'assets/images/default-avatar.png'
+          "
+          alt="Avatar nadawcy"
+          class="user-avatar"
+          (click)="navigateToUserProfile(invite.sender.email)"
+        />
+        <span
+          class="user-login"
+          (click)="navigateToUserProfile(invite.sender.email)"
+          >{{ invite.sender.login }}</span
+        >
+        <div class="invite-actions">
+          <button
+            class="action-btn accept-btn"
+            (click)="acceptInvite(invite.id)"
+          >
+            Akceptuj
+          </button>
+          <button
+            class="action-btn decline-btn"
+            (click)="declineInvite(invite.id)"
+          >
+            Odrzuć
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  } @if (searchResults.length > 0) {
   <ul class="results-list">
     @for (user of searchResults; track user.id) {
     <li class="result-item">

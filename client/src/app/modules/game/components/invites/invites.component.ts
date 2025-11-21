@@ -11,6 +11,9 @@ import { UserSearchResult } from '../../interfaces/user-search-result.interface'
 import { environment } from '../../../../../environments/environment';
 import { FriendRequestsService } from '../../services/friend-requests.service';
 import { Router } from '@angular/router';
+import { FriendRequest } from '../../../../shared/models';
+import { FriendRequestStatus } from '../../../../shared/enums';
+import { UserService } from '../../../auth/services/user.service';
 
 @Component({
   selector: 'app-invites',
@@ -24,12 +27,15 @@ export class InvitesComponent {
   public searchResults: UserSearchResult[] = [];
   public sentInvites: Set<string> = new Set();
 
+  invites: FriendRequest[] = [];
+
   private searchSubscription!: Subscription;
 
   constructor(
     private readonly usersService: UsersService,
     private readonly friendRequestsService: FriendRequestsService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -44,11 +50,21 @@ export class InvitesComponent {
         error: (err) => console.error('Błąd podczas wyszukiwania:', err),
       });
 
-    this.friendRequestsService.getSentFriendRequests().subscribe({
+    this.friendRequestsService.getAllFriendRequests().subscribe({
       next: (res) => {
         res.data.forEach((fr) => {
-          this.sentInvites.add(fr.receiver.email);
+          if (fr.receiver.email !== this.userService.getCurrentUser()?.email) {
+            this.sentInvites.add(fr.receiver.email);
+          } else {
+            this.sentInvites.add(fr.sender.email);
+          }
         });
+
+        this.invites = res.data.filter(
+          (fr) =>
+            fr.status === FriendRequestStatus.PENDING &&
+            fr.receiver.email === this.userService.getCurrentUser()?.email
+        );
       },
     });
   }
@@ -70,6 +86,10 @@ export class InvitesComponent {
       error: (err) => console.error('Błąd podczas wysyłania zaproszenia:', err),
     });
   }
+
+  acceptInvite(inviteId: number): void {}
+
+  declineInvite(inviteId: number): void {}
 
   ngOnDestroy(): void {
     if (this.searchSubscription) {
