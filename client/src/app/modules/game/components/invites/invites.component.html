@@ -13,7 +13,7 @@
   <ul class="results-list">
     @for (user of searchResults; track user.id) {
     <li class="result-item">
-      <div class="user-info">
+      <div class="user-info" (click)="navigateToUserProfile(user.email)">
         <img
           [src]="
             backendUrl + user.profileImage || 'assets/images/default-avatar.png'

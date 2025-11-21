@@ -10,6 +10,7 @@ import { UsersService } from '../../services/users.service';
 import { UserSearchResult } from '../../interfaces/user-search-result.interface';
 import { environment } from '../../../../../environments/environment';
 import { FriendRequestsService } from '../../services/friend-requests.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-invites',
@@ -27,7 +28,8 @@ export class InvitesComponent {
 
   constructor(
     private readonly usersService: UsersService,
-    private readonly friendRequestsService: FriendRequestsService
+    private readonly friendRequestsService: FriendRequestsService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -54,6 +56,10 @@ export class InvitesComponent {
   onSearch(event: Event): void {
     const term = (event.target as HTMLInputElement).value;
     this.searchTerm.next(term);
+  }
+
+  navigateToUserProfile(email: string): void {
+    this.router.navigate(['/game', 'profile', email]);
   }
 
   sendInvite(userEmail: string): void {
