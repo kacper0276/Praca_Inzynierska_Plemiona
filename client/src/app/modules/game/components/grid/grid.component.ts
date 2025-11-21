@@ -20,6 +20,10 @@ import { WebSocketService } from '../../../../shared/services/web-socket.service
 import { availableBuildings } from '../../../../shared/consts/available-buildings';
 import { WebSocketEvent } from '../../../../shared/enums/websocket-event.enum';
 import { UserService } from '../../../auth/services/user.service';
+import {
+  BUILDING_OPTIONS,
+  EMPTY_PLOT_OPTIONS,
+} from '../../../../shared/consts/radial-menu.options';
 
 @Component({
   selector: 'app-grid',
@@ -96,40 +100,9 @@ export class GridComponent implements OnInit, OnDestroy {
 
   availableBuildings: BuildingData[] = availableBuildings;
 
-  emptyPlotOptions: RadialMenuOption[] = [
-    {
-      action: 'build',
-      iconName: 'build',
-      tooltip: 'Zbuduj nowy budynek',
-    },
-    {
-      action: 'inspect',
-      iconName: 'search',
-      tooltip: 'Informacje o polu',
-    },
-  ];
-  buildingOptions: RadialMenuOption[] = [
-    {
-      action: 'details',
-      iconName: 'info',
-      tooltip: 'Szczegóły',
-    },
-    {
-      action: 'upgrade',
-      iconName: 'upgrade',
-      tooltip: 'Rozbuduj',
-    },
-    {
-      action: 'destroy',
-      iconName: 'delete',
-      tooltip: 'Usuń',
-    },
-    {
-      action: 'edit',
-      iconName: 'edit',
-      tooltip: 'Edytuj',
-    },
-  ];
+  emptyPlotOptions: RadialMenuOption[] = EMPTY_PLOT_OPTIONS;
+  buildingOptions: RadialMenuOption[] = BUILDING_OPTIONS;
+
   public timeLeft$: Observable<number>;
 
   constructor(
