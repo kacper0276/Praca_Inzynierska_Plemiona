@@ -27,6 +27,8 @@ export class InvitesComponent {
   public searchResults: UserSearchResult[] = [];
   public sentInvites: Set<string> = new Set();
 
+  public FriendRequestStatus = FriendRequestStatus;
+
   invites: FriendRequest[] = [];
 
   private searchSubscription!: Subscription;
@@ -87,9 +89,11 @@ export class InvitesComponent {
     });
   }
 
-  acceptInvite(inviteId: number): void {}
-
-  declineInvite(inviteId: number): void {}
+  respondToFriendRequest(inviteId: number, status: FriendRequestStatus): void {
+    this.friendRequestsService
+      .respondToFriendRequest(inviteId, status)
+      .subscribe({});
+  }
 
   ngOnDestroy(): void {
     if (this.searchSubscription) {

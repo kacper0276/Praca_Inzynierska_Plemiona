@@ -32,13 +32,17 @@
         <div class="invite-actions">
           <button
             class="action-btn accept-btn"
-            (click)="acceptInvite(invite.id)"
+            (click)="
+              respondToFriendRequest(invite.id, FriendRequestStatus.ACCEPTED)
+            "
           >
             Akceptuj
           </button>
           <button
             class="action-btn decline-btn"
-            (click)="declineInvite(invite.id)"
+            (click)="
+              respondToFriendRequest(invite.id, FriendRequestStatus.DECLINED)
+            "
           >
             Odrzuć
           </button>
