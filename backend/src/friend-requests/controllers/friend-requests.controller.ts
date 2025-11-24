@@ -1,12 +1,24 @@
-import { Controller, Get, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Request,
+} from '@nestjs/common';
 import { FriendRequestsService } from '../services/friend-requests.service';
 import {
   ApiTags,
   ApiBearerAuth,
   ApiOkResponse,
   ApiForbiddenResponse,
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { Authenticated } from 'src/core/decorators/authenticated.decorator';
+import { RespondToFriendRequestDto } from '../dto/respond-to-friend-request.dto';
 
 @ApiTags('Friend Requests')
 @ApiBearerAuth('access-token')
@@ -42,5 +54,29 @@ export class FriendRequestsController {
   async getAllFriendRequests(@Request() req: any) {
     const userId = req.user.sub;
     return this.friendRequestsService.getAllFriendRequests(userId);
+  }
+
+  @Patch(':id/respond')
+  @Authenticated()
+  @ApiBody({ type: RespondToFriendRequestDto })
+  @ApiOkResponse({ description: 'Status zaproszenia został zaktualizowany.' })
+  @ApiBadRequestResponse({
+    description: 'Nieprawidłowy status lub zaproszenie już obsłużone.',
+  })
+  @ApiForbiddenResponse({
+    description: 'Próba odpowiedzi na cudze zaproszenie.',
+  })
+  @ApiNotFoundResponse({ description: 'Zaproszenie nie istnieje.' })
+  async respondToFriendRequest(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() respondDto: RespondToFriendRequestDto,
+    @Request() req: any,
+  ) {
+    const userId = req.user.sub;
+    return this.friendRequestsService.respondToFriendRequest(
+      id,
+      userId,
+      respondDto,
+    );
   }
 }
