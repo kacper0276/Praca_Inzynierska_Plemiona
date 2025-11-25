@@ -97,6 +97,9 @@ export class InvitesComponent {
       .subscribe({
         next: () => {
           this.friendRequestNotificationService.decrementCount();
+          this.invites = this.invites.filter(
+            (invite) => invite.id !== inviteId
+          );
         },
       });
   }
