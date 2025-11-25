@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 import { FriendRequest } from '../../../../shared/models';
 import { FriendRequestStatus } from '../../../../shared/enums';
 import { UserService } from '../../../auth/services/user.service';
+import { FriendRequestNotificationService } from '../../../../shared/services/friend-request-notification.service';
 
 @Component({
   selector: 'app-invites',
@@ -37,7 +38,8 @@ export class InvitesComponent {
     private readonly usersService: UsersService,
     private readonly friendRequestsService: FriendRequestsService,
     private readonly router: Router,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly friendRequestNotificationService: FriendRequestNotificationService
   ) {}
 
   ngOnInit(): void {
@@ -92,7 +94,11 @@ export class InvitesComponent {
   respondToFriendRequest(inviteId: number, status: FriendRequestStatus): void {
     this.friendRequestsService
       .respondToFriendRequest(inviteId, status)
-      .subscribe({});
+      .subscribe({
+        next: () => {
+          this.friendRequestNotificationService.decrementCount();
+        },
+      });
   }
 
   ngOnDestroy(): void {
