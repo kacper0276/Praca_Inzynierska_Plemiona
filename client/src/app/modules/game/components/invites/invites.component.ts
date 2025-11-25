@@ -11,7 +11,7 @@ import { UserSearchResult } from '../../interfaces/user-search-result.interface'
 import { environment } from '../../../../../environments/environment';
 import { FriendRequestsService } from '../../services/friend-requests.service';
 import { Router } from '@angular/router';
-import { FriendRequest } from '../../../../shared/models';
+import { FriendRequest, User } from '../../../../shared/models';
 import { FriendRequestStatus } from '../../../../shared/enums';
 import { UserService } from '../../../auth/services/user.service';
 import { FriendRequestNotificationService } from '../../../../shared/services/friend-request-notification.service';
@@ -102,6 +102,23 @@ export class InvitesComponent {
           );
         },
       });
+  }
+
+  public userInitials(
+    firstName: string,
+    lastName: string,
+    login: string
+  ): string {
+    if (firstName && lastName) {
+      return `${firstName.charAt(0)}${lastName.charAt(0)}`;
+    }
+    if (firstName) {
+      return firstName.substring(0, 2);
+    }
+    if (login) {
+      return login.substring(0, 2);
+    }
+    return '?';
   }
 
   ngOnDestroy(): void {

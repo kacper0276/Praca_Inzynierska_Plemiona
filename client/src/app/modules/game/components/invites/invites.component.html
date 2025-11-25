@@ -15,15 +15,27 @@
     <div class="invites-scroll-container">
       @for (invite of invites; track invite.id) {
       <div class="invite-card">
-        <img
-          [src]="
-            backendUrl + invite.sender.profileImage ||
-            'assets/images/default-avatar.png'
-          "
-          alt="Avatar nadawcy"
-          class="user-avatar"
+        <ng-container
+          *ngIf="invite.sender.profileImage; else initialsAvatar"
           (click)="navigateToUserProfile(invite.sender.email)"
-        />
+        >
+          <img
+            [src]="backendUrl + invite.sender.profileImage"
+            alt="Awatar użytkownika"
+            class="user-avatar"
+          />
+        </ng-container>
+        <ng-template #initialsAvatar>
+          <div class="initials-avatar">
+            <span>{{
+              userInitials(
+                invite.sender.firstName,
+                invite.sender.lastName,
+                invite.sender.login
+              )
+            }}</span>
+          </div>
+        </ng-template>
         <span
           class="user-login"
           (click)="navigateToUserProfile(invite.sender.email)"
@@ -56,13 +68,20 @@
     @for (user of searchResults; track user.id) {
     <li class="result-item">
       <div class="user-info" (click)="navigateToUserProfile(user.email)">
-        <img
-          [src]="
-            backendUrl + user.profileImage || 'assets/images/default-avatar.png'
-          "
-          alt="Avatar użytkownika"
-          class="user-avatar"
-        />
+        <ng-container *ngIf="user.profileImage; else initialsAvatar">
+          <img
+            [src]="backendUrl + user.profileImage"
+            alt="Awatar użytkownika"
+            class="avatar-image"
+          />
+        </ng-container>
+        <ng-template #initialsAvatar>
+          <div class="initials-avatar">
+            <span>{{
+              userInitials(user.firstName, user.lastName, user.login)
+            }}</span>
+          </div>
+        </ng-template>
         <span class="user-login">{{ user.login }}</span>
       </div>
       <button

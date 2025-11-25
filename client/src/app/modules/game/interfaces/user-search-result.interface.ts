@@ -3,4 +3,6 @@ export interface UserSearchResult {
   login: string;
   email: string;
   profileImage: string | null;
+  firstName: string;
+  lastName: string;
 }
