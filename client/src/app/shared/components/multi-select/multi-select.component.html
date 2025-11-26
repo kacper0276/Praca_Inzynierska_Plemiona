@@ -1,12 +1,36 @@
-<div class="multi-select">
-  <div *ngFor="let it of items" class="multi-item">
-    <label>
-      <input
-        type="checkbox"
-        [checked]="selected.indexOf(it.id) > -1"
-        (change)="toggle(it.id)"
+<div class="multi-select-container">
+  <div class="select-box" (click)="toggleDropdown()">
+    <div class="chip" *ngFor="let item of selectedItems">
+      {{ item.name }}
+      <span class="remove" (click)="removeItem(item, $event)">×</span>
+    </div>
+
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      (input)="filterItems()"
+      [placeholder]="selectedItems.length > 0 ? '' : placeholder"
+    />
+  </div>
+
+  <div class="dropdown-list" *ngIf="isOpen">
+    <div
+      class="option"
+      *ngFor="let item of filteredItems"
+      [class.selected]="isSelected(item)"
+      (click)="selectItem(item)"
+    >
+      <img
+        *ngIf="item.avatar"
+        [src]="item.avatar"
+        alt="avatar"
+        class="option-avatar"
       />
-      <span>{{ it.label }}</span>
-    </label>
+      <span class="option-name">{{ item.name }}</span>
+    </div>
+
+    <div class="no-results" *ngIf="filteredItems.length === 0">
+      Brak wyników
+    </div>
   </div>
 </div>

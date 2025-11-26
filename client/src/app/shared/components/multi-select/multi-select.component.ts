@@ -1,40 +1,77 @@
-import { Component, forwardRef, Input } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  Output,
+} from '@angular/core';
+import { MultiSelectItem } from '../../interfaces/multi-select-item.interface';
 
 @Component({
   selector: 'app-multi-select',
   templateUrl: './multi-select.component.html',
-  styleUrls: ['./multi-select.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => MultiSelectComponent),
-      multi: true,
-    },
-  ],
+  styleUrl: './multi-select.component.scss',
 })
-export class MultiSelectComponent implements ControlValueAccessor {
-  @Input() items: Array<{ id: number; label: string }> = [];
+export class MultiSelectComponent {
+  @Input() items: MultiSelectItem[] = [];
+  @Input() placeholder: string = 'Wybierz...';
 
-  selected: number[] = [];
+  @Output() selectionChange = new EventEmitter<MultiSelectItem[]>();
 
-  private onChange: (v: any) => void = () => {};
-  private onTouched: () => void = () => {};
+  selectedItems: MultiSelectItem[] = [];
+  filteredItems: MultiSelectItem[] = [];
+  searchQuery: string = '';
+  isOpen: boolean = false;
 
-  writeValue(obj: any): void {
-    this.selected = Array.isArray(obj) ? obj : [];
+  constructor(private eRef: ElementRef) {}
+
+  ngOnChanges() {
+    this.filteredItems = this.items;
   }
-  registerOnChange(fn: any): void {
-    this.onChange = fn;
-  }
-  registerOnTouched(fn: any): void {
-    this.onTouched = fn;
+
+  toggleDropdown() {
+    this.isOpen = !this.isOpen;
+    if (this.isOpen) {
+      this.filterItems();
+    }
   }
 
-  toggle(id: number) {
-    const idx = this.selected.indexOf(id);
-    if (idx >= 0) this.selected.splice(idx, 1);
-    else this.selected.push(id);
-    this.onChange(this.selected.slice());
+  filterItems() {
+    const query = this.searchQuery.toLowerCase();
+    this.filteredItems = this.items.filter((item) =>
+      item.name.toLowerCase().includes(query)
+    );
+  }
+
+  selectItem(item: MultiSelectItem) {
+    if (!this.isSelected(item)) {
+      this.selectedItems.push(item);
+      this.emitChange();
+    }
+    this.searchQuery = '';
+    this.filterItems();
+    // this.isOpen = false;
+  }
+
+  removeItem(item: MultiSelectItem, event: Event) {
+    event.stopPropagation();
+    this.selectedItems = this.selectedItems.filter((i) => i.id !== item.id);
+    this.emitChange();
+  }
+
+  isSelected(item: MultiSelectItem): boolean {
+    return this.selectedItems.some((i) => i.id === item.id);
+  }
+
+  emitChange() {
+    this.selectionChange.emit(this.selectedItems);
+  }
+
+  @HostListener('document:click', ['$event'])
+  clickout(event: Event) {
+    if (!this.eRef.nativeElement.contains(event.target)) {
+      this.isOpen = false;
+    }
   }
 }
