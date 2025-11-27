@@ -67,18 +67,9 @@
         [title]="isCollapsed ? 'Mapa' : ''"
       >
         <a routerLink="map">
-          <mat-icon>map</mat-icon>
+          <!-- <mat-icon>map</mat-icon> -->
+          <img src="/assets/icons/map.png" alt="Map" />
           <span *ngIf="!isCollapsed">Mapa</span>
-        </a>
-      </li>
-
-      <li
-        [class.active]="activeTab === 'barracks'"
-        [title]="isCollapsed ? 'Koszary' : ''"
-      >
-        <a routerLink="barracks">
-          <mat-icon>fort</mat-icon>
-          <span *ngIf="!isCollapsed">Koszary</span>
         </a>
       </li>
 
@@ -87,7 +78,8 @@
         [title]="isCollapsed ? 'Armia' : ''"
       >
         <a routerLink="army">
-          <mat-icon>shield</mat-icon>
+          <!-- <mat-icon>shield</mat-icon> -->
+          <img src="/assets/icons/sword.png" alt="Map" />
           <span *ngIf="!isCollapsed">Armia</span>
         </a>
       </li>
@@ -97,7 +89,8 @@
         [title]="isCollapsed ? 'Wiadomości' : ''"
       >
         <a routerLink="chat">
-          <mat-icon>chat</mat-icon>
+          <!-- <mat-icon>chat</mat-icon> -->
+          <img src="/assets/icons/messages.png" alt="Chat" />
           <span *ngIf="!isCollapsed">Wiadomości</span>
         </a>
       </li>
@@ -107,7 +100,8 @@
         [title]="isCollapsed ? 'Ranking' : ''"
       >
         <a routerLink="ranking">
-          <mat-icon>leaderboard</mat-icon>
+          <!-- <mat-icon>leaderboard</mat-icon> -->
+          <img src="/assets/icons/ranking.png" alt="Ranking" />
           <span *ngIf="!isCollapsed">Ranking</span>
         </a>
       </li>
@@ -117,7 +111,8 @@
         [title]="isCollapsed ? 'Klan' : ''"
       >
         <a routerLink="clan">
-          <mat-icon>groups</mat-icon>
+          <!-- <mat-icon>groups</mat-icon> -->
+          <img src="/assets/icons/shield.png" alt="Clan" />
           <span *ngIf="!isCollapsed">Klan</span>
         </a>
       </li>
@@ -127,7 +122,8 @@
         [title]="isCollapsed ? 'Zaproszenia' : ''"
       >
         <a routerLink="invitations">
-          <mat-icon>person_add</mat-icon>
+          <!-- <mat-icon>person_add</mat-icon> -->
+          <img src="/assets/icons/invite.png" alt="Invitations" />
           <span *ngIf="!isCollapsed">Zaproszenia</span>
 
           <ng-container *ngIf="pendingRequestsCount$ | async as count">

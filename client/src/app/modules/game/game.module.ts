@@ -5,7 +5,6 @@ import { GameComponent } from './components/game/game.component';
 import { GridComponent } from './components/grid/grid.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { MapComponent } from './components/map/map.component';
-import { BarracksComponent } from './components/barracks/barracks.component';
 import { SideMenuComponent } from './components/side-menu/side-menu.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { GameRoutingModule } from './game-routing.module';
@@ -23,7 +22,6 @@ import { InvitesComponent } from './components/invites/invites.component';
     GridComponent,
     ChatComponent,
     MapComponent,
-    BarracksComponent,
     SideMenuComponent,
     RankingComponent,
     BuildingDetailsPopupComponent,
