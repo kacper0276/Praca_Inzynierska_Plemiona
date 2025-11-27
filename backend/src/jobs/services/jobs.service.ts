@@ -84,8 +84,9 @@ export class JobsService {
   }
 
   @Cron(CronExpression.EVERY_10_HOURS)
+  // @Cron(CronExpression.EVERY_10_SECONDS)
   async handleResourceGeneration() {
-    this.logger.log('Uruchamianie zadania generowania surowców...');
+    // this.logger.log('Uruchamianie zadania generowania surowców...');
 
     const users = await this.usersRepository.findAll({
       relations: ['villages', 'villages.buildings'],
