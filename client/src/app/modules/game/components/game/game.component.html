@@ -25,11 +25,22 @@
       <h2>Terra Bellum</h2>
     </div>
     <div class="resources">
-      <span>Drewno: {{ resources.wood }}</span>
-      <span>Glina: {{ resources.clay }}</span>
-      <span>Żelazo: {{ resources.iron }}</span>
-      <span
-        >Ludność: {{ resources.population }}/{{ resources.maxPopulation }}</span
+      <span [title]="'Drewno: ' + resources.wood"
+        ><mat-icon>forest</mat-icon>
+        {{ resources.wood | adjustResourceQuantity }}</span
+      >
+      <span [title]="'Glina: ' + resources.clay"
+        ><mat-icon>terrain</mat-icon>
+        {{ resources.clay | adjustResourceQuantity }}</span
+      >
+      <span [title]="'Żelazo: ' + resources.iron"
+        ><mat-icon>iron</mat-icon>
+        {{ resources.iron | adjustResourceQuantity }}</span
+      >
+      <span title="Ludność"
+        ><mat-icon>people</mat-icon>: {{ resources.population }}/{{
+          resources.maxPopulation
+        }}</span
       >
     </div>
     <div class="server-info">

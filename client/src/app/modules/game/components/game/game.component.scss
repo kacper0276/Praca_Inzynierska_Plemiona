@@ -35,8 +35,15 @@ $side-menu-width: 200px;
       font-weight: normal;
     }
 
-    .resources span {
-      margin: 0 15px;
+    .resources {
+      mat-icon {
+        vertical-align: middle;
+        margin-right: 5px;
+      }
+
+      span {
+        margin: 0 15px;
+      }
     }
   }
 
