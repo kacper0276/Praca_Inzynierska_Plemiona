@@ -23,6 +23,11 @@
   <header class="top-bar">
     <div class="logo">
       <h2>Terra Bellum</h2>
+      <img
+        src="/assets/icons/domek.png"
+        alt=""
+        style="width: 30px; height: 30px"
+      />
     </div>
     <div class="resources">
       <span [title]="'Drewno: ' + resources.wood">
@@ -48,10 +53,14 @@
         />
         {{ resources.iron | adjustResourceQuantity }}</span
       >
-      <span title="Ludność"
-        ><mat-icon>people</mat-icon>: {{ resources.population }}/{{
-          resources.maxPopulation
-        }}</span
+      <span title="Ludność">
+        <!-- <mat-icon>people</mat-icon> -->
+        <img
+          src="/assets/icons/villager.png"
+          alt=""
+          style="width: 24px; height: 24px"
+        />
+        {{ resources.population }}/{{ resources.maxPopulation }}</span
       >
     </div>
     <div class="server-info">
