@@ -12,6 +12,8 @@ import { Resources } from 'src/resources/entities/resources.entity';
 import { UserRole } from 'src/core/enums/user-role.enum';
 import { Village } from 'src/villages/entities/village.entity';
 import { FriendRequest } from '../../friend-requests/entities/friend-request.entity';
+import { DirectMessage } from 'src/chat/entities/direct-message.entity';
+import { ChatGroup } from 'src/chat/entities/chat-group.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -69,4 +71,13 @@ export class User extends BaseEntity {
 
   @OneToMany(() => FriendRequest, (request) => request.receiver)
   receivedFriendRequests: FriendRequest[];
+
+  @OneToMany(() => DirectMessage, (message) => message.sender)
+  sentDirectMessages: DirectMessage[];
+
+  @OneToMany(() => DirectMessage, (message) => message.receiver)
+  receivedDirectMessages: DirectMessage[];
+
+  @ManyToMany(() => ChatGroup, (group) => group.members)
+  chatGroups: ChatGroup[];
 }

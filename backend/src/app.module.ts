@@ -32,6 +32,7 @@ import { BuildingsModule } from './buildings/buildings.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { FriendRequestsModule } from './friend-requests/friend-requests.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -115,6 +116,7 @@ import { FriendRequestsModule } from './friend-requests/friend-requests.module';
     ServersModule,
     BuildingsModule,
     FriendRequestsModule,
+    ChatModule,
   ],
   controllers: [],
   providers: [
