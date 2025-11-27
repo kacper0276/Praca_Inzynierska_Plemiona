@@ -46,6 +46,7 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Wysyłanie i odbieranie zaproszeń w trybie rzeczywistym
 - Dodanie własnych ikonek
 - Stworzenie komponentu dla chatowania
+- Dodanie kolejnych ikonek
 
 ### Changed
 
