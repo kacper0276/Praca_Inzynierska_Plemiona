@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../../../shared/services/http.service';
 import { UserSearchResult } from '../interfaces/user-search-result.interface';
-import { ApiResponse } from '../../../shared/models';
+import { ApiResponse, User } from '../../../shared/models';
 import { Observable, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -14,5 +14,9 @@ export class UsersService {
     }
 
     return this.httpService.get<UserSearchResult[]>(`/users/search/${query}`);
+  }
+
+  fetchAllUsers(): Observable<ApiResponse<User[]>> {
+    return this.httpService.get<User[]>('/users');
   }
 }

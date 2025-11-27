@@ -36,9 +36,16 @@
           (click)="toggleTheme()"
           [title]="currentTheme === 'dark' ? 'Jasny motyw' : 'Ciemny motyw'"
         >
-          <mat-icon [ngClass]="{ 'dark-icon': currentTheme === 'dark' }">{{
+          <!-- <mat-icon [ngClass]="{ 'dark-icon': currentTheme === 'dark' }">{{
             currentTheme === "dark" ? "dark_mode" : "light_mode"
-          }}</mat-icon>
+          }}</mat-icon> -->
+          <img
+            [src]="
+              '/assets/icons/' +
+              (currentTheme === 'dark' ? 'moon.png' : 'sun.png')
+            "
+            alt="Theme Icon"
+          />
         </button>
       </div>
     </div>
@@ -46,17 +53,18 @@
     <ul>
       <li
         [class.active]="activeTab === 'village'"
-        [title]="isCollapsed ? 'Wioska' : null"
+        [title]="isCollapsed ? 'Wioska' : ''"
       >
         <a routerLink="village/kacper0276@op.pl">
-          <mat-icon>cottage</mat-icon>
+          <!-- <mat-icon>cottage</mat-icon> -->
+          <img src="/assets/icons/village.png" alt="Village" />
           <span *ngIf="!isCollapsed">Wioska</span>
         </a>
       </li>
 
       <li
         [class.active]="activeTab === 'map'"
-        [title]="isCollapsed ? 'Mapa' : null"
+        [title]="isCollapsed ? 'Mapa' : ''"
       >
         <a routerLink="map">
           <mat-icon>map</mat-icon>
@@ -66,7 +74,7 @@
 
       <li
         [class.active]="activeTab === 'barracks'"
-        [title]="isCollapsed ? 'Koszary' : null"
+        [title]="isCollapsed ? 'Koszary' : ''"
       >
         <a routerLink="barracks">
           <mat-icon>fort</mat-icon>
@@ -76,7 +84,7 @@
 
       <li
         [class.active]="activeTab === 'army'"
-        [title]="isCollapsed ? 'Armia' : null"
+        [title]="isCollapsed ? 'Armia' : ''"
       >
         <a routerLink="army">
           <mat-icon>shield</mat-icon>
@@ -86,7 +94,7 @@
 
       <li
         [class.active]="activeTab === 'chat'"
-        [title]="isCollapsed ? 'Wiadomości' : null"
+        [title]="isCollapsed ? 'Wiadomości' : ''"
       >
         <a routerLink="chat">
           <mat-icon>chat</mat-icon>
@@ -96,7 +104,7 @@
 
       <li
         [class.active]="activeTab === 'ranking'"
-        [title]="isCollapsed ? 'Ranking' : null"
+        [title]="isCollapsed ? 'Ranking' : ''"
       >
         <a routerLink="ranking">
           <mat-icon>leaderboard</mat-icon>
@@ -106,7 +114,7 @@
 
       <li
         [class.active]="activeTab === 'clan'"
-        [title]="isCollapsed ? 'Klan' : null"
+        [title]="isCollapsed ? 'Klan' : ''"
       >
         <a routerLink="clan">
           <mat-icon>groups</mat-icon>
@@ -116,7 +124,7 @@
 
       <li
         [class.active]="activeTab === 'invitations'"
-        [title]="isCollapsed ? 'Zaproszenia' : null"
+        [title]="isCollapsed ? 'Zaproszenia' : ''"
       >
         <a routerLink="invitations">
           <mat-icon>person_add</mat-icon>
@@ -140,7 +148,7 @@
       @if (currentUser?.role === 'admin') {
       <li
         [class.active]="activeTab === 'admin'"
-        [title]="isCollapsed ? 'Panel admina' : null"
+        [title]="isCollapsed ? 'Panel admina' : ''"
       >
         <a routerLink="admin-panel">
           <mat-icon>admin_panel_settings</mat-icon>
