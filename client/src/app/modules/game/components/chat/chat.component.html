@@ -1,7 +1,119 @@
 <div class="chat-container">
-  <div class="chat-messages">
-    <div *ngFor="let msg of messages" class="chat-message">{{ msg }}</div>
+  <aside class="chat-sidebar">
+    <div class="sidebar-header">
+      <h3>Wiadomości</h3>
+      <button class="create-group-btn" (click)="openGroupModal()">+</button>
+    </div>
+
+    <div class="search-wrapper">
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Szukaj użytkownika..."
+        [(ngModel)]="searchQuery"
+        (input)="filterChats()"
+      />
+    </div>
+
+    <div class="chat-list">
+      <div
+        class="chat-item"
+        *ngFor="let chat of filteredChats"
+        [class.active]="selectedChat?.id === chat.id"
+        (click)="selectChat(chat)"
+      >
+        <img [src]="chat.avatar" class="avatar" alt="User Avatar" />
+        <div class="chat-info">
+          <div class="name">{{ chat.name }}</div>
+          <div class="last-msg">{{ chat.lastMessage }}</div>
+        </div>
+        <div class="timestamp">{{ chat.time }}</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="chat-window">
+    <ng-container *ngIf="selectedChat; else noChatSelected">
+      <div class="chat-header">
+        <img [src]="selectedChat.avatar" class="header-avatar" alt="Avatar" />
+        <div class="header-info">
+          <h4>{{ selectedChat.name }}</h4>
+          <span>Dostępny</span>
+        </div>
+      </div>
+
+      <div class="messages-area" #scrollContainer>
+        <div
+          class="message"
+          *ngFor="let msg of messages"
+          [ngClass]="{ sent: msg.isMe, received: !msg.isMe }"
+        >
+          <div class="bubble">{{ msg.content }}</div>
+          <span class="time">{{ msg.time }}</span>
+        </div>
+      </div>
+
+      <div class="input-area">
+        <input
+          type="text"
+          placeholder="Napisz wiadomość..."
+          [(ngModel)]="newMessage"
+          (keydown.enter)="sendMessage()"
+        />
+        <button (click)="sendMessage()">Wyślij</button>
+      </div>
+    </ng-container>
+
+    <ng-template #noChatSelected>
+      <div
+        class="messages-area"
+        style="
+          align-items: center;
+          justify-content: center;
+          opacity: 0.5;
+          color: var(--text);
+        "
+      >
+        <h3>Wybierz czat, aby rozpocząć rozmowę</h3>
+      </div>
+    </ng-template>
+  </main>
+</div>
+
+<div class="modal-backdrop" *ngIf="isModalOpen">
+  <div class="modal-content">
+    <h2>Utwórz nową grupę</h2>
+
+    <div class="form-group">
+      <label>Nazwa grupy</label>
+      <input
+        type="text"
+        class="text-input"
+        [(ngModel)]="newGroupName"
+        placeholder="Np. Projekt Zespół A"
+      />
+    </div>
+
+    <div class="form-group">
+      <label>Dodaj uczestników</label>
+
+      <app-multi-select
+        [items]="allFriends"
+        placeholder="Szukaj znajomych..."
+        (selectionChange)="onFriendsSelectionChange($event)"
+      >
+      </app-multi-select>
+    </div>
+
+    <div class="modal-actions">
+      <button class="cancel" (click)="closeGroupModal()">Anuluj</button>
+      <button
+        class="confirm"
+        (click)="createGroup()"
+        [disabled]="!newGroupName || selectedFriends.length === 0"
+      >
+        Utwórz grupę
+      </button>
+    </div>
   </div>
-  <input [(ngModel)]="newMessage" placeholder="Napisz wiadomość..." />
-  <button (click)="sendMessage()">Wyślij</button>
 </div>
