@@ -1,1 +1,15 @@
-<p>user-panel works!</p>
+<app-table
+  [columns]="userColumns"
+  [data]="usersList"
+  [dataModifier]="formatUserData"
+  (action)="handleUserAction($event)"
+></app-table>
+
+<app-edit-modal
+  [isVisible]="isModalOpen"
+  [item]="selectedUser"
+  [columns]="userColumns"
+  (save)="onSaveUser($event)"
+  (delete)="onDeleteUser($event)"
+  (close)="closeEditModal()"
+></app-edit-modal>

@@ -30,13 +30,28 @@ $side-menu-width: 200px;
     border-bottom: 3px solid var(--top-bar-border, rgba(0, 0, 0, 0.06));
     flex-shrink: 0;
 
-    .logo h2 {
-      margin: 0;
-      font-weight: normal;
+    .logo {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+
+      h2 {
+        margin: 0;
+        font-weight: normal;
+      }
     }
 
-    .resources span {
-      margin: 0 15px;
+    .resources {
+      mat-icon {
+        vertical-align: middle;
+        margin-right: 5px;
+      }
+
+      span {
+        margin: 0 15px;
+      }
     }
   }
 

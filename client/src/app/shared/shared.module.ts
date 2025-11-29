@@ -19,6 +19,7 @@ import { SetTitleDirective } from './directives/set-title.directive';
 import { TableComponent } from './components/table/table.component';
 import { EditModalComponent } from './components/edit-modal/edit-modal.component';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
+import { AdjustResourceQuantityPipe } from './pipes/adjust-resource-quantity.pipe';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
     TableComponent,
     EditModalComponent,
     ConfirmationDialogComponent,
+    AdjustResourceQuantityPipe,
   ],
   imports: [
     CommonModule,
@@ -66,6 +68,7 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
     TableComponent,
     EditModalComponent,
     ConfirmationDialogComponent,
+    AdjustResourceQuantityPipe,
   ],
 })
 export class SharedModule {}

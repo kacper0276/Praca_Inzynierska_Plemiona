@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { GridComponent } from './components/grid/grid.component';
 import { MapComponent } from './components/map/map.component';
-import { BarracksComponent } from './components/barracks/barracks.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { GameComponent } from './components/game/game.component';
 import { RankingComponent } from './components/ranking/ranking.component';
@@ -18,7 +17,6 @@ const gameRoutes: Routes = [
     children: [
       { path: 'village/:userEmail', component: GridComponent },
       { path: 'map', component: MapComponent },
-      { path: 'barracks', component: BarracksComponent },
       { path: 'army', component: ArmyComponent },
       { path: 'chat', component: ChatComponent },
       { path: 'ranking', component: RankingComponent },

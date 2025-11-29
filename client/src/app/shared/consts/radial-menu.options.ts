@@ -3,12 +3,14 @@ import { RadialMenuOption } from '../models';
 export const EMPTY_PLOT_OPTIONS: RadialMenuOption[] = [
   {
     action: 'build',
-    iconName: 'build',
+    // iconName: 'build',
+    iconUrl: '/assets/icons/key.png',
     tooltip: 'Zbuduj nowy budynek',
   },
   {
     action: 'inspect',
-    iconName: 'search',
+    // iconName: 'search',
+    iconUrl: '/assets/icons/pencil.png',
     tooltip: 'Informacje o polu',
   },
 ];
@@ -26,12 +28,14 @@ export const BUILDING_OPTIONS: RadialMenuOption[] = [
   },
   {
     action: 'destroy',
-    iconName: 'delete',
+    // iconName: 'delete',
+    iconUrl: '/assets/icons/trash.png',
     tooltip: 'Usuń',
   },
   {
     action: 'edit',
-    iconName: 'edit',
+    // iconName: 'edit',
+    iconUrl: '/assets/icons/pencil.png',
     tooltip: 'Edytuj',
   },
 ];

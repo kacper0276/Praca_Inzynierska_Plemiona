@@ -98,8 +98,8 @@ $side-menu-collapsed-width: 68px;
 }
 
 .flag-btn {
-  width: 28px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   padding: 2px;
   border: 1px solid transparent;
   background: transparent;
@@ -124,7 +124,7 @@ $side-menu-collapsed-width: 68px;
 
   .side-menu.collapsed & {
     width: 24px;
-    height: 16px;
+    height: 24px;
     padding: 1px;
   }
 }
@@ -184,7 +184,16 @@ ul {
         transition: margin 0.3s ease-in-out;
       }
 
+      img {
+        margin-right: 15px;
+        transition: margin 0.3s ease-in-out;
+      }
+
       .side-menu.collapsed & mat-icon {
+        margin-right: 0;
+      }
+
+      .side-menu.collapsed & img {
         margin-right: 0;
       }
     }
@@ -244,6 +253,7 @@ ul {
 
     &.collapsed {
       justify-content: center;
+      padding: 0;
     }
   }
 

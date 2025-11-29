@@ -23,13 +23,44 @@
   <header class="top-bar">
     <div class="logo">
       <h2>Terra Bellum</h2>
+      <img
+        src="/assets/icons/home.png"
+        alt=""
+        style="width: 30px; height: 30px"
+      />
     </div>
     <div class="resources">
-      <span>Drewno: {{ resources.wood }}</span>
-      <span>Glina: {{ resources.clay }}</span>
-      <span>Żelazo: {{ resources.iron }}</span>
-      <span
-        >Ludność: {{ resources.population }}/{{ resources.maxPopulation }}</span
+      <span [title]="'Drewno: ' + resources.wood">
+        <!-- <mat-icon>forest</mat-icon> -->
+        <img
+          src="/assets/icons/wood.png"
+          alt=""
+          style="width: 24px; height: 24px"
+        />
+        {{ resources.wood | adjustResourceQuantity }}</span
+      >
+      <span [title]="'Glina: ' + resources.clay">
+        <!-- <mat-icon>terrain</mat-icon> -->
+        <img src="/assets/icons/clay.png" alt="" />
+        {{ resources.clay | adjustResourceQuantity }}</span
+      >
+      <span [title]="'Żelazo: ' + resources.iron">
+        <!-- <mat-icon>iron</mat-icon> -->
+        <img
+          src="/assets/icons/iron.png"
+          alt=""
+          style="width: 24px; height: 24px"
+        />
+        {{ resources.iron | adjustResourceQuantity }}</span
+      >
+      <span title="Ludność">
+        <!-- <mat-icon>people</mat-icon> -->
+        <img
+          src="/assets/icons/villager.png"
+          alt=""
+          style="width: 24px; height: 24px"
+        />
+        {{ resources.population }}/{{ resources.maxPopulation }}</span
       >
     </div>
     <div class="server-info">
