@@ -136,7 +136,8 @@
 
       <li class="report-bug">
         <a (click)="openBugReport()" title="Zgłoś błąd">
-          <mat-icon>bug_report</mat-icon>
+          <!-- <mat-icon>bug_report</mat-icon> -->
+          <img src="/assets/icons/report_bug.png" alt="Report bug" />
           <span *ngIf="!isCollapsed">Zgłoś problem</span>
         </a>
       </li>
@@ -147,7 +148,8 @@
         [title]="isCollapsed ? 'Panel admina' : ''"
       >
         <a routerLink="admin-panel">
-          <mat-icon>admin_panel_settings</mat-icon>
+          <!-- <mat-icon>admin_panel_settings</mat-icon> -->
+          <img src="/assets/icons/admin_panel.png" alt="Admin Panel" />
           <span *ngIf="!isCollapsed">Panel admina</span>
         </a>
       </li>
@@ -178,7 +180,8 @@
       <ul>
         <li>
           <a routerLink="profile/edit" (click)="toggleUserMenu()">
-            <mat-icon>edit</mat-icon>
+            <!-- <mat-icon>edit</mat-icon> -->
+            <img src="/assets/icons/pencil.png" alt="Edit" />
             <span>Edycja konta</span>
           </a>
         </li>
