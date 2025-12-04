@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Theme } from '../types/theme.type';
+import { LocalStorageService } from './local-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private storageKey = 'app_theme';
   private current: Theme = 'light';
 
-  constructor() {
-    const saved = localStorage.getItem(this.storageKey) as Theme | null;
+  constructor(private readonly localStorageService: LocalStorageService) {
+    const saved = localStorageService.getItem<Theme>(this.storageKey);
     this.current =
       saved ||
       (window.matchMedia &&
@@ -24,14 +25,14 @@ export class ThemeService {
   toggle(): Theme {
     this.current = this.current === 'light' ? 'dark' : 'light';
     this.apply(this.current);
-    localStorage.setItem(this.storageKey, this.current);
+    this.localStorageService.setItem(this.storageKey, this.current);
     return this.current;
   }
 
   set(theme: Theme) {
     this.current = theme;
     this.apply(this.current);
-    localStorage.setItem(this.storageKey, this.current);
+    this.localStorageService.setItem(this.storageKey, this.current);
   }
 
   private apply(theme: Theme) {

@@ -9,6 +9,7 @@ import { User } from '@shared/models';
 import { FriendRequestNotificationService } from '@shared/services/friend-request-notification.service';
 import { ThemeService } from '@shared/services/theme.service';
 import { Theme } from '@shared/types/theme.type';
+import { LocalStorageService } from '@shared/services/local-storage.service';
 
 @Component({
   selector: 'app-side-menu',
@@ -36,11 +37,12 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     private readonly userService: UserService,
     private readonly authService: AuthService,
     private readonly router: Router,
-    private readonly friendRequestNotificationService: FriendRequestNotificationService
+    private readonly friendRequestNotificationService: FriendRequestNotificationService,
+    private readonly localStorageService: LocalStorageService
   ) {}
 
   ngOnInit(): void {
-    const storedLang = localStorage.getItem('lang');
+    const storedLang = this.localStorageService.getItem<string>('lang');
     if (storedLang) {
       this.setLanguage(storedLang);
     } else {
@@ -68,7 +70,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   setLanguage(lang: string) {
     this.currentLang = lang;
     this.translate.use(lang);
-    localStorage.setItem('lang', lang);
+    this.localStorageService.setItem('lang', lang);
   }
 
   toggleTheme() {

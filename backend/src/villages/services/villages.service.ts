@@ -13,6 +13,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { ExpandVillageWsDto } from '../dto/expand-village-ws.dto';
 import { ResourcesService } from 'src/resources/services/resources.service';
 import { Building } from 'src/buildings/entities/building.entity';
+import { Server } from 'src/servers/entities/server.entity';
 
 @Injectable()
 export class VillagesService {
@@ -90,10 +91,25 @@ export class VillagesService {
 
     const options = { relations: ['buildings'] };
 
-    const village = await this.villagesRepository.findOne(conditions, options);
+    let village = await this.villagesRepository.findOne(conditions, options);
 
     if (!village) {
-      return null;
+      const user = await this.usersRepository.findOneById(userId);
+      const serverRepo = this.dataSource.getRepository(Server);
+      const server = await serverRepo.findOneBy({ id: serverId });
+
+      if (!user || !server) {
+        throw new NotFoundException('Nie znaleziono użytkownika lub serwera.');
+      }
+
+      village = this.villagesRepository.create({
+        user: user,
+        server: server,
+        gridSize: 5,
+        buildings: [],
+      });
+
+      village = await this.villagesRepository.save(village);
     }
 
     const grid: (BuildingData | null)[][] = Array(village.gridSize)

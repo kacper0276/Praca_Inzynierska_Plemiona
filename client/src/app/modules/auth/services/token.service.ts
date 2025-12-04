@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { LocalStorageService } from '@shared/services/local-storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -7,24 +8,26 @@ export class TokenService {
   private readonly JWT_TOKEN = 'jwt_token';
   private readonly REFRESH_TOKEN = 'refresh_token';
 
+  constructor(private readonly localStorageService: LocalStorageService) {}
+
   getJwtToken(): string | null {
-    return localStorage.getItem(this.JWT_TOKEN);
+    return this.localStorageService.getItem<string>(this.JWT_TOKEN);
   }
 
   setJwtToken(token: string): void {
-    localStorage.setItem(this.JWT_TOKEN, token);
+    this.localStorageService.setItem(this.JWT_TOKEN, token);
   }
 
   getRefreshToken(): string | null {
-    return localStorage.getItem(this.REFRESH_TOKEN);
+    return this.localStorageService.getItem<string>(this.REFRESH_TOKEN);
   }
 
   setRefreshToken(token: string): void {
-    localStorage.setItem(this.REFRESH_TOKEN, token);
+    this.localStorageService.setItem(this.REFRESH_TOKEN, token);
   }
 
   clearTokens(): void {
-    localStorage.removeItem(this.JWT_TOKEN);
-    localStorage.removeItem(this.REFRESH_TOKEN);
+    this.localStorageService.removeItem(this.JWT_TOKEN);
+    this.localStorageService.removeItem(this.REFRESH_TOKEN);
   }
 }
