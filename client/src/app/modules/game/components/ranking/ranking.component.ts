@@ -57,7 +57,6 @@ export class RankingComponent implements OnInit {
   onPageChange(event: PaginationEvent): void {
     this.pageNumber = event.page;
     this.pageSize = event.limit;
-    console.log(event);
     this.loadRanking();
   }
 
