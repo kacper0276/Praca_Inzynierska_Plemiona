@@ -4,12 +4,12 @@ import { ServerStatus } from 'src/servers/enums/server-status.enum';
 import { ServersService } from 'src/servers/services/servers.service';
 import { UsersRepository } from 'src/users/repositories/users.repository';
 import * as net from 'net';
-import { WsGateway } from '@core/gateways/ws.gateway';
+import { WsGateway } from 'src/core/gateways/ws.gateway';
 import { ResourcesService } from 'src/resources/services/resources.service';
 import { BuildingsService } from 'src/buildings/services/buildings.service';
-import { WsEvent } from '@core/enums/ws-event.enum';
+import { WsEvent } from 'src/core/enums/ws-event.enum';
 import { Building } from 'src/buildings/entities/building.entity';
-import { BuildingName } from '@core/enums/building-name.enum';
+import { BuildingName } from 'src/core/enums/building-name.enum';
 
 @Injectable()
 export class JobsService {
@@ -84,25 +84,43 @@ export class JobsService {
   }
 
   @Cron(CronExpression.EVERY_10_HOURS)
+  // @Cron(CronExpression.EVERY_10_SECONDS)
   async handleResourceGeneration() {
     this.logger.log('Uruchamianie zadania generowania surowców...');
 
-    const users = await this.usersRepository.findAll({
-      relations: ['villages', 'villages.buildings'],
+    const users = await this.usersRepository.findUsersLoggedIn({
+      relations: [
+        'currentServer',
+        'villages',
+        'villages.server',
+        'villages.buildings',
+      ],
     });
+
     if (users.length === 0) return;
 
     for (const user of users) {
-      const village = user.villages?.[0];
-      if (!village || !village.buildings || village.buildings.length === 0) {
+      if (!user.currentServer) continue;
+
+      const currentVillage = user.villages?.find(
+        (v) => v.server?.id === user.currentServer.id,
+      );
+
+      if (
+        !currentVillage ||
+        !currentVillage.buildings ||
+        currentVillage.buildings.length === 0
+      ) {
         continue;
       }
-      const buildings = user.villages[0].buildings;
-      if (buildings.length === 0) continue;
-      const production = this.calculateProduction(buildings);
+
+      const production = this.calculateProduction(currentVillage.buildings);
+
       if (Object.values(production).every((v) => v === 0)) continue;
+
       const updatedResources = await this.resourcesService.updateResources(
         user.id,
+        user.currentServer.id,
         production,
       );
 

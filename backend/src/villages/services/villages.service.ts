@@ -204,6 +204,7 @@ export class VillagesService {
 
       const canAfford = await this.resourcesService.hasEnoughResources(
         village.user.id,
+        village.server.id,
         expandDto.cost,
       );
 
@@ -213,6 +214,7 @@ export class VillagesService {
 
       await this.resourcesService.spendResources(
         village.user.id,
+        village.server.id,
         expandDto.cost,
         queryRunner.manager,
       );

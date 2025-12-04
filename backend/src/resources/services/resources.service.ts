@@ -15,13 +15,13 @@ export class ResourcesService {
   ) {}
 
   findAll() {
-    return this.repository.findAll({ relations: ['user'] });
+    return this.repository.findAll({ relations: ['user', 'server'] });
   }
 
   async findOne(id: number) {
     const resource = await this.repository.findOne(
       { id },
-      { relations: ['user'] },
+      { relations: ['user', 'server'] },
     );
     if (!resource) {
       throw new NotFoundException(`Zasób o ID ${id} nie został znaleziony.`);
@@ -67,7 +67,7 @@ export class ResourcesService {
   }
 
   async create(data: CreateResourceDto): Promise<Resources> {
-    const { userId, ...resourceData } = data;
+    const { userId, serverId, ...resourceData } = data as any;
     const user = await this.usersRepository.findOneById(userId);
 
     if (!user) {
@@ -79,6 +79,7 @@ export class ResourcesService {
     const resource = this.repository.create({
       ...resourceData,
       user: user,
+      server: { id: serverId },
     });
 
     return this.repository.save(resource);
@@ -91,16 +92,19 @@ export class ResourcesService {
 
   async updateResources(
     userId: number,
+    serverId: number,
     resourcesToAdd: {
       wood: number;
       clay: number;
       iron: number;
     },
   ) {
-    const userResources = await this.repository.findOneByUserId(userId);
+    const userResources = await this.repository.findOne({
+      user: { id: userId },
+      server: { id: serverId },
+    } as any);
 
     if (!userResources) {
-      console.error(`Nie znaleziono zasobów dla użytkownika o ID: ${userId}`);
       return null;
     }
 
@@ -117,6 +121,7 @@ export class ResourcesService {
 
   async spendResources(
     userId: number,
+    serverId: number,
     cost: Partial<Resources>,
     transactionalManager?: EntityManager,
   ): Promise<void> {
@@ -125,10 +130,24 @@ export class ResourcesService {
       : this.repository;
 
     const userResources = await repo.findOne({
-      where: { user: { id: userId } },
+      where: {
+        user: { id: userId },
+        server: { id: serverId },
+      },
     });
+
     if (!userResources) {
-      throw new Error('Nie znaleziono zasobów użytkownika.');
+      throw new Error(
+        'Nie znaleziono zasobów użytkownika na podanym serwerze.',
+      );
+    }
+
+    if (
+      userResources.wood < (cost.wood || 0) ||
+      userResources.clay < (cost.clay || 0) ||
+      userResources.iron < (cost.iron || 0)
+    ) {
+      throw new Error('Niewystarczająca ilość surowców.');
     }
 
     userResources.wood -= cost.wood || 0;
@@ -140,12 +159,17 @@ export class ResourcesService {
 
   async hasEnoughResources(
     userId: number,
+    serverId: number,
     cost: ResourceCost,
   ): Promise<boolean> {
-    const userResources = await this.repository.findOneByUserId(userId);
+    const userResources = await this.repository.findOne({
+      user: { id: userId },
+      server: { id: serverId },
+    } as any);
+
     if (!userResources) {
       throw new NotFoundException(
-        `Nie znaleziono zasobów dla użytkownika o ID: ${userId}`,
+        `Nie znaleziono zasobów dla użytkownika o ID: ${userId} na serwerze ${serverId}`,
       );
     }
 

@@ -37,6 +37,20 @@ export class ResourcesRepository extends BaseRepository<Resources> {
     });
   }
 
+  findOneByUserIdAndServerId(
+    userId: number,
+    serverId: number,
+    options?: FindOneOptions<Resources>,
+  ): Promise<Resources | null> {
+    return this.repository.findOne({
+      where: {
+        user: { id: userId },
+        server: { id: serverId },
+      },
+      ...options,
+    });
+  }
+
   create(entity: Partial<Resources>): Resources {
     return this.repository.create(entity);
   }
