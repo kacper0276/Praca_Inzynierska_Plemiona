@@ -1,7 +1,7 @@
-import { FriendRequestStatus } from 'src/core/enums/friend-request-status.enum';
+import { FriendRequestStatus } from '@core/enums/friend-request-status.enum';
 import { Entity, ManyToOne, Column } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { BaseEntity } from 'src/core/entities/base.entity';
+import { BaseEntity } from '@core/entities/base.entity';
 
 @Entity({ name: 'friend_requests' })
 export class FriendRequest extends BaseEntity {

@@ -11,8 +11,8 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { ResourcesService } from '../services/resources.service';
-import { UserRole } from 'src/core/enums/user-role.enum';
-import { Roles } from 'src/core/decorators/roles.decorator';
+import { UserRole } from '@core/enums/user-role.enum';
+import { Roles } from '@core/decorators/roles.decorator';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -26,7 +26,7 @@ import {
 } from '@nestjs/swagger';
 import { UpdateResourceDto } from '../dto/update-resource.dto';
 import { CreateResourceDto } from '../dto/create-resource.dto';
-import { Authenticated } from 'src/core/decorators/authenticated.decorator';
+import { Authenticated } from '@core/decorators/authenticated.decorator';
 
 @ApiTags('Resources')
 @ApiBearerAuth('access-token')

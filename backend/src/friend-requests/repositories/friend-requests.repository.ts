@@ -1,4 +1,4 @@
-import { BaseRepository } from 'src/core/repositories/base.repository';
+import { BaseRepository } from '@core/repositories/base.repository';
 import { FriendRequest } from '../entities/friend-request.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';

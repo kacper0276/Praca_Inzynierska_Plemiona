@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BaseRepository } from 'src/core/repositories/base.repository';
+import { BaseRepository } from '@core/repositories/base.repository';
 import { Clan } from '../entities/clan.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

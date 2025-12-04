@@ -25,13 +25,13 @@ import {
   ApiNotFoundResponse,
   ApiNoContentResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/core/decorators/roles.decorator';
-import { UserRole } from 'src/core/enums/user-role.enum';
+import { Roles } from '@core/decorators/roles.decorator';
+import { UserRole } from '@core/enums/user-role.enum';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { Authenticated } from 'src/core/decorators/authenticated.decorator';
+import { Authenticated } from '@core/decorators/authenticated.decorator';
 import { AuthService } from 'src/auth/services/auth.service';
-import { MulterConfigInterceptor } from 'src/core/interceptors/multer-config.interceptor';
+import { MulterConfigInterceptor } from '@core/interceptors/multer-config.interceptor';
 import { UpdateUserDeletionTimeDto } from '../dto/update-user-deletion-time.dto';
 
 @ApiTags('Users')

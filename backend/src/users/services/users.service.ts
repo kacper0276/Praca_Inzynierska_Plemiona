@@ -15,11 +15,11 @@ import * as fs from 'fs/promises';
 import { join } from 'path';
 import { UpdateUserDeletionTimeDto } from '../dto/update-user-deletion-time.dto';
 import { FriendRequestsRepository } from 'src/friend-requests/repositories/friend-requests.repository';
-import { FriendRequestStatus } from 'src/core/enums/friend-request-status.enum';
+import { FriendRequestStatus } from '@core/enums/friend-request-status.enum';
 import { FriendRequest } from 'src/friend-requests/entities/friend-request.entity';
 import { ILike, In, Not } from 'typeorm';
-import { WsGateway } from 'src/core/gateways/ws.gateway';
-import { WsEvent } from 'src/core/enums/ws-event.enum';
+import { WsGateway } from '@core/gateways/ws.gateway';
+import { WsEvent } from '@core/enums/ws-event.enum';
 
 @Injectable()
 export class UsersService {

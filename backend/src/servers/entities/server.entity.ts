@@ -1,7 +1,8 @@
-import { BaseEntity } from 'src/core/entities/base.entity';
+import { BaseEntity } from '@core/entities/base.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { ServerStatusLog } from './server-status-log.entity';
 import { ServerStatus } from '../enums/server-status.enum';
+import { Village } from 'src/villages/entities/village.entity';
 
 @Entity({ name: 'servers' })
 export class Server extends BaseEntity {
@@ -26,4 +27,7 @@ export class Server extends BaseEntity {
 
   @OneToMany(() => ServerStatusLog, (log) => log.server)
   logs: ServerStatusLog[];
+
+  @OneToMany(() => Village, (village) => village.server)
+  villages: Village[];
 }

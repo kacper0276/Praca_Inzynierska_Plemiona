@@ -4,9 +4,9 @@ import { AuthService } from './services/auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { TtlModule } from 'src/core/ttl/ttl.module';
 import { UsersModule } from 'src/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TtlModule } from '@core/ttl/ttl.module';
 
 @Module({
   imports: [

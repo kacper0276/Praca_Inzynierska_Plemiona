@@ -5,7 +5,7 @@ import { CreateResourceDto } from '../dto/create-resource.dto';
 import { UpdateResourceDto } from '../dto/update-resource.dto';
 import { UsersRepository } from 'src/users/repositories/users.repository';
 import { EntityManager } from 'typeorm';
-import { ResourceCost } from 'src/core/consts/building-costs';
+import { ResourceCost } from '@core/consts/building-costs';
 
 @Injectable()
 export class ResourcesService {

@@ -7,7 +7,7 @@ import {
   IsString,
   Min,
 } from 'class-validator';
-import { BuildingName } from 'src/core/enums/building-name.enum';
+import { BuildingName } from '@core/enums/building-name.enum';
 
 export class CreateBuildingDto {
   @ApiProperty({

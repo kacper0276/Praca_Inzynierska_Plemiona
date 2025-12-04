@@ -1,7 +1,7 @@
 import { FindOneOptions, Repository } from 'typeorm';
 import { Resources } from '../entities/resources.entity';
 import { Injectable } from '@nestjs/common';
-import { BaseRepository } from 'src/core/repositories/base.repository';
+import { BaseRepository } from '@core/repositories/base.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()

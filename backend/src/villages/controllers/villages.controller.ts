@@ -25,9 +25,9 @@ import {
   ApiConflictResponse,
   ApiNoContentResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/core/decorators/roles.decorator';
-import { UserRole } from 'src/core/enums/user-role.enum';
-import { Authenticated } from 'src/core/decorators/authenticated.decorator';
+import { Roles } from '@core/decorators/roles.decorator';
+import { UserRole } from '@core/enums/user-role.enum';
+import { Authenticated } from '@core/decorators/authenticated.decorator';
 
 @ApiTags('Villages')
 @ApiBearerAuth('access-token')

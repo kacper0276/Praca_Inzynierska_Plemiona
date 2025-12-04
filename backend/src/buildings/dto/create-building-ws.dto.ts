@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsNotEmpty, Min } from 'class-validator';
-import { BuildingName } from 'src/core/enums/building-name.enum';
+import { BuildingName } from '@core/enums/building-name.enum';
 
 export class CreateBuildingWsDto {
   @ApiProperty({

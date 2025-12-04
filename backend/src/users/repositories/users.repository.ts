@@ -1,4 +1,4 @@
-import { BaseRepository } from 'src/core/repositories/base.repository';
+import { BaseRepository } from '@core/repositories/base.repository';
 import { User } from '../entities/user.entity';
 import { IsNull, LessThan, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';

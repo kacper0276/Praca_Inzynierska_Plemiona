@@ -14,15 +14,14 @@ import { Building } from '../entities/building.entity';
 import { CreateBuildingWsDto } from '../dto/create-building-ws.dto';
 import { DeleteBuildingWsDto } from '../dto/delete-building-ws.dto';
 import { MoveBuildingWsDto } from '../dto/move-building-ws.dto';
-import { ResourcesRepository } from 'src/resources/repositories/resources.repository';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { BUILDING_COSTS } from 'src/core/consts/building-costs';
-import { BuildingName } from 'src/core/enums/building-name.enum';
+import { BUILDING_COSTS } from '@core/consts/building-costs';
+import { BuildingName } from '@core/enums/building-name.enum';
 import { Village } from 'src/villages/entities/village.entity';
 import { Resources } from 'src/resources/entities/resources.entity';
-import { WsGateway } from 'src/core/gateways/ws.gateway';
-import { WsEvent } from 'src/core/enums/ws-event.enum';
+import { WsGateway } from '@core/gateways/ws.gateway';
+import { WsEvent } from '@core/enums/ws-event.enum';
 
 @Injectable()
 export class BuildingsService {

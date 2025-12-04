@@ -20,11 +20,11 @@ import {
 } from '@nestjs/swagger';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
-import { Public } from 'src/core/decorators/public.decorator';
 import { ActivateAccountDto } from '../dto/activate-account.dto';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
-import { Authenticated } from 'src/core/decorators/authenticated.decorator';
-import { Message } from 'src/core/decorators/message.decorator';
+import { Authenticated } from '@core/decorators/authenticated.decorator';
+import { Message } from '@core/decorators/message.decorator';
+import { Public } from '@core/decorators/public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')

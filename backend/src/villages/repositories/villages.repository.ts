@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import { Village } from '../entities/village.entity';
 import { Injectable } from '@nestjs/common';
-import { BaseRepository } from 'src/core/repositories/base.repository';
+import { BaseRepository } from '@core/repositories/base.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()

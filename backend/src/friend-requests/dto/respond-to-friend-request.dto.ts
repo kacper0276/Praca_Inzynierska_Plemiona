@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
-import { FriendRequestStatus } from 'src/core/enums/friend-request-status.enum';
+import { FriendRequestStatus } from '@core/enums/friend-request-status.enum';
 
 export class RespondToFriendRequestDto {
   @ApiProperty({

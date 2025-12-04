@@ -48,7 +48,7 @@ export class ConfigService {
       password: this.migrationConfig.password,
       database: this.migrationConfig.database,
       synchronize: this.migrationConfig.synchronize,
-      migrations: ['src/core/database/migrations/*{.ts,.js}'],
+      migrations: ['@core/database/migrations/*{.ts,.js}'],
       entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
     };
   }

@@ -5,7 +5,7 @@ import {
   CallHandler,
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { ConfigService } from 'src/core/config/config.service';
+import { ConfigService } from '@core/config/config.service';
 
 @Injectable()
 export class MulterConfigInterceptor implements NestInterceptor {

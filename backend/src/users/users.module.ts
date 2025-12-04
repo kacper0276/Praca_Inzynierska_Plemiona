@@ -6,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { FriendRequestsModule } from 'src/friend-requests/friend-requests.module';
-import { CoreModule } from 'src/core/core.module';
+import { CoreModule } from '@core/core.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
