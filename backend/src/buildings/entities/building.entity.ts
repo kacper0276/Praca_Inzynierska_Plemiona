@@ -33,4 +33,7 @@ export class Building extends BaseEntity {
 
   @Column({ type: 'int' })
   col: number;
+
+  @Column({ type: 'timestamp', nullable: true })
+  constructionFinishedAt: Date | null;
 }

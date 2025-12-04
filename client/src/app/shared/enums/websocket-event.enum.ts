@@ -26,6 +26,8 @@ export enum WebSocketEvent {
   BUILDING_CREATE = 'building_create',
   BUILDING_MOVE = 'building_move',
   BUILDING_DELETE = 'building_delete',
+  BUILDING_UPGRADE = 'building_upgrade',
+  BUILDING_FINISHED = 'building_finished',
 
   // Friend
   FRIEND_REQUEST_RECEIVED = 'friend_request_received',

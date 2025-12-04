@@ -125,6 +125,7 @@ export class VillagesService {
           imageUrl: building.imageUrl,
           health: building.health,
           maxHealth: building.maxHealth,
+          constructionFinishedAt: building.constructionFinishedAt,
         };
       }
     }
@@ -190,8 +191,11 @@ export class VillagesService {
       const buildingRepo = queryRunner.manager.getRepository(Building);
 
       const village = await villageRepo.findOne({
-        where: { user: { id: userId }, server: { id: expandDto.serverId } },
-        relations: ['user', 'buildings'],
+        where: {
+          user: { id: userId },
+          server: { id: expandDto.serverId },
+        } as any,
+        relations: ['user', 'buildings', 'server'],
       });
 
       if (!village) {

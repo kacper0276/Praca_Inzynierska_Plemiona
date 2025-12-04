@@ -36,6 +36,9 @@ export class GridComponent implements OnInit, OnDestroy {
   readonly maxGridSize = 11;
   expansionMultiplier: number = 1;
   userEmail: string | null = null;
+  now: number = Date.now();
+
+  private timerInterval: any;
 
   isOwnVillage: boolean = true;
 
@@ -43,6 +46,7 @@ export class GridComponent implements OnInit, OnDestroy {
   private battleInterval: any = null;
   private villageDataSub: Subscription | undefined;
   private villageErrorSub: Subscription | undefined;
+  private buildingFinishedSub: Subscription | undefined;
 
   attackingArmy = {
     totalHp: 0,
@@ -171,6 +175,7 @@ export class GridComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initializeGrid();
     this.setupVillageDataListeners();
+    this.setupBuildingFinishedListener();
 
     if (this.isOwnVillage) {
       this.resourcesService.resources$.subscribe((res) => {
@@ -178,6 +183,32 @@ export class GridComponent implements OnInit, OnDestroy {
       });
       this.gatheringService.start(1000 * 10);
     }
+
+    this.timerInterval = setInterval(() => {
+      this.now = Date.now();
+    }, 1000);
+  }
+
+  private setupBuildingFinishedListener(): void {
+    this.buildingFinishedSub = this.webSocketService
+      .on<BuildingData>(WebSocketEvent.BUILDING_FINISHED)
+      .subscribe((finishedBuilding) => {
+        if (!finishedBuilding || !finishedBuilding.id) return;
+
+        for (let r = 0; r < this.buildings.length; r++) {
+          for (let c = 0; c < this.buildings[r].length; c++) {
+            const currentBuilding = this.buildings[r][c];
+
+            if (currentBuilding && currentBuilding.id === finishedBuilding.id) {
+              this.buildings[r][c] = finishedBuilding;
+              this.toastr.showSuccess(
+                `Budowa budynku ${finishedBuilding.name} zakończona!`
+              );
+              return;
+            }
+          }
+        }
+      });
   }
 
   private setupVillageDataListeners(): void {
@@ -367,6 +398,15 @@ export class GridComponent implements OnInit, OnDestroy {
 
     const draggedData = this.buildings[fromRow][fromCol];
     const targetData = this.buildings[row][col];
+
+    if (
+      draggedData?.constructionFinishedAt ||
+      targetData?.constructionFinishedAt
+    ) {
+      this.toastr.showError('Nie można przenosić budynków w trakcie budowy.');
+      this.cleanupDragState(event);
+      return;
+    }
 
     this.buildings[row][col] = draggedData;
     this.buildings[fromRow][fromCol] = targetData;
@@ -677,18 +717,23 @@ export class GridComponent implements OnInit, OnDestroy {
     this.toastr.showInfo(message);
   }
 
+  getConstructionTimeLeft(building: BuildingData): number {
+    if (!building || !building.constructionFinishedAt) return 0;
+    const end = new Date(building.constructionFinishedAt).getTime();
+    return Math.max(0, Math.ceil((end - this.now) / 1000));
+  }
+
   ngOnDestroy(): void {
-    if (this.isOwnVillage) {
-      this.gatheringService.stop();
-    }
-    if (this.villageDataSub) {
-      this.villageDataSub.unsubscribe();
-    }
-    if (this.villageErrorSub) {
-      this.villageErrorSub.unsubscribe();
-    }
-    if (this.battleInterval) {
-      clearInterval(this.battleInterval);
-    }
+    if (this.isOwnVillage) this.gatheringService.stop();
+
+    if (this.villageDataSub) this.villageDataSub.unsubscribe();
+
+    if (this.villageErrorSub) this.villageErrorSub.unsubscribe();
+
+    if (this.battleInterval) clearInterval(this.battleInterval);
+
+    if (this.buildingFinishedSub) this.buildingFinishedSub.unsubscribe();
+
+    if (this.timerInterval) clearInterval(this.timerInterval);
   }
 }

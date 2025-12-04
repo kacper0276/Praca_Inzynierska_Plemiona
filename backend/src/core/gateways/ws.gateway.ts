@@ -26,6 +26,7 @@ import { ExpandVillageWsDto } from 'src/villages/dto/expand-village-ws.dto';
 import { FriendRequestsRepository } from 'src/friend-requests/repositories/friend-requests.repository';
 import { FriendRequestStatus } from '../enums/friend-request-status.enum';
 import { GetVillageWsDto } from 'src/villages/dto/get-village-ws.dto';
+import { UpgradeBuildingWsDto } from 'src/buildings/dto/upgrade-building-ws.dto';
 
 export interface AuthenticatedSocket extends Socket {
   user: User;
@@ -216,6 +217,22 @@ export class WsGateway
       this.logger.error(
         `Failed to create building for ${client.user.email}: ${error.message}`,
       );
+    }
+  }
+
+  @SubscribeMessage(WsEvent.BUILDING_UPGRADE)
+  async handleBuildingUpgrade(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: UpgradeBuildingWsDto,
+  ) {
+    this.logger.log(
+      `User ${client.user.email} upgrading building ${payload.buildingId}`,
+    );
+    try {
+      await this.buildingsService.upgradeForUser(client.user.id, payload);
+      this.handleGetVillageData(client, { serverId: payload.serverId });
+    } catch (error) {
+      this.logger.error(`Upgrade failed: ${error.message}`);
     }
   }
 
