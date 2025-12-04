@@ -1,0 +1,67 @@
+<div class="table-container">
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          @for (col of columns; track col.key) {
+          <th>{{ col.header }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of data; track item) {
+        <tr
+          [ngClass]="getRowClass(item)"
+          (click)="rowClickable ? onEdit(item) : null"
+          [attr.title]="rowClickable ? 'Kliknij, aby edytować' : ''"
+        >
+          @for (col of columns; track col.key) {
+          <td>
+            @if (col.isAction) {
+            <div class="actions-cell">
+              <button
+                class="action-btn"
+                mat-icon-button
+                (click)="$event.stopPropagation(); onActionEdit(item)"
+                aria-label="Edytuj element"
+                title="Edytuj"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                class="action-btn"
+                mat-icon-button
+                (click)="$event.stopPropagation(); onDelete(item)"
+                aria-label="Usuń element"
+                title="Usuń"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+            } @else {
+            {{ getCellValue(item, col.key) }}
+            }
+          </td>
+          }
+        </tr>
+        } @empty {
+        <tr>
+          <td
+            [attr.colspan]="columns.length"
+            style="text-align: center; padding: 20px"
+          >
+            Brak danych do wyświetlenia.
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <app-pagination
+    [totalItems]="totalItems"
+    [pageSize]="pageSize"
+    [currentPage]="pageNumber"
+    (pageChange)="onPaginationChange($event)"
+  ></app-pagination>
+</div>

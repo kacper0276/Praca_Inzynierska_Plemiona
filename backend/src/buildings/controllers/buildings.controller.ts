@@ -23,7 +23,7 @@ import {
   ApiNoContentResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Authenticated } from 'src/core/decorators/authenticated.decorator';
+import { Authenticated } from '@core/decorators/authenticated.decorator';
 
 @ApiTags('Buildings')
 @ApiBearerAuth('access-token')

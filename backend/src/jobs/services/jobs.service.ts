@@ -84,25 +84,43 @@ export class JobsService {
   }
 
   @Cron(CronExpression.EVERY_10_HOURS)
+  // @Cron(CronExpression.EVERY_10_SECONDS)
   async handleResourceGeneration() {
     this.logger.log('Uruchamianie zadania generowania surowców...');
 
-    const users = await this.usersRepository.findAll({
-      relations: ['villages', 'villages.buildings'],
+    const users = await this.usersRepository.findUsersLoggedIn({
+      relations: [
+        'currentServer',
+        'villages',
+        'villages.server',
+        'villages.buildings',
+      ],
     });
+
     if (users.length === 0) return;
 
     for (const user of users) {
-      const village = user.villages?.[0];
-      if (!village || !village.buildings || village.buildings.length === 0) {
+      if (!user.currentServer) continue;
+
+      const currentVillage = user.villages?.find(
+        (v) => v.server?.id === user.currentServer.id,
+      );
+
+      if (
+        !currentVillage ||
+        !currentVillage.buildings ||
+        currentVillage.buildings.length === 0
+      ) {
         continue;
       }
-      const buildings = user.villages[0].buildings;
-      if (buildings.length === 0) continue;
-      const production = this.calculateProduction(buildings);
+
+      const production = this.calculateProduction(currentVillage.buildings);
+
       if (Object.values(production).every((v) => v === 0)) continue;
+
       const updatedResources = await this.resourcesService.updateResources(
         user.id,
+        user.currentServer.id,
         production,
       );
 

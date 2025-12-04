@@ -14,7 +14,7 @@ import { GroupMessage } from '../entities/group-message.entity';
 import { WsGateway } from '../../core/gateways/ws.gateway';
 import { In } from 'typeorm';
 import { CreateGroupMessageDto } from '../dto/create-group-message.dto';
-import { WsEvent } from 'src/core/enums/ws-event.enum';
+import { WsEvent } from '@core/enums/ws-event.enum';
 
 @Injectable()
 export class ChatGroupsService {

@@ -9,8 +9,8 @@ import { UsersRepository } from 'src/users/repositories/users.repository';
 import { getActivationEmailTemplate } from 'src/users/templates/activation-email.template';
 import * as bcrypt from 'bcryptjs';
 import { User } from 'src/users/entities/user.entity';
-import { TtlService } from 'src/core/ttl/services/ttl.service';
 import { RegisterDto } from '../dto/register.dto';
+import { TtlService } from '@core/ttl/services/ttl.service';
 
 @Injectable()
 export class AuthService {

@@ -7,12 +7,13 @@ import { VillagesRepository } from '../repositories/villages.repository';
 import { Village } from '../entities/village.entity';
 import { VillageStateDto } from '../dto/village-state.dto';
 import { UsersRepository } from 'src/users/repositories/users.repository';
-import { BuildingData } from 'src/core/models/building.model';
+import { BuildingData } from '@core/models/building.model';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { ExpandVillageWsDto } from '../dto/expand-village-ws.dto';
 import { ResourcesService } from 'src/resources/services/resources.service';
 import { Building } from 'src/buildings/entities/building.entity';
+import { Server } from 'src/servers/entities/server.entity';
 
 @Injectable()
 export class VillagesService {
@@ -51,6 +52,64 @@ export class VillagesService {
 
     if (!village) {
       return null;
+    }
+
+    const grid: (BuildingData | null)[][] = Array(village.gridSize)
+      .fill(null)
+      .map(() => Array(village.gridSize).fill(null));
+
+    for (const building of village.buildings) {
+      if (building.row < village.gridSize && building.col < village.gridSize) {
+        grid[building.row][building.col] = {
+          id: building.id,
+          name: building.name,
+          level: building.level,
+          imageUrl: building.imageUrl,
+          health: building.health,
+          maxHealth: building.maxHealth,
+        };
+      }
+    }
+
+    return {
+      gridSize: village.gridSize,
+      buildings: grid,
+    };
+  }
+
+  async getVillageForUserAndServerId(
+    userId: number,
+    serverId: number,
+  ): Promise<{
+    gridSize: number;
+    buildings: (BuildingData | null)[][];
+  } | null> {
+    const conditions = {
+      user: { id: userId },
+      server: { id: serverId },
+    } as any;
+
+    const options = { relations: ['buildings'] };
+
+    let village = await this.villagesRepository.findOne(conditions, options);
+
+    if (!village) {
+      const user = await this.usersRepository.findOneById(userId);
+      const serverRepo = this.dataSource.getRepository(Server);
+      const server = await serverRepo.findOneBy({ id: serverId });
+
+      if (!user || !server) {
+        throw new NotFoundException('Nie znaleziono użytkownika lub serwera.');
+      }
+
+      village = this.villagesRepository.create({
+        user: user,
+        server: server,
+        gridSize: 5,
+        buildings: [],
+      });
+
+      village = await this.villagesRepository.save(village);
     }
 
     const grid: (BuildingData | null)[][] = Array(village.gridSize)
@@ -131,7 +190,7 @@ export class VillagesService {
       const buildingRepo = queryRunner.manager.getRepository(Building);
 
       const village = await villageRepo.findOne({
-        where: { user: { id: userId } },
+        where: { user: { id: userId }, server: { id: expandDto.serverId } },
         relations: ['user', 'buildings'],
       });
 
@@ -145,6 +204,7 @@ export class VillagesService {
 
       const canAfford = await this.resourcesService.hasEnoughResources(
         village.user.id,
+        village.server.id,
         expandDto.cost,
       );
 
@@ -154,6 +214,7 @@ export class VillagesService {
 
       await this.resourcesService.spendResources(
         village.user.id,
+        village.server.id,
         expandDto.cost,
         queryRunner.manager,
       );

@@ -5,15 +5,18 @@ import {
   JoinTable,
   OneToOne,
   OneToMany,
+  JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 import { Clan } from '../../clans/entities/clan.entity';
 import { BaseEntity } from '../../core/entities/base.entity';
 import { Resources } from 'src/resources/entities/resources.entity';
-import { UserRole } from 'src/core/enums/user-role.enum';
+import { UserRole } from '@core/enums/user-role.enum';
 import { Village } from 'src/villages/entities/village.entity';
 import { FriendRequest } from '../../friend-requests/entities/friend-request.entity';
 import { DirectMessage } from 'src/chat/entities/direct-message.entity';
 import { ChatGroup } from 'src/chat/entities/chat-group.entity';
+import { Server } from 'src/servers/entities/server.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -53,8 +56,8 @@ export class User extends BaseEntity {
   @Column({ default: null })
   deleteAt: Date | null;
 
-  @OneToOne(() => Resources, (resources) => resources.user)
-  resources: Resources;
+  @OneToMany(() => Resources, (resources) => resources.user)
+  resources: Resources[];
 
   @OneToMany(() => Village, (village) => village.user)
   villages: Village[];
@@ -80,4 +83,8 @@ export class User extends BaseEntity {
 
   @ManyToMany(() => ChatGroup, (group) => group.members)
   chatGroups: ChatGroup[];
+
+  @ManyToOne(() => Server, { nullable: true })
+  @JoinColumn({ name: 'currentServerId' })
+  currentServer: Server | null;
 }

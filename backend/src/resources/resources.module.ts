@@ -13,6 +13,6 @@ import { UsersModule } from 'src/users/users.module';
   ],
   providers: [ResourcesService, ResourcesRepository],
   controllers: [ResourcesController],
-  exports: [ResourcesService],
+  exports: [ResourcesService, ResourcesRepository],
 })
 export class ResourcesModule {}

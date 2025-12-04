@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from './modules/auth/services/user.service';
 import { Router } from '@angular/router';
-import { ToastrService } from './shared/services/toastr.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { ToastrService } from '@shared/services/toastr.service';
+import { UserService } from '@modules/auth/services/user.service';
+import { ThemeService } from '@shared/services/theme.service';
+import { LocalStorageService } from '@shared/services/local-storage.service';
+import { Theme } from '@shared/types/theme.type';
 
 @Component({
   selector: 'app-root',
@@ -19,11 +22,15 @@ export class AppComponent implements OnInit {
     private readonly router: Router,
     private readonly toastrService: ToastrService,
     private readonly translateService: TranslateService,
-    private readonly deviceService: DeviceDetectorService
+    private readonly deviceService: DeviceDetectorService,
+    private readonly themeService: ThemeService,
+    private readonly localStorageService: LocalStorageService
   ) {}
 
   ngOnInit(): void {
     this.checkDevice();
+
+    this.setTheme();
 
     this.userService.getUserFromToken().subscribe({
       next: (res) => {
@@ -37,6 +44,12 @@ export class AppComponent implements OnInit {
         );
       },
     });
+  }
+
+  private setTheme(): void {
+    const theme = this.localStorageService.getItem<Theme>('app_theme');
+
+    if (theme) this.themeService.set(theme);
   }
 
   private checkDevice(): void {

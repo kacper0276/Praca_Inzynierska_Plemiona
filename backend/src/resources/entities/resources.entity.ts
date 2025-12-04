@@ -4,8 +4,10 @@ import {
   Column,
   JoinColumn,
   OneToOne,
+  ManyToOne,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Server } from 'src/servers/entities/server.entity';
 
 @Entity()
 export class Resources {
@@ -27,7 +29,10 @@ export class Resources {
   @Column({ default: 0 })
   maxPopulation: number;
 
-  @OneToOne(() => User, (user) => user.resources, { onDelete: 'CASCADE' })
-  @JoinColumn()
+  @ManyToOne(() => User, (user) => user.resources, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
   user: User;
+
+  @ManyToOne(() => Server, (server) => server.id)
+  server: Server;
 }

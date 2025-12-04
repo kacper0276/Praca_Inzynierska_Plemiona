@@ -17,7 +17,7 @@ import {
   ApiBody,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
-import { Authenticated } from 'src/core/decorators/authenticated.decorator';
+import { Authenticated } from '@core/decorators/authenticated.decorator';
 import { RespondToFriendRequestDto } from '../dto/respond-to-friend-request.dto';
 
 @ApiTags('Friend Requests')

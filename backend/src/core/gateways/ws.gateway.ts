@@ -25,6 +25,7 @@ import { MoveBuildingWsDto } from 'src/buildings/dto/move-building-ws.dto';
 import { ExpandVillageWsDto } from 'src/villages/dto/expand-village-ws.dto';
 import { FriendRequestsRepository } from 'src/friend-requests/repositories/friend-requests.repository';
 import { FriendRequestStatus } from '../enums/friend-request-status.enum';
+import { GetVillageWsDto } from 'src/villages/dto/get-village-ws.dto';
 
 export interface AuthenticatedSocket extends Socket {
   user: User;
@@ -133,12 +134,13 @@ export class WsGateway
   }
 
   @SubscribeMessage('joinServerStatusRoom')
-  handleJoinServerStatusRoom(
+  async handleJoinServerStatusRoom(
     @MessageBody() data: JoinServerRoomDto,
     @ConnectedSocket() client: Socket,
   ) {
     const roomName = this.getServerStatusRoomName(data.hostname, data.port);
     client.join(roomName);
+    await this.usersService.setActualUserServer(data.userEmail, data.serverId);
     this.logger.log(`Client ${client.id} joined room: ${roomName}`);
   }
 
@@ -172,12 +174,17 @@ export class WsGateway
   }
 
   @SubscribeMessage(WsEvent.GET_VILLAGE_DATA)
-  async handleGetVillageData(@ConnectedSocket() client: AuthenticatedSocket) {
+  async handleGetVillageData(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: GetVillageWsDto,
+  ) {
     this.logger.log(`User ${client.user.email} requested village data.`);
     try {
-      const villageData = await this.villagesService.getVillageForUser(
-        client.user.id,
-      );
+      const villageData =
+        await this.villagesService.getVillageForUserAndServerId(
+          client.user.id,
+          payload.serverId,
+        );
 
       if (!villageData) {
         throw new Error('Village not found for user.');
@@ -204,7 +211,7 @@ export class WsGateway
     );
     try {
       await this.buildingsService.createForUser(client.user.id, payload);
-      this.handleGetVillageData(client);
+      this.handleGetVillageData(client, { serverId: payload.serverId });
     } catch (error) {
       this.logger.error(
         `Failed to create building for ${client.user.email}: ${error.message}`,
@@ -261,7 +268,7 @@ export class WsGateway
       this.logger.log(
         `Pomyślnie rozszerzono wioskę dla ${client.user.email}. Wysyłanie aktualizacji.`,
       );
-      await this.handleGetVillageData(client);
+      await this.handleGetVillageData(client, { serverId: payload.serverId });
     } catch (error) {
       this.logger.error(
         `Błąd podczas rozszerzania wioski dla ${client.user.email}: ${error.message}`,

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { User } from '../../../../shared/models';
 import { UserService } from '../../../auth/services/user.service';
 import { UpdateUser } from '../../../auth/interfaces/update-user.interface';
 import { environment } from '../../../../../environments/environment';
-import { ToastrService } from '../../../../shared/services/toastr.service';
+import { User } from '@shared/models';
+import { ToastrService } from '@shared/services/toastr.service';
 
 @Component({
   selector: 'app-edit-profile',

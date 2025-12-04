@@ -1,4 +1,4 @@
-import { BaseEntity } from 'src/core/entities/base.entity';
+import { BaseEntity } from '@core/entities/base.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Entity, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { GroupMessage } from './group-message.entity';

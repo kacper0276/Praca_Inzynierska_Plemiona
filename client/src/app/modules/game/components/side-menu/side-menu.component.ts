@@ -1,14 +1,15 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Theme } from '../../../../shared/types/theme.type';
-import { ThemeService } from '../../../../shared/services/theme.service';
 import { UserService } from '../../../auth/services/user.service';
-import { User } from '../../../../shared/models';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Router } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { Observable, Subscription } from 'rxjs';
-import { FriendRequestNotificationService } from '../../../../shared/services/friend-request-notification.service';
+import { User } from '@shared/models';
+import { FriendRequestNotificationService } from '@shared/services/friend-request-notification.service';
+import { ThemeService } from '@shared/services/theme.service';
+import { Theme } from '@shared/types/theme.type';
+import { LocalStorageService } from '@shared/services/local-storage.service';
 
 @Component({
   selector: 'app-side-menu',
@@ -36,11 +37,12 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     private readonly userService: UserService,
     private readonly authService: AuthService,
     private readonly router: Router,
-    private readonly friendRequestNotificationService: FriendRequestNotificationService
+    private readonly friendRequestNotificationService: FriendRequestNotificationService,
+    private readonly localStorageService: LocalStorageService
   ) {}
 
   ngOnInit(): void {
-    const storedLang = localStorage.getItem('lang');
+    const storedLang = this.localStorageService.getItem<string>('lang');
     if (storedLang) {
       this.setLanguage(storedLang);
     } else {
@@ -68,7 +70,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   setLanguage(lang: string) {
     this.currentLang = lang;
     this.translate.use(lang);
-    localStorage.setItem('lang', lang);
+    this.localStorageService.setItem('lang', lang);
   }
 
   toggleTheme() {

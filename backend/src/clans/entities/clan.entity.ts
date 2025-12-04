@@ -1,6 +1,6 @@
 import { Entity, Column, ManyToMany, JoinTable } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { BaseEntity } from 'src/core/entities/base.entity';
+import { BaseEntity } from '@core/entities/base.entity';
 
 @Entity({ name: 'clans' })
 export class Clan extends BaseEntity {

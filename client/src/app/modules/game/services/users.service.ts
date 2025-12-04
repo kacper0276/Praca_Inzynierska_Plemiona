@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from '../../../shared/services/http.service';
 import { UserSearchResult } from '../interfaces/user-search-result.interface';
-import { ApiResponse, User } from '../../../shared/models';
 import { Observable, of } from 'rxjs';
+import { ApiResponse, User } from '@shared/models';
+import { HttpService } from '@shared/services/http.service';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {

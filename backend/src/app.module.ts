@@ -33,6 +33,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { FriendRequestsModule } from './friend-requests/friend-requests.module';
 import { ChatModule } from './chat/chat.module';
+import { RankingModule } from './ranking/ranking.module';
 
 @Module({
   imports: [
@@ -117,6 +118,7 @@ import { ChatModule } from './chat/chat.module';
     BuildingsModule,
     FriendRequestsModule,
     ChatModule,
+    RankingModule,
   ],
   controllers: [],
   providers: [

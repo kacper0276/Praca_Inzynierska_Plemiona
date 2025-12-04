@@ -11,10 +11,10 @@ import { UserSearchResult } from '../../interfaces/user-search-result.interface'
 import { environment } from '../../../../../environments/environment';
 import { FriendRequestsService } from '../../services/friend-requests.service';
 import { Router } from '@angular/router';
-import { FriendRequest, User } from '../../../../shared/models';
-import { FriendRequestStatus } from '../../../../shared/enums';
 import { UserService } from '../../../auth/services/user.service';
-import { FriendRequestNotificationService } from '../../../../shared/services/friend-request-notification.service';
+import { FriendRequestStatus } from '@shared/enums';
+import { FriendRequest } from '@shared/models';
+import { FriendRequestNotificationService } from '@shared/services/friend-request-notification.service';
 
 @Component({
   selector: 'app-invites',

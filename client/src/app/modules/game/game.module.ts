@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { SharedModule } from '../../shared/shared.module';
 import { FormsModule } from '@angular/forms';
 import { GameComponent } from './components/game/game.component';
 import { GridComponent } from './components/grid/grid.component';
@@ -15,6 +14,7 @@ import { UpgradeModalComponent } from './components/upgrade/upgrade-modal.compon
 import { ClanCreateComponent } from './components/clan-create/clan-create.component';
 import { ArmyComponent } from './components/army/army.component';
 import { InvitesComponent } from './components/invites/invites.component';
+import { SharedModule } from '@shared/shared.module';
 
 @NgModule({
   declarations: [

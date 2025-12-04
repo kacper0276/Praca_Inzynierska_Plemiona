@@ -8,22 +8,19 @@ import {
 import { Observable, Subscription } from 'rxjs';
 import { ResourcesService } from '../../services/resources.service';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BuildingData,
-  RadialMenuOption,
-  Resources,
-} from '../../../../shared/models';
 import { ActivatedRoute } from '@angular/router';
 import { GatheringService } from '../../services/gathering.service';
-import { ToastrService } from '../../../../shared/services/toastr.service';
-import { WebSocketService } from '../../../../shared/services/web-socket.service';
-import { availableBuildings } from '../../../../shared/consts/available-buildings';
-import { WebSocketEvent } from '../../../../shared/enums/websocket-event.enum';
 import { UserService } from '../../../auth/services/user.service';
+import { availableBuildings } from '@shared/consts/available-buildings';
+import { WebSocketEvent } from '@shared/enums';
+import { BuildingData, Resources, RadialMenuOption } from '@shared/models';
+import { ToastrService } from '@shared/services/toastr.service';
+import { WebSocketService } from '@shared/services/web-socket.service';
 import {
   BUILDING_OPTIONS,
   EMPTY_PLOT_OPTIONS,
-} from '../../../../shared/consts/radial-menu.options';
+} from '@shared/consts/radial-menu.options';
+import { ServerService } from '@modules/game/services/server.service';
 
 @Component({
   selector: 'app-grid',
@@ -113,7 +110,8 @@ export class GridComponent implements OnInit, OnDestroy {
     private readonly translate: TranslateService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly webSocketService: WebSocketService,
-    private readonly usersService: UserService
+    private readonly usersService: UserService,
+    private readonly serverService: ServerService
   ) {
     this.resources = {
       wood: 0,
@@ -201,7 +199,9 @@ export class GridComponent implements OnInit, OnDestroy {
           this.toastr.showError(`Błąd ładowania wioski: ${error.message}`);
         });
 
-      this.webSocketService.requestVillageData();
+      this.webSocketService.requestVillageData(
+        this.serverService.getServer()?.id ?? -1
+      );
     } else if (this.userEmail) {
       this.villageDataSub = this.webSocketService
         .onVillageByEmailUpdate()
@@ -286,6 +286,7 @@ export class GridComponent implements OnInit, OnDestroy {
     this.webSocketService.send(WebSocketEvent.VILLAGE_EXPAND, {
       side,
       cost,
+      serverId: this.serverService.getServer()?.id ?? -1,
     });
   }
 
@@ -484,6 +485,7 @@ export class GridComponent implements OnInit, OnDestroy {
         name: building.name,
         row: this.buildRow,
         col: this.buildCol,
+        serverId: this.serverService.getServer()?.id ?? -1,
       });
 
       const newBuilding: BuildingData = {

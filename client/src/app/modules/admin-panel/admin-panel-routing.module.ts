@@ -6,7 +6,7 @@ import { BuildingPanelComponent } from './components/building-panel/building-pan
 import { ResourcePanelComponent } from './components/resource-panel/resource-panel.component';
 import { ReportPanelComponent } from './components/report-panel/report-panel.component';
 import { ClanPanelComponent } from './components/clan-panel/clan-panel.component';
-import { adminGuard } from '../../shared/guards/admin.guard';
+import { adminGuard } from '@shared/guards/admin.guard';
 
 const routes: Routes = [
   {

@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { ToastrService } from '../../../../shared/services/toastr.service';
 import { AuthService } from '../../services/auth.service';
+import { ToastrService } from '@shared/services/toastr.service';
 
 @Component({
   selector: 'register',

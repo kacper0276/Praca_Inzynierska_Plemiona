@@ -1,7 +1,8 @@
 import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
-import { BaseEntity } from 'src/core/entities/base.entity';
+import { BaseEntity } from '@core/entities/base.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Building } from 'src/buildings/entities/building.entity';
+import { Server } from 'src/servers/entities/server.entity';
 
 @Entity({ name: 'villages' })
 export class Village extends BaseEntity {
@@ -22,4 +23,7 @@ export class Village extends BaseEntity {
 
   @Column({ default: 0 })
   centerY: number;
+
+  @ManyToOne(() => Server, (server) => server.id)
+  server: Server;
 }

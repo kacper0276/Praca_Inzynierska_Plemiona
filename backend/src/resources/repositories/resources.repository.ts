@@ -1,7 +1,7 @@
 import { FindOneOptions, Repository } from 'typeorm';
 import { Resources } from '../entities/resources.entity';
 import { Injectable } from '@nestjs/common';
-import { BaseRepository } from 'src/core/repositories/base.repository';
+import { BaseRepository } from '@core/repositories/base.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -14,6 +14,10 @@ export class ResourcesRepository extends BaseRepository<Resources> {
   }
 
   findAll(options?: any): Promise<Resources[]> {
+    return this.repository.find(options);
+  }
+
+  find(options?: any): Promise<Resources[]> {
     return this.repository.find(options);
   }
 
@@ -32,6 +36,20 @@ export class ResourcesRepository extends BaseRepository<Resources> {
     return this.repository.findOne({
       where: {
         user: { id: userId },
+      },
+      ...options,
+    });
+  }
+
+  findOneByUserIdAndServerId(
+    userId: number,
+    serverId: number,
+    options?: FindOneOptions<Resources>,
+  ): Promise<Resources | null> {
+    return this.repository.findOne({
+      where: {
+        user: { id: userId },
+        server: { id: serverId },
       },
       ...options,
     });

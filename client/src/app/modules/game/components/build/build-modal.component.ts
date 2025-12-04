@@ -1,10 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { BuildingData, Resources } from '../../../../shared/models';
-import {
-  BUILDING_COSTS,
-  ResourceCost,
-} from '../../../../shared/consts/building-costs';
-import { BuildingName } from '../../../../shared/enums';
+import { ResourceCost, BUILDING_COSTS } from '@shared/consts/building-costs';
+import { BuildingName } from '@shared/enums';
+import { BuildingData, Resources } from '@shared/models';
 
 @Component({
   selector: 'app-build-modal',

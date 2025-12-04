@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsNotEmpty, Min } from 'class-validator';
-import { BuildingName } from 'src/core/enums/building-name.enum';
+import { BuildingName } from '@core/enums/building-name.enum';
 
 export class CreateBuildingWsDto {
   @ApiProperty({
@@ -21,4 +21,8 @@ export class CreateBuildingWsDto {
   @IsInt({ message: 'Kolumna musi być liczbą całkowitą.' })
   @Min(0)
   col: number;
+
+  @ApiProperty({ description: 'Id serwera', example: 1 })
+  @IsInt({ message: 'Id musi być liczbą całkowitą' })
+  serverId: number;
 }

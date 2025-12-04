@@ -7,7 +7,7 @@ import {
   FindOptionsWhere,
   Repository,
 } from 'typeorm';
-import { BaseRepository } from 'src/core/repositories/base.repository';
+import { BaseRepository } from '@core/repositories/base.repository';
 import { Building } from '../entities/building.entity';
 
 @Injectable()

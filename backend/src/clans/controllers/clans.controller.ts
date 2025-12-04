@@ -22,10 +22,10 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/core/decorators/roles.decorator';
-import { UserRole } from 'src/core/enums/user-role.enum';
+import { Roles } from '@core/decorators/roles.decorator';
+import { UserRole } from '@core/enums/user-role.enum';
 import { CreateClanDto } from '../dto/create-clan.dto';
-import { Public } from 'src/core/decorators/public.decorator';
+import { Public } from '@core/decorators/public.decorator';
 import { UpdateClanDto } from '../dto/update-clan.dto';
 
 @ApiTags('Clans')

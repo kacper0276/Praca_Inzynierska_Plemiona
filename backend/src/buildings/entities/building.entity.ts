@@ -1,5 +1,5 @@
-import { BaseEntity } from 'src/core/entities/base.entity';
-import { BuildingName } from 'src/core/enums/building-name.enum';
+import { BaseEntity } from '@core/entities/base.entity';
+import { BuildingName } from '@core/enums/building-name.enum';
 import { Village } from 'src/villages/entities/village.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 

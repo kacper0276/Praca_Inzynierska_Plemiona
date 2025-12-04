@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, take } from 'rxjs/operators';
 import { ResourcesService } from '../../services/resources.service';
-import { WebSocketService } from '../../../../shared/services/web-socket.service';
 import { UserService } from '../../../auth/services/user.service';
-import { Resources, Server } from '../../../../shared/models';
 import { ServersService } from '../../services/servers.service';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { ServerStatus } from '../../../../shared/enums';
+import { ServerStatus } from '@shared/enums';
+import { Server, Resources } from '@shared/models';
+import { WebSocketService } from '@shared/services/web-socket.service';
+import { ServerService } from '@modules/game/services/server.service';
 
 @Component({
   selector: 'app-game',
@@ -26,6 +27,7 @@ export class GameComponent implements OnInit {
   private statusSubscription: Subscription | null = null;
   private connectionSubscription: Subscription | null = null;
   private resourcesSubscription: Subscription | null = null;
+  private serverSubscription: Subscription | null = null;
 
   private backendWsUrl = environment.wsUrl;
 
@@ -42,7 +44,8 @@ export class GameComponent implements OnInit {
     public readonly router: Router,
     private readonly webSocket: WebSocketService,
     private readonly usersService: UserService,
-    private readonly serversService: ServersService
+    private readonly serversService: ServersService,
+    private readonly serverService: ServerService
   ) {
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
@@ -53,14 +56,6 @@ export class GameComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const userEmail = this.usersService.getCurrentUser()?.email;
-    this.resourcesService.fetchResources(userEmail ?? '').subscribe({
-      next: (res) => {
-        this.resourcesService.setResources(res.data);
-        this.resources = res.data;
-      },
-    });
-
     this.serversService.getAll().subscribe({
       next: (res) => {
         this.servers = res.data;
@@ -101,6 +96,7 @@ export class GameComponent implements OnInit {
     this.joinedServer = this.selectedServerInModal;
     this.isModalOpen = false;
     console.log(`Dołączono do serwera: ${this.joinedServer.name}`);
+    this.serverService.setServer(this.selectedServerInModal);
 
     try {
       this.webSocket.connect(this.backendWsUrl);
@@ -119,11 +115,25 @@ export class GameComponent implements OnInit {
           console.log(
             'Połączenie WebSocket nawiązane. Dołączanie do pokoju statusu serwera...'
           );
+          const userEmail = this.usersService.getCurrentUser()?.email;
 
           this.webSocket.joinServerStatusRoom(
             this.joinedServer!.hostname,
-            this.joinedServer!.port
+            this.joinedServer!.port,
+            this.joinedServer!.id ?? -1,
+            userEmail ?? ''
           );
+
+          const serverId = this.serverService.getServer()?.id;
+
+          this.resourcesService
+            .fetchResources(userEmail ?? '', serverId ?? -1)
+            .subscribe({
+              next: (res) => {
+                this.resourcesService.setResources(res.data);
+                this.resources = res.data;
+              },
+            });
 
           this.listenForStatusUpdates();
         });

@@ -5,7 +5,7 @@ import { VillagesModule } from 'src/villages/villages.module';
 import { BuildingsService } from './services/buildings.service';
 import { BuildingsRepository } from './repositories/buildings.repository';
 import { BuildingsController } from './controllers/buildings.controller';
-import { CoreModule } from 'src/core/core.module';
+import { CoreModule } from '@core/core.module';
 
 @Module({
   imports: [

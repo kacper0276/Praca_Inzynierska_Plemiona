@@ -1,8 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import {
-  BuildingData,
-  RadialMenuOption,
-} from '../../../../../../shared/models';
+import { BuildingData, RadialMenuOption } from '@shared/models';
 
 @Component({
   selector: 'app-building-details-popup',

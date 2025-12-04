@@ -3,7 +3,7 @@ import { ServersRepository } from '../repositories/servers.repository';
 import { CreateServerDto } from '../dto/create-server.dto';
 import { UpdateServerDto } from '../dto/update-server.dto';
 import { Server } from '../entities/server.entity';
-import { WsGateway } from 'src/core/gateways/ws.gateway';
+import { WsGateway } from '@core/gateways/ws.gateway';
 import { ServerStatus } from '../enums/server-status.enum';
 
 @Injectable()

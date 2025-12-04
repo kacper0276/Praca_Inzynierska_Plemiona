@@ -9,8 +9,8 @@ import {
   ApiNotFoundResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/core/decorators/roles.decorator';
-import { UserRole } from 'src/core/enums/user-role.enum';
+import { Roles } from '@core/decorators/roles.decorator';
+import { UserRole } from '@core/enums/user-role.enum';
 import {
   Body,
   Controller,
@@ -23,7 +23,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { Public } from 'src/core/decorators/public.decorator';
+import { Public } from '@core/decorators/public.decorator';
 import { ServersService } from '../services/servers.service';
 import { CreateServerDto } from '../dto/create-server.dto';
 import { UpdateServerDto } from '../dto/update-server.dto';

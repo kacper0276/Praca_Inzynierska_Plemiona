@@ -11,8 +11,8 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../../modules/auth/services/auth.service';
-import { TokenService } from '../../modules/auth/services/token.service';
+import { AuthService } from '@modules/auth/services/auth.service';
+import { TokenService } from '@modules/auth/services/token.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthInterceptor implements HttpInterceptor {

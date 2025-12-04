@@ -1,6 +1,6 @@
-import { BaseRepository } from 'src/core/repositories/base.repository';
+import { BaseRepository } from '@core/repositories/base.repository';
 import { User } from '../entities/user.entity';
-import { IsNull, LessThan, Repository } from 'typeorm';
+import { FindManyOptions, IsNull, LessThan, Not, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -31,6 +31,16 @@ export class UsersRepository extends BaseRepository<User> {
   findOneByEmailOrLogin(email: string, login: string): Promise<User | null> {
     return this.repository.findOne({
       where: [{ email }, { login }],
+    });
+  }
+
+  findUsersLoggedIn(options: FindManyOptions<User> = {}): Promise<User[]> {
+    return this.repository.find({
+      ...options,
+      where: {
+        currentServer: Not(IsNull()),
+        ...(options.where as object),
+      },
     });
   }
 

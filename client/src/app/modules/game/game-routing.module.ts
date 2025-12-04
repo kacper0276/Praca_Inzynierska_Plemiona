@@ -8,7 +8,7 @@ import { RankingComponent } from './components/ranking/ranking.component';
 import { ClanCreateComponent } from './components/clan-create/clan-create.component';
 import { ArmyComponent } from './components/army/army.component';
 import { InvitesComponent } from './components/invites/invites.component';
-import { adminGuard } from '../../shared/guards/admin.guard';
+import { adminGuard } from '@shared/guards/admin.guard';
 
 const gameRoutes: Routes = [
   {

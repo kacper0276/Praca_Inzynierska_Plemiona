@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from '../../../shared/services/http.service';
 import { CreateReport } from '../interfaces/create-report.interface';
 import { Observable } from 'rxjs';
-import { ApiResponse, Report } from '../../../shared/models';
+import { HttpService } from '@shared/services/http.service';
+import { ApiResponse, Report } from '@shared/models';
 
 @Injectable({
   providedIn: 'root',

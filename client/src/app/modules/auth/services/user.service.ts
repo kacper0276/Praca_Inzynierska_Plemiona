@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { ApiResponse, User } from '../../../shared/models';
-import { HttpService } from '../../../shared/services/http.service';
 import { TokenService } from './token.service';
 import { UpdateUser } from '../interfaces/update-user.interface';
 import { UpdateUserResposne } from '../interfaces/update-user-response.interface';
+import { User, ApiResponse } from '@shared/models';
+import { HttpService } from '@shared/services/http.service';
+import { LocalStorageService } from '@shared/services/local-storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,8 @@ export class UserService {
 
   constructor(
     private readonly http: HttpService,
-    private readonly tokenService: TokenService
+    private readonly tokenService: TokenService,
+    private readonly localStorageService: LocalStorageService
   ) {}
 
   public currentUser$: Observable<User | null> =
@@ -29,9 +31,9 @@ export class UserService {
 
   setUser(user: User | null): void {
     if (user) {
-      localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+      this.localStorageService.setItem(this.USER_KEY, JSON.stringify(user));
     } else {
-      localStorage.removeItem(this.USER_KEY);
+      this.localStorageService.removeItem(this.USER_KEY);
     }
     this.currentUserSubject.next(user);
   }
@@ -45,8 +47,7 @@ export class UserService {
   }
 
   private getUserFromStorage(): User | null {
-    const userJson = localStorage.getItem(this.USER_KEY);
-    return userJson ? (JSON.parse(userJson) as User) : null;
+    return this.localStorageService.getItem<User>(this.USER_KEY);
   }
 
   updateUser(
