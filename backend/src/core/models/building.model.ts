@@ -5,4 +5,5 @@ export interface BuildingData {
   imageUrl: string;
   health?: number;
   maxHealth?: number;
+  constructionFinishedAt?: Date | null;
 }

@@ -14,7 +14,7 @@ import { Building } from '../entities/building.entity';
 import { CreateBuildingWsDto } from '../dto/create-building-ws.dto';
 import { DeleteBuildingWsDto } from '../dto/delete-building-ws.dto';
 import { MoveBuildingWsDto } from '../dto/move-building-ws.dto';
-import { DataSource } from 'typeorm';
+import { DataSource, LessThanOrEqual } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { BUILDING_COSTS } from '@core/consts/building-costs';
 import { BuildingName } from '@core/enums/building-name.enum';
@@ -22,6 +22,7 @@ import { Village } from 'src/villages/entities/village.entity';
 import { Resources } from 'src/resources/entities/resources.entity';
 import { WsGateway } from '@core/gateways/ws.gateway';
 import { WsEvent } from '@core/enums/ws-event.enum';
+import { UpgradeBuildingWsDto } from '../dto/upgrade-building-ws.dto';
 
 @Injectable()
 export class BuildingsService {
@@ -156,6 +157,9 @@ export class BuildingsService {
       const imageUrl = `assets/buildings/${dto.name}.png`;
       const defaultHealth = 100;
 
+      const constructionTime = 30 * 1000;
+      const finishedAt = new Date(Date.now() + constructionTime);
+
       const newBuilding = buildingRepository.create({
         name: dto.name,
         level: 1,
@@ -165,6 +169,7 @@ export class BuildingsService {
         health: defaultHealth,
         maxHealth: defaultHealth,
         village: village,
+        constructionFinishedAt: finishedAt,
       });
       savedBuilding = await buildingRepository.save(newBuilding);
 
@@ -185,6 +190,78 @@ export class BuildingsService {
     }
 
     return savedBuilding;
+  }
+
+  async upgradeForUser(
+    userId: number,
+    dto: UpgradeBuildingWsDto,
+  ): Promise<void> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    let updatedResources: Resources;
+
+    try {
+      const buildingRepository = queryRunner.manager.getRepository(Building);
+      const resourcesRepository = queryRunner.manager.getRepository(Resources);
+
+      const building = await buildingRepository.findOne({
+        where: { id: dto.buildingId, village: { user: { id: userId } } },
+      });
+
+      if (!building) throw new NotFoundException('Budynek nie istnieje.');
+      if (building.constructionFinishedAt)
+        throw new ConflictException('Budynek jest w trakcie budowy.');
+
+      const baseCost = BUILDING_COSTS[building.name as BuildingName];
+      const multiplier = Math.pow(1.2, building.level);
+      const cost = {
+        wood: Math.ceil(baseCost.wood * multiplier),
+        clay: Math.ceil(baseCost.clay * multiplier),
+        iron: Math.ceil(baseCost.iron * multiplier),
+      };
+
+      const userResources = await resourcesRepository.findOne({
+        where: { user: { id: userId } },
+      });
+
+      if (
+        userResources.wood < cost.wood ||
+        userResources.clay < cost.clay ||
+        userResources.iron < cost.iron
+      ) {
+        throw new ConflictException('Niewystarczające zasoby.');
+      }
+
+      userResources.wood -= cost.wood;
+      userResources.clay -= cost.clay;
+      userResources.iron -= cost.iron;
+      updatedResources = await resourcesRepository.save(userResources);
+
+      const upgradeTime = 60 * 1000 * building.level;
+      building.constructionFinishedAt = new Date(Date.now() + upgradeTime);
+
+      building.level += 1;
+      building.maxHealth += 10;
+      building.health = building.maxHealth;
+
+      await buildingRepository.save(building);
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+
+    if (updatedResources) {
+      this.wsGateway.sendToUser(
+        userId,
+        WsEvent.RESOURCE_UPDATE,
+        updatedResources,
+      );
+    }
   }
 
   async moveForUser(userId: number, dto: MoveBuildingWsDto): Promise<void> {
@@ -238,5 +315,25 @@ export class BuildingsService {
       id: dto.buildingId,
       village: { id: village.id },
     });
+  }
+
+  async processFinishedConstructions(): Promise<void> {
+    const now = new Date();
+    const finishedBuildings = await this.buildingsRepository.findAll({
+      where: { constructionFinishedAt: LessThanOrEqual(now) },
+      relations: ['village', 'village.user', 'village.server'],
+    });
+    for (const building of finishedBuildings) {
+      building.constructionFinishedAt = null;
+      const savedBuilding = await this.buildingsRepository.save(building);
+
+      const userId = building.village.user.id;
+
+      this.wsGateway.sendToUser(
+        userId,
+        WsEvent.BUILDING_FINISHED,
+        savedBuilding,
+      );
+    }
   }
 }

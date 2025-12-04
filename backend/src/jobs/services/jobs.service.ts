@@ -23,6 +23,11 @@ export class JobsService {
     private readonly wsGateway: WsGateway,
   ) {}
 
+  @Cron(CronExpression.EVERY_SECOND)
+  async handleBuildingConstruction() {
+    await this.buildingsService.processFinishedConstructions();
+  }
+
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async handleMarkInactiveUsersForDeletion() {
     this.logger.log(
@@ -142,6 +147,8 @@ export class JobsService {
     const production = { wood: 0, clay: 0, iron: 0 };
 
     for (const building of buildings) {
+      if (building.constructionFinishedAt) continue;
+
       const level = building.level || 1;
 
       switch (building.name) {
