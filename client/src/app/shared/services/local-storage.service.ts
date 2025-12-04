@@ -18,7 +18,6 @@ export class LocalStorageService {
       const serializedValue = localStorage.getItem(key);
       return serializedValue ? JSON.parse(serializedValue) : null;
     } catch (error) {
-      console.log(`Error reading from localStorage`);
       return null;
     }
   }

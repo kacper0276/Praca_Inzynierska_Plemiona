@@ -20,6 +20,7 @@ import {
   BUILDING_OPTIONS,
   EMPTY_PLOT_OPTIONS,
 } from '@shared/consts/radial-menu.options';
+import { ServerService } from '@modules/game/services/server.service';
 
 @Component({
   selector: 'app-grid',
@@ -109,7 +110,8 @@ export class GridComponent implements OnInit, OnDestroy {
     private readonly translate: TranslateService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly webSocketService: WebSocketService,
-    private readonly usersService: UserService
+    private readonly usersService: UserService,
+    private readonly serverService: ServerService
   ) {
     this.resources = {
       wood: 0,
@@ -197,7 +199,9 @@ export class GridComponent implements OnInit, OnDestroy {
           this.toastr.showError(`Błąd ładowania wioski: ${error.message}`);
         });
 
-      this.webSocketService.requestVillageData();
+      this.webSocketService.requestVillageData(
+        this.serverService.getServer()?.id ?? -1
+      );
     } else if (this.userEmail) {
       this.villageDataSub = this.webSocketService
         .onVillageByEmailUpdate()
@@ -282,6 +286,7 @@ export class GridComponent implements OnInit, OnDestroy {
     this.webSocketService.send(WebSocketEvent.VILLAGE_EXPAND, {
       side,
       cost,
+      serverId: this.serverService.getServer()?.id ?? -1,
     });
   }
 
@@ -480,6 +485,7 @@ export class GridComponent implements OnInit, OnDestroy {
         name: building.name,
         row: this.buildRow,
         col: this.buildCol,
+        serverId: this.serverService.getServer()?.id ?? -1,
       });
 
       const newBuilding: BuildingData = {

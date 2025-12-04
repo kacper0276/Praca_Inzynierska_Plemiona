@@ -35,8 +35,13 @@ export class ResourcesService implements OnDestroy {
       });
   }
 
-  public fetchResources(email: string): Observable<ApiResponse<Resources>> {
-    return this.httpService.get<Resources>(`/resources/user/${email}`);
+  public fetchResources(
+    email: string,
+    serverId: number
+  ): Observable<ApiResponse<Resources>> {
+    return this.httpService.get<Resources>(
+      `/resources/user/${email}/${serverId}`
+    );
   }
 
   public fetchAllResources(): Observable<ApiResponse<Resources[]>> {

@@ -92,8 +92,13 @@ export class WebSocketService {
     this.socket.emit(event as string, payload);
   }
 
-  public joinServerStatusRoom(hostname: string, port: number): void {
-    const payload = { hostname, port };
+  public joinServerStatusRoom(
+    hostname: string,
+    port: number,
+    serverId: number,
+    userEmail: string
+  ): void {
+    const payload = { hostname, port, serverId, userEmail };
     this.send('joinServerStatusRoom', payload);
   }
 
@@ -111,7 +116,7 @@ export class WebSocketService {
     );
   }
 
-  public requestVillageData(): void {
+  public requestVillageData(serverId: number): void {
     this.authenticated$
       .pipe(
         filter((isAuth) => isAuth),
@@ -121,7 +126,7 @@ export class WebSocketService {
         console.log(
           'Socket is authenticated, sending request for village data.'
         );
-        this.send(WebSocketEvent.GET_VILLAGE_DATA);
+        this.send(WebSocketEvent.GET_VILLAGE_DATA, { serverId });
       });
   }
 
