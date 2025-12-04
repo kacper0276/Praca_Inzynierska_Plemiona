@@ -15,7 +15,9 @@ export class RankingService {
   async getRankingForServer(
     serverName: string,
     currentUserId: number,
-  ): Promise<Ranking[]> {
+    page: number,
+    limit: number,
+  ): Promise<{ items: Ranking[]; total: number }> {
     const server = await this.serversRepository.findOne({ name: serverName });
 
     if (!server) {
@@ -44,7 +46,7 @@ export class RankingService {
         userMap.set(uid, { login: village.user.login, score: 0 });
       }
 
-      const entry = userMap.get(uid);
+      const entry = userMap.get(uid)!;
 
       const buildingLevelPoints = village.buildings.reduce(
         (sum, b) => sum + b.level * 10,
@@ -63,26 +65,36 @@ export class RankingService {
         userMap.set(uid, { login: res.user.login, score: 0 });
       }
 
-      const entry = userMap.get(uid);
+      const entry = userMap.get(uid)!;
 
       const totalRes = res.wood + res.clay + res.iron;
       const resourcePoints = Math.floor(totalRes / 1000);
-
       const populationPoints = res.population || 0;
 
       entry.score += resourcePoints + populationPoints;
     }
 
     const sortedData = Array.from(userMap.entries())
-      .map(([userId, data]) => ({ userId, ...data }))
+      .map(([userId, data]) => ({ userId: Number(userId), ...data }))
       .sort((a, b) => b.score - a.score);
 
-    return sortedData.map((item, index) => ({
-      position: index + 1,
-      username: item.login,
-      score: item.score,
-      server: serverName,
-      isYou: item.userId === currentUserId,
-    }));
+    const total = sortedData.length;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    const paginatedData = sortedData
+      .slice(startIndex, endIndex)
+      .map((item, index) => ({
+        position: startIndex + index + 1,
+        username: item.login,
+        score: item.score,
+        server: serverName,
+        isYou: item.userId === currentUserId,
+      }));
+
+    return {
+      items: paginatedData,
+      total: total,
+    };
   }
 }
