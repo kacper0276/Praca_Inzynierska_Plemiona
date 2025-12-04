@@ -48,30 +48,45 @@
         (dragleave)="onDragLeave($event)"
       >
         <ng-container *ngIf="building">
-          <app-building
-            [draggable]="true"
-            (dragstart)="onDragStart(i, j)"
-            (dragend)="onDragEnd($event)"
-            [class.is-dragging]="
-              draggedBuilding?.row === i && draggedBuilding?.col === j
-            "
-            [name]="building.name"
-            [level]="building.level"
-            [imageUrl]="building.imageUrl"
-            [health]="building.health"
-            [maxHealth]="building.maxHealth"
-            (click)="onBuildingClick(i, j)"
-          ></app-building>
+          <div
+            class="construction-overlay"
+            *ngIf="getConstructionTimeLeft(building) > 0"
+          >
+            <div class="timer">
+              Pozostały czas
+              {{ getConstructionTimeLeft(building) | secondsToTime }}
+            </div>
+            <div class="building-preview">
+              {{ building.name }} (Lvl {{ building.level }})
+            </div>
+          </div>
 
-          <app-radial-menu
-            *ngIf="
-              activeRadial && activeRadial.row === i && activeRadial.col === j
-            "
-            [menuOptions]="buildingOptions"
-            [forceOpen]="true"
-            [showToggle]="false"
-            (optionSelected)="handleBuildingMenuOption($event, i, j)"
-          ></app-radial-menu>
+          <ng-container *ngIf="getConstructionTimeLeft(building) === 0">
+            <app-building
+              [draggable]="true"
+              (dragstart)="onDragStart(i, j)"
+              (dragend)="onDragEnd($event)"
+              [class.is-dragging]="
+                draggedBuilding?.row === i && draggedBuilding?.col === j
+              "
+              [name]="building.name"
+              [level]="building.level"
+              [imageUrl]="building.imageUrl"
+              [health]="building.health"
+              [maxHealth]="building.maxHealth"
+              (click)="onBuildingClick(i, j)"
+            ></app-building>
+
+            <app-radial-menu
+              *ngIf="
+                activeRadial && activeRadial.row === i && activeRadial.col === j
+              "
+              [menuOptions]="buildingOptions"
+              [forceOpen]="true"
+              [showToggle]="false"
+              (optionSelected)="handleBuildingMenuOption($event, i, j)"
+            ></app-radial-menu>
+          </ng-container>
         </ng-container>
         <ng-container *ngIf="!building">
           <button

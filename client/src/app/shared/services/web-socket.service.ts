@@ -177,4 +177,8 @@ export class WebSocketService {
       map((message) => message.payload)
     );
   }
+
+  public on<T>(event: WebSocketEvent | string): Observable<T> {
+    return this.onEvent(event).pipe(map((message) => message.payload));
+  }
 }
