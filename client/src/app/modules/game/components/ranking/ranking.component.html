@@ -1,1 +1,11 @@
-<app-table [columns]="rankingColumns" [data]="ranking"></app-table>
+<app-paginated-table
+  [columns]="rankingColumns"
+  [data]="ranking"
+  [totalItems]="totalItems"
+  [pageSize]="pageSize"
+  [pageNumber]="pageNumber"
+  [rowClickable]="false"
+  [rowClassFn]="getRowClass"
+  (pageChange)="onPageChange($event)"
+>
+</app-paginated-table>

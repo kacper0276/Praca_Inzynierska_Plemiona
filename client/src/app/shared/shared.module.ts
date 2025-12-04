@@ -20,6 +20,9 @@ import { TableComponent } from './components/table/table.component';
 import { EditModalComponent } from './components/edit-modal/edit-modal.component';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import { AdjustResourceQuantityPipe } from './pipes/adjust-resource-quantity.pipe';
+import { PaginatedTableComponent } from './components/paginated-table/paginated-table.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { PaginationComponent } from './components/pagination/pagination.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +41,8 @@ import { AdjustResourceQuantityPipe } from './pipes/adjust-resource-quantity.pip
     EditModalComponent,
     ConfirmationDialogComponent,
     AdjustResourceQuantityPipe,
+    PaginatedTableComponent,
+    PaginationComponent,
   ],
   imports: [
     CommonModule,
@@ -69,6 +74,7 @@ import { AdjustResourceQuantityPipe } from './pipes/adjust-resource-quantity.pip
     EditModalComponent,
     ConfirmationDialogComponent,
     AdjustResourceQuantityPipe,
+    PaginatedTableComponent,
   ],
 })
 export class SharedModule {}

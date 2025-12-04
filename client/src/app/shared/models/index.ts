@@ -12,3 +12,4 @@ export * from './toast.model';
 export * from './report.model';
 export * from './friend-request.model';
 export * from './ranking.model';
+export * from './paginated-response.model';
