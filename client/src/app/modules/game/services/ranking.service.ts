@@ -1,0 +1,13 @@
+import { Injectable } from '@angular/core';
+import { ApiResponse, Ranking } from '@shared/models';
+import { HttpService } from '@shared/services/http.service';
+import { Observable } from 'rxjs';
+
+@Injectable({ providedIn: 'root' })
+export class RankingService {
+  constructor(private readonly httpService: HttpService) {}
+
+  getRankingForServer(serverName: string): Observable<ApiResponse<Ranking[]>> {
+    return this.httpService.get<Ranking[]>(`/ranking/for-server/${serverName}`);
+  }
+}

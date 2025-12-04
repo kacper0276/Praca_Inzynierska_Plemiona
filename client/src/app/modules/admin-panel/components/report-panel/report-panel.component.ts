@@ -69,6 +69,7 @@ export class ReportPanelComponent implements OnInit {
     this.selectedReport = null;
   }
 
+  // TODO: BACKEND PODPIĄĆ
   onSaveReport(updatedReport: Report): void {
     console.log('Zapisywanie zmian:', updatedReport);
     const index = this.reports.findIndex((r) => r.id === updatedReport.id);
