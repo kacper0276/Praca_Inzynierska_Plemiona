@@ -27,5 +27,7 @@ export class RankingController {
   async getRankingForServer(
     @Param('serverName') serverName: string,
     @Request() req: any,
-  ) {}
+  ) {
+    return this.rankingService.getRankingForServer(serverName, req.user.sub);
+  }
 }

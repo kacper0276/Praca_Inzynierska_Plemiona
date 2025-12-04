@@ -17,6 +17,10 @@ export class ResourcesRepository extends BaseRepository<Resources> {
     return this.repository.find(options);
   }
 
+  find(options?: any): Promise<Resources[]> {
+    return this.repository.find(options);
+  }
+
   findOne(where: Partial<Resources>, options?: any): Promise<Resources | null> {
     return this.repository.findOne({ where, ...options });
   }

@@ -9,6 +9,6 @@ import { ServersRepository } from './repositories/servers.repository';
   imports: [TypeOrmModule.forFeature([Server])],
   controllers: [ServersController],
   providers: [ServersService, ServersRepository],
-  exports: [ServersService],
+  exports: [ServersService, ServersRepository],
 })
 export class ServersModule {}

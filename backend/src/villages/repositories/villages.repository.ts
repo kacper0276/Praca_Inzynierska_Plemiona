@@ -17,6 +17,10 @@ export class VillagesRepository extends BaseRepository<Village> {
     return this.repository.find(options);
   }
 
+  find(options?: any): Promise<Village[]> {
+    return this.repository.find(options);
+  }
+
   findOne(where: Partial<Village>, options?: any): Promise<Village | null> {
     return this.repository.findOne({ where, ...options });
   }
