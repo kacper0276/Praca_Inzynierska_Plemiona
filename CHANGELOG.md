@@ -60,3 +60,13 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 ### Removed
 
 - Usunięto zbędne biblioteki
+
+## [0.0.3] - 04.12.2025 - 04.12.2025
+
+### Added
+
+- Dodano możliwość posiadania różnych wiosek na różnym serwerze
+
+### Changed
+
+- Zmieniono działanie surowców (na każdym serwerze osobna ilość surowców)
