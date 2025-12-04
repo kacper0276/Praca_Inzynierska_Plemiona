@@ -21,4 +21,8 @@ export class CreateBuildingWsDto {
   @IsInt({ message: 'Kolumna musi być liczbą całkowitą.' })
   @Min(0)
   col: number;
+
+  @ApiProperty({ description: 'Id serwera', example: 1 })
+  @IsInt({ message: 'Id musi być liczbą całkowitą' })
+  serverId: number;
 }

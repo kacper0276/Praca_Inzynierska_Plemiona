@@ -3,6 +3,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { ServerStatusLog } from './server-status-log.entity';
 import { ServerStatus } from '../enums/server-status.enum';
 import { Village } from 'src/villages/entities/village.entity';
+import { Resources } from 'src/resources/entities/resources.entity';
 
 @Entity({ name: 'servers' })
 export class Server extends BaseEntity {
@@ -30,4 +31,7 @@ export class Server extends BaseEntity {
 
   @OneToMany(() => Village, (village) => village.server)
   villages: Village[];
+
+  @OneToMany(() => Resources, (resource) => resource.server)
+  resources: Resources[];
 }

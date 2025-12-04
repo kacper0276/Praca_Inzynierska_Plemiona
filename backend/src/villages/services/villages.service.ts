@@ -190,7 +190,7 @@ export class VillagesService {
       const buildingRepo = queryRunner.manager.getRepository(Building);
 
       const village = await villageRepo.findOne({
-        where: { user: { id: userId } },
+        where: { user: { id: userId }, server: { id: expandDto.serverId } },
         relations: ['user', 'buildings'],
       });
 

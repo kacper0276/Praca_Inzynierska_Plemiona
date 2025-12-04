@@ -47,7 +47,7 @@ export class ResourcesController {
     return this.resourcesService.findAll();
   }
 
-  @Get('user/:email')
+  @Get('user/:email/:serverId')
   @Authenticated()
   @ApiOkResponse({
     description:
@@ -57,8 +57,14 @@ export class ResourcesController {
     description: 'Użytkownik o podanym e-mailu nie został znaleziony.',
   })
   @ApiUnauthorizedResponse({ description: 'Brak autoryzacji (niezalogowany).' })
-  findOrCreateByUserEmail(@Param('email') email: string) {
-    return this.resourcesService.findOrCreateByUserEmail(email);
+  findOrCreateByUserEmail(
+    @Param('email') email: string,
+    @Param('serverId', ParseIntPipe) serverId: number,
+  ) {
+    return this.resourcesService.findOrCreateByUserEmailAndServerId(
+      email,
+      serverId,
+    );
   }
 
   @Get(':id')

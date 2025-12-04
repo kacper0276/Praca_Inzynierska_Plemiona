@@ -134,12 +134,13 @@ export class WsGateway
   }
 
   @SubscribeMessage('joinServerStatusRoom')
-  handleJoinServerStatusRoom(
+  async handleJoinServerStatusRoom(
     @MessageBody() data: JoinServerRoomDto,
     @ConnectedSocket() client: Socket,
   ) {
     const roomName = this.getServerStatusRoomName(data.hostname, data.port);
     client.join(roomName);
+    await this.usersService.setActualUserServer(data.userEmail, data.serverId);
     this.logger.log(`Client ${client.id} joined room: ${roomName}`);
   }
 
@@ -210,7 +211,7 @@ export class WsGateway
     );
     try {
       await this.buildingsService.createForUser(client.user.id, payload);
-      this.handleGetVillageData(client);
+      this.handleGetVillageData(client, { serverId: payload.serverId });
     } catch (error) {
       this.logger.error(
         `Failed to create building for ${client.user.email}: ${error.message}`,
@@ -267,7 +268,7 @@ export class WsGateway
       this.logger.log(
         `Pomyślnie rozszerzono wioskę dla ${client.user.email}. Wysyłanie aktualizacji.`,
       );
-      await this.handleGetVillageData(client);
+      await this.handleGetVillageData(client, { serverId: payload.serverId });
     } catch (error) {
       this.logger.error(
         `Błąd podczas rozszerzania wioski dla ${client.user.email}: ${error.message}`,

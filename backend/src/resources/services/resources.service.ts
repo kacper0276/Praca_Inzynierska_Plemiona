@@ -29,11 +29,11 @@ export class ResourcesService {
     return resource;
   }
 
-  async findOrCreateByUserEmail(email: string): Promise<Resources> {
-    const user = await this.usersRepository.findOne(
-      { email },
-      { relations: ['resources'] },
-    );
+  async findOrCreateByUserEmailAndServerId(
+    email: string,
+    serverId: number,
+  ): Promise<Resources> {
+    const user = await this.usersRepository.findOne({ email });
 
     if (!user) {
       throw new NotFoundException(
@@ -41,16 +41,25 @@ export class ResourcesService {
       );
     }
 
-    if (user.resources) {
-      return user.resources;
+    const existingResource = await this.repository.findOne(
+      {
+        user: { id: user.id },
+        server: { id: serverId },
+      } as any,
+      { relations: ['user', 'server'] },
+    );
+
+    if (existingResource) {
+      return existingResource;
     }
 
     const newResource = this.repository.create({
       user: user,
-      wood: 0,
-      clay: 0,
-      iron: 0,
-      population: 0,
+      server: { id: serverId } as any,
+      wood: 100,
+      clay: 100,
+      iron: 100,
+      population: 2,
       maxPopulation: 10,
     });
 

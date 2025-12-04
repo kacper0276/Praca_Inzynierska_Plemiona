@@ -20,12 +20,15 @@ import { FriendRequest } from 'src/friend-requests/entities/friend-request.entit
 import { ILike, In, Not } from 'typeorm';
 import { WsGateway } from '@core/gateways/ws.gateway';
 import { WsEvent } from '@core/enums/ws-event.enum';
+import { ServersService } from 'src/servers/services/servers.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly friendRequestsRepository: FriendRequestsRepository,
+    @Inject(forwardRef(() => ServersService))
+    private readonly serversService: ServersService,
     @Inject(forwardRef(() => WsGateway))
     private readonly wsGateway: WsGateway,
   ) {}
@@ -140,6 +143,23 @@ export class UsersService {
     }
 
     user.isOnline = isOnline;
+
+    user.currentServer = null;
+
+    await this.usersRepository.save(user);
+  }
+
+  async setActualUserServer(email: string, serverId: number): Promise<void> {
+    const user = await this.findOneByEmail(email);
+    const server = await this.serversService.findOne(serverId);
+
+    if (!user || !server) {
+      throw new NotFoundException(
+        `Użytkownik lub serwer nie został znaleziony.`,
+      );
+    }
+
+    user.currentServer = server;
 
     await this.usersRepository.save(user);
   }

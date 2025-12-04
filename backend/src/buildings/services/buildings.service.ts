@@ -107,7 +107,7 @@ export class BuildingsService {
       const resourcesRepository = queryRunner.manager.getRepository(Resources);
 
       const village = await villageRepository.findOne({
-        where: { user: { id: userId } },
+        where: { user: { id: userId }, server: { id: dto.serverId } },
       });
       if (!village) {
         throw new NotFoundException(
