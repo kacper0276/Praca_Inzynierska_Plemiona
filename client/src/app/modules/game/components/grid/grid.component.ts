@@ -8,22 +8,18 @@ import {
 import { Observable, Subscription } from 'rxjs';
 import { ResourcesService } from '../../services/resources.service';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BuildingData,
-  RadialMenuOption,
-  Resources,
-} from '../../../../shared/models';
 import { ActivatedRoute } from '@angular/router';
 import { GatheringService } from '../../services/gathering.service';
-import { ToastrService } from '../../../../shared/services/toastr.service';
-import { WebSocketService } from '../../../../shared/services/web-socket.service';
-import { availableBuildings } from '../../../../shared/consts/available-buildings';
-import { WebSocketEvent } from '../../../../shared/enums/websocket-event.enum';
 import { UserService } from '../../../auth/services/user.service';
+import { availableBuildings } from '@shared/consts/available-buildings';
+import { WebSocketEvent } from '@shared/enums';
+import { BuildingData, Resources, RadialMenuOption } from '@shared/models';
+import { ToastrService } from '@shared/services/toastr.service';
+import { WebSocketService } from '@shared/services/web-socket.service';
 import {
   BUILDING_OPTIONS,
   EMPTY_PLOT_OPTIONS,
-} from '../../../../shared/consts/radial-menu.options';
+} from '@shared/consts/radial-menu.options';
 
 @Component({
   selector: 'app-grid',

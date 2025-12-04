@@ -2,8 +2,8 @@ import { Injectable, NgZone } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 import { io, Socket } from 'socket.io-client';
-import { AuthService } from '../../modules/auth/services/auth.service';
 import { WebSocketEvent } from '../enums';
+import { AuthService } from '@modules/auth/services/auth.service';
 export interface WsMessage<T = any> {
   event: WebSocketEvent | string;
   payload?: T;

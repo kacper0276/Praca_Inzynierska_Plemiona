@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ResourcesService } from '../../services/resources.service';
-import { Unit } from '../../../../shared/models';
-import { UnitType } from '../../../../shared/enums';
+import { UnitType } from '@shared/enums';
+import { Unit } from '@shared/models';
 
 @Component({
   selector: 'app-army',

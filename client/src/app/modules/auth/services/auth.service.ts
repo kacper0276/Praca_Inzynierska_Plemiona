@@ -3,12 +3,12 @@ import { lastValueFrom, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TokenService } from './token.service';
 import { UserService } from './user.service';
-import { HttpService } from '../../../shared/services/http.service';
-import { ApiResponse, User } from '../../../shared/models';
 import { LoginCredentials } from '../interfaces/login-credentials.interface';
 import { LoginResponse } from '../interfaces/login-response.interface';
 import { RegisterCredentials } from '../interfaces/register-credentials.interface';
 import { jwtDecode } from 'jwt-decode';
+import { HttpService } from '@shared/services/http.service';
+import { ApiResponse, User } from '@shared/models';
 
 @Injectable({
   providedIn: 'root',

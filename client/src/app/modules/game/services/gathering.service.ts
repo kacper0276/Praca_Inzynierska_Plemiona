@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { WebSocketEvent } from '@shared/enums';
+import { WebSocketService } from '@shared/services/web-socket.service';
 import { BehaviorSubject, interval, Subscription } from 'rxjs';
-import { WebSocketService } from '../../../shared/services/web-socket.service';
-import { WebSocketEvent } from '../../../shared/enums/websocket-event.enum';
 
 @Injectable({ providedIn: 'root' })
 export class GatheringService implements OnDestroy {

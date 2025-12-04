@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Report } from '../../../../shared/models';
 import { ReportsService } from '../../../game/services/reports.service';
-import { ColumnDefinition } from '../../../../shared/interfaces/column-definition.interface';
-import { ActionEvent } from '../../../../shared/interfaces/action-event.interface';
-import { ConfirmationService } from '../../../../shared/services/confirmation.service';
+import { ActionEvent } from '@shared/interfaces/action-event.interface';
+import { ColumnDefinition } from '@shared/interfaces/column-definition.interface';
+import { ConfirmationService } from '@shared/services/confirmation.service';
+import { Report } from '@shared/models';
 
 @Component({
   selector: 'app-report-panel',
@@ -15,7 +15,7 @@ export class ReportPanelComponent implements OnInit {
   reportColumns: ColumnDefinition[] = [
     {
       key: 'reporter',
-      header: 'Zgłaszający (e-mail)',
+      header: 'Zgłaszający (e-mxail)',
       editField: 'email',
       isReadOnly: true,
     },

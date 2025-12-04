@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { User } from '../../../../shared/models';
+import { User } from '@shared/models';
 
 @Component({
   selector: 'app-chat',

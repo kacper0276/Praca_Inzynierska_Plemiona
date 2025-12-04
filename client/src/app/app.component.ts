@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from './modules/auth/services/user.service';
 import { Router } from '@angular/router';
-import { ToastrService } from './shared/services/toastr.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { ToastrService } from '@shared/services/toastr.service';
+import { UserService } from '@modules/auth/services/user.service';
 
 @Component({
   selector: 'app-root',

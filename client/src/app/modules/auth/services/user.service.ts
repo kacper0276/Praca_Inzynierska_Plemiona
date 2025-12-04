@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { ApiResponse, User } from '../../../shared/models';
-import { HttpService } from '../../../shared/services/http.service';
 import { TokenService } from './token.service';
 import { UpdateUser } from '../interfaces/update-user.interface';
 import { UpdateUserResposne } from '../interfaces/update-user-response.interface';
+import { User, ApiResponse } from '@shared/models';
+import { HttpService } from '@shared/services/http.service';
 
 @Injectable({
   providedIn: 'root',

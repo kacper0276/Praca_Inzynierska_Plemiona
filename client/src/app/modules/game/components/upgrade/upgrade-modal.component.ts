@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { BuildingData, Resources } from '../../../../shared/models';
+import { BuildingData, Resources } from '@shared/models';
 
 @Component({
   selector: 'app-upgrade-modal',

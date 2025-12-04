@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, take } from 'rxjs/operators';
 import { ResourcesService } from '../../services/resources.service';
-import { WebSocketService } from '../../../../shared/services/web-socket.service';
 import { UserService } from '../../../auth/services/user.service';
-import { Resources, Server } from '../../../../shared/models';
 import { ServersService } from '../../services/servers.service';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { ServerStatus } from '../../../../shared/enums';
+import { ServerStatus } from '@shared/enums';
+import { Server, Resources } from '@shared/models';
+import { WebSocketService } from '@shared/services/web-socket.service';
 
 @Component({
   selector: 'app-game',
