@@ -66,6 +66,8 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 ### Added
 
 - Dodano możliwość posiadania różnych wiosek na różnym serwerze
+- Stworzono ranking graczy dla danego serwera
+- Stworzono paginację
 
 ### Changed
 
