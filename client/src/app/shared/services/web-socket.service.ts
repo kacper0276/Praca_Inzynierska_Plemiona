@@ -123,9 +123,6 @@ export class WebSocketService {
         take(1)
       )
       .subscribe(() => {
-        console.log(
-          'Socket is authenticated, sending request for village data.'
-        );
         this.send(WebSocketEvent.GET_VILLAGE_DATA, { serverId });
       });
   }
@@ -149,7 +146,6 @@ export class WebSocketService {
         take(1)
       )
       .subscribe(() => {
-        console.log(`Requesting village data for email: ${email}`);
         this.send(WebSocketEvent.GET_VILLAGE_BY_EMAIL, { email });
       });
   }
