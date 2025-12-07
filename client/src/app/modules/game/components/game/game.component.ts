@@ -23,11 +23,12 @@ export class GameComponent implements OnInit {
 
   servers: Server[] = [];
   selectedServerInModal: Server = this.servers[0];
+  connectionFailed: boolean = false;
 
   private statusSubscription: Subscription | null = null;
   private connectionSubscription: Subscription | null = null;
   private resourcesSubscription: Subscription | null = null;
-  private serverSubscription: Subscription | null = null;
+  private errorSubscription: Subscription | null = null;
 
   private backendWsUrl = environment.wsUrl;
 
@@ -94,16 +95,21 @@ export class GameComponent implements OnInit {
     }
 
     this.joinedServer = this.selectedServerInModal;
-    this.isModalOpen = false;
     console.log(`Dołączono do serwera: ${this.joinedServer.name}`);
-    this.serverService.setServer(this.selectedServerInModal);
 
     try {
-      this.webSocket.connect(this.backendWsUrl);
+      let wsURL = '';
 
-      if (this.connectionSubscription) {
+      wsURL = this.joinedServer
+        ? `http://${this.joinedServer.hostname}:${this.joinedServer.port}`
+        : this.backendWsUrl;
+
+      this.webSocket.connect(wsURL);
+
+      if (this.connectionSubscription)
         this.connectionSubscription.unsubscribe();
-      }
+
+      if (this.errorSubscription) this.errorSubscription.unsubscribe();
 
       this.connectionSubscription = this.webSocket
         .isConnected()
@@ -111,34 +117,56 @@ export class GameComponent implements OnInit {
           filter((connected) => connected),
           take(1)
         )
-        .subscribe(() => {
-          console.log(
-            'Połączenie WebSocket nawiązane. Dołączanie do pokoju statusu serwera...'
-          );
-          const userEmail = this.usersService.getCurrentUser()?.email;
+        .subscribe({
+          next: () => {
+            console.log(
+              'Połączenie WebSocket nawiązane. Dołączanie do pokoju statusu serwera...'
+            );
+            const userEmail = this.usersService.getCurrentUser()?.email;
 
-          this.webSocket.joinServerStatusRoom(
-            this.joinedServer!.hostname,
-            this.joinedServer!.port,
-            this.joinedServer!.id ?? -1,
-            userEmail ?? ''
-          );
+            this.isModalOpen = false;
 
-          const serverId = this.serverService.getServer()?.id;
+            this.webSocket.joinServerStatusRoom(
+              this.joinedServer!.hostname,
+              this.joinedServer!.port,
+              this.joinedServer!.id ?? -1,
+              userEmail ?? ''
+            );
 
-          this.resourcesService
-            .fetchResources(userEmail ?? '', serverId ?? -1)
-            .subscribe({
-              next: (res) => {
-                this.resourcesService.setResources(res.data);
-                this.resources = res.data;
-              },
-            });
+            this.serverService.setServer(this.selectedServerInModal);
 
-          this.listenForStatusUpdates();
+            const serverId = this.serverService.getServer()?.id;
+
+            this.resourcesService
+              .fetchResources(userEmail ?? '', serverId ?? -1)
+              .subscribe({
+                next: (res) => {
+                  this.resourcesService.setResources(res.data);
+                  this.resources = res.data;
+                },
+                error: () => {
+                  this.connectionFailed = true;
+                  console.log('AAA');
+                },
+              });
+
+            this.listenForStatusUpdates();
+          },
+          error: () => {
+            this.connectionFailed = true;
+            console.log('AAA');
+          },
+        });
+
+      this.errorSubscription = this.webSocket
+        .onConnectError()
+        .pipe(take(1))
+        .subscribe((err) => {
+          this.connectionFailed = true;
         });
     } catch (e) {
       console.warn('WS connect failed', e);
+      this.connectionFailed = true;
     }
   }
 

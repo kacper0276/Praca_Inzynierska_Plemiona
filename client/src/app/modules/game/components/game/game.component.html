@@ -18,7 +18,7 @@
     <button class="btn btn-primary" (click)="joinGame()">Dołącz do Gry</button>
   </div>
 </app-modal>
-} @if (joinedServer) {
+} @if (joinedServer && !connectionFailed) {
 <div class="game-container">
   <header class="top-bar">
     <div class="logo">
@@ -84,5 +84,9 @@
     Musisz wybrać serwer, aby rozpocząć grę. Odśwież stronę, aby spróbować
     ponownie.
   </p>
+</div>
+} @if (connectionFailed) {
+<div class="error-message">
+  <p>Połączenie z serwerem nie powiodło się. Spróbuj ponownie później.</p>
 </div>
 }

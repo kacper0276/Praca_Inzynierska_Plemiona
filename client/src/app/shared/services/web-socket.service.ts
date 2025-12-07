@@ -15,6 +15,7 @@ export class WebSocketService {
   private incoming$ = new Subject<WsMessage>();
   private connected$ = new BehaviorSubject<boolean>(false);
   private authenticated$ = new BehaviorSubject<boolean>(false);
+  private connectionError$ = new Subject<any>();
 
   constructor(
     private ngZone: NgZone,
@@ -39,6 +40,7 @@ export class WebSocketService {
       auth: {
         token: `Bearer ${token}`,
       },
+      reconnection: false,
     });
 
     this.socket.on('connect', () => {
@@ -47,6 +49,13 @@ export class WebSocketService {
 
     this.socket.on('disconnect', (reason: any) => {
       this.ngZone.run(() => this.connected$.next(false));
+    });
+
+    this.socket.on('connect_error', (err: any) => {
+      this.ngZone.run(() => {
+        console.error('Socket connection error:', err);
+        this.connectionError$.next(err);
+      });
     });
 
     this.socket.on(WebSocketEvent.USER_CONNECTED, (payload: any) => {
@@ -176,5 +185,9 @@ export class WebSocketService {
 
   public on<T>(event: WebSocketEvent | string): Observable<T> {
     return this.onEvent(event).pipe(map((message) => message.payload));
+  }
+
+  public onConnectError(): Observable<any> {
+    return this.connectionError$.asObservable();
   }
 }
