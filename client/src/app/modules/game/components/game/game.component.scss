@@ -113,9 +113,12 @@ $side-menu-width: 200px;
 }
 
 .info-message {
+  width: 100vw;
+  height: 100vh;
   text-align: center;
   padding: 40px;
   color: $gray-600;
+  background: var(--game-bg);
 }
 
 .close-button {
@@ -127,4 +130,13 @@ $side-menu-width: 200px;
 
 p {
   color: var(--text);
+}
+
+.error-message {
+  height: 100vh;
+  width: 100vw;
+  text-align: center;
+  padding: 40px;
+  color: $red-600;
+  background: var(--game-bg);
 }
