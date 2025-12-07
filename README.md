@@ -119,7 +119,7 @@ export const environment = {
 Baza danych musi działać na porcie **3307** lub możemy użyć np. Xamppa wtedy w konfiguracji backendu ustawiamy inny port. Uruchom poniższą komendę w terminalu:
 
 ```bash
-docker run --name mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=projekt_zespolowy -p 3307:3306 -d mysql:latest
+docker run --name mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=praca_inzynierska -p 3307:3306 -d mysql:latest
 ```
 
 ---
