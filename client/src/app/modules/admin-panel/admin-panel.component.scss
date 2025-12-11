@@ -86,6 +86,7 @@ $admin-tab-active-color: $blue-600;
   padding: 20px;
   border-radius: 8px;
   border: 1px solid $admin-panel-header-border;
+  max-height: 400px;
 }
 body.dark-theme {
   .admin-panel-header {
