@@ -26,7 +26,7 @@ export class ReportPanelComponent implements OnInit {
       isReadOnly: true,
     },
     { key: 'content', header: 'Treść' },
-    { key: 'isResolved', header: 'Status' },
+    { key: 'isResolved', header: 'Status (Czy rozwiązano)' },
     // { key: 'actions', header: 'Akcje', isAction: true },
   ];
 
@@ -69,13 +69,21 @@ export class ReportPanelComponent implements OnInit {
     this.selectedReport = null;
   }
 
-  // TODO: BACKEND PODPIĄĆ
   onSaveReport(updatedReport: Report): void {
     console.log('Zapisywanie zmian:', updatedReport);
-    const index = this.reports.findIndex((r) => r.id === updatedReport.id);
-    if (index > -1) {
-      this.reports[index] = updatedReport;
-    }
+    this.reportsService
+      .updateReport(updatedReport.id ?? -1, updatedReport.isResolved)
+      .subscribe({
+        next: () => {
+          const index = this.reports.findIndex(
+            (r) => r.id === updatedReport.id
+          );
+          if (index > -1) {
+            this.reports[index] = updatedReport;
+          }
+        },
+      });
+
     this.closeEditModal();
   }
 
@@ -85,8 +93,12 @@ export class ReportPanelComponent implements OnInit {
     );
 
     if (result) {
-      console.log('Usuwanie potwierdzone:', reportToDelete);
-      this.reports = this.reports.filter((r) => r.id !== reportToDelete.id);
+      this.reportsService.deleteReport(reportToDelete.id ?? -1).subscribe({
+        next: () => {
+          this.reports = this.reports.filter((r) => r.id !== reportToDelete.id);
+        },
+      });
+
       this.closeEditModal();
     } else {
       console.log('Usuwanie anulowane.');

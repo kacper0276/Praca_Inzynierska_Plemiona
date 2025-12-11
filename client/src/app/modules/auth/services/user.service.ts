@@ -73,7 +73,10 @@ export class UserService {
     }
 
     return this.http
-      .patch<UpdateUserResposne>(`/users/${originalEmail}`, formData)
+      .patch<UpdateUserResposne>(
+        `/users/update-user-and-login/${originalEmail}`,
+        formData
+      )
       .pipe(
         tap((response) => {
           const { user, accessToken, refreshToken } = response.data;
