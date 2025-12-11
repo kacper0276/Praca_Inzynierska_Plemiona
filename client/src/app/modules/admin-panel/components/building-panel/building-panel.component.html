@@ -1,3 +1,17 @@
 <div class="wrapper">
-  <app-table [columns]="buildingColumns" [data]="buildingsList"> </app-table>
+  <app-table
+    [columns]="buildingColumns"
+    [data]="buildingsList"
+    (action)="handleBuildingAction($event)"
+  >
+  </app-table>
+
+  <app-edit-modal
+    [isVisible]="isModalOpen"
+    [item]="selectedBuilding"
+    [columns]="buildingColumns"
+    (save)="onSaveBuilding($event)"
+    (delete)="onDeleteBuilding($event)"
+    (close)="closeEditModal()"
+  ></app-edit-modal>
 </div>

@@ -1,15 +1,17 @@
-<app-table
-  [columns]="reportColumns"
-  [data]="reports"
-  [dataModifier]="formatReportData"
-  (action)="handleReportAction($event)"
-></app-table>
+<div class="wrapper">
+  <app-table
+    [columns]="reportColumns"
+    [data]="reports"
+    [dataModifier]="formatReportData"
+    (action)="handleReportAction($event)"
+  ></app-table>
 
-<app-edit-modal
-  [isVisible]="isModalOpen"
-  [item]="selectedReport"
-  [columns]="reportColumns"
-  (save)="onSaveReport($event)"
-  (delete)="onDeleteReport($event)"
-  (close)="closeEditModal()"
-></app-edit-modal>
+  <app-edit-modal
+    [isVisible]="isModalOpen"
+    [item]="selectedReport"
+    [columns]="reportColumns"
+    (save)="onSaveReport($event)"
+    (delete)="onDeleteReport($event)"
+    (close)="closeEditModal()"
+  ></app-edit-modal>
+</div>
