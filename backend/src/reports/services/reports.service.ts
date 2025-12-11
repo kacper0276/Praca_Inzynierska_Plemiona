@@ -56,7 +56,11 @@ export class ReportsService {
     });
   }
 
-  async resolveReport(id: number, resolverId: number): Promise<Report> {
+  async resolveReport(
+    id: number,
+    resolverId: number,
+    resolveStatus: boolean,
+  ): Promise<Report> {
     const existing = await this.reportsRepository.findOneById(id);
 
     if (!existing) {
@@ -65,10 +69,17 @@ export class ReportsService {
       );
     }
 
-    existing.isResolved = true;
+    console.log(resolveStatus);
+    console.log(id);
+
+    existing.isResolved = resolveStatus;
     existing.resolvedAt = new Date();
     existing.resolver = { id: resolverId } as User;
 
     return this.reportsRepository.save(existing);
+  }
+
+  async deleteReport(reportId: number) {
+    return this.reportsRepository.delete(reportId);
   }
 }

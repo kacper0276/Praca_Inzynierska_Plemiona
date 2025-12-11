@@ -133,12 +133,38 @@ export class UsersController {
     return result;
   }
 
-  @Patch(':email')
+  @Patch('update-user/:email')
+  @Authenticated()
+  @ApiOkResponse({ description: 'Użytkownik pomyślnie zaktualizowany.' })
+  @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
+  async update(
+    @Param('email') email: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Request() req: any,
+  ) {
+    const userMakingRequest = req.user;
+
+    if (userMakingRequest.role !== UserRole.ADMIN) {
+      throw new ForbiddenException(
+        'Nie masz uprawnień do edycji tego profilu.',
+      );
+    }
+
+    if (userMakingRequest.role !== UserRole.ADMIN && updateUserDto.role) {
+      throw new ForbiddenException('Nie możesz zmienić swojej roli.');
+    }
+
+    const updatedUser = await this.usersService.update(email, updateUserDto);
+
+    return updatedUser;
+  }
+
+  @Patch('update-user-and-login/:email')
   @Authenticated()
   @ApiOkResponse({ description: 'Użytkownik pomyślnie zaktualizowany.' })
   @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
   @UseInterceptors(MulterConfigInterceptor)
-  async update(
+  async updateAndLogin(
     @Param('email') email: string,
     @Body() updateUserDto: UpdateUserDto,
     @Request() req: any,
