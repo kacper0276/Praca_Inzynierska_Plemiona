@@ -32,4 +32,15 @@ export enum WebSocketEvent {
   // Friend
   FRIEND_REQUEST_RECEIVED = 'friend_request_received',
   PENDING_FRIEND_REQUESTS_COUNT = 'pending_friend_requests_count',
+
+  // Message
+  JOIN_DM_ROOM = 'join_dm_room',
+  LEAVE_DM_ROOM = 'leave_dm_room',
+  DIRECT_MESSAGE_SEND = 'direct_message_send',
+  DIRECT_MESSAGE_RECEIVED = 'direct_message_received',
+
+  JOIN_GROUP_ROOM = 'join_group_room',
+  LEAVE_GROUP_ROOM = 'leave_group_room',
+  GROUP_MESSAGE_SEND = 'group_message_send',
+  GROUP_MESSAGE_RECEIVED = 'group_message_received',
 }
