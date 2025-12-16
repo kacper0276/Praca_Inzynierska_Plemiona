@@ -55,4 +55,14 @@ export class ChatGroupsRepository extends BaseRepository<ChatGroup> {
       .orderBy('group.createdAt', 'DESC')
       .getMany();
   }
+
+  async findUserGroupsWithLastMessage(userId: number): Promise<ChatGroup[]> {
+    return this.repository
+      .createQueryBuilder('group')
+      .innerJoin('group.members', 'member', 'member.id = :userId', { userId })
+      .leftJoinAndSelect('group.messages', 'message')
+      .leftJoinAndSelect('message.sender', 'sender')
+      .orderBy('message.createdAt', 'DESC')
+      .getMany();
+  }
 }

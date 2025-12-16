@@ -27,6 +27,8 @@ import { FriendRequestsRepository } from 'src/friend-requests/repositories/frien
 import { FriendRequestStatus } from '../enums/friend-request-status.enum';
 import { GetVillageWsDto } from 'src/villages/dto/get-village-ws.dto';
 import { UpgradeBuildingWsDto } from 'src/buildings/dto/upgrade-building-ws.dto';
+import { ChatGroupsService } from 'src/chat/services/chat-groups.service';
+import { DirectMessagesService } from 'src/chat/services/direct-messages.service';
 
 export interface AuthenticatedSocket extends Socket {
   user: User;
@@ -49,6 +51,10 @@ export class WsGateway
     private readonly buildingsService: BuildingsService,
     private readonly friendRequestsRepository: FriendRequestsRepository,
     private readonly logger: FileLogger,
+    @Inject(forwardRef(() => DirectMessagesService))
+    private readonly dmService: DirectMessagesService,
+    @Inject(forwardRef(() => ChatGroupsService))
+    private readonly chatGroupsService: ChatGroupsService,
   ) {}
 
   afterInit(server: Server) {
@@ -79,6 +85,11 @@ export class WsGateway
 
       const userRoom = `user-${user.id}`;
       client.join(userRoom);
+
+      const userGroups = await this.chatGroupsService.getUserGroups(user.id);
+      userGroups.forEach((group) => {
+        client.join(`group-${group.id}`);
+      });
 
       client.user = user;
       await this.usersService.setUserOnlineStatus(user.email, true);
@@ -340,5 +351,75 @@ export class WsGateway
         message: error.message || 'Wystąpił błąd podczas pobierania danych.',
       });
     }
+  }
+
+  @SubscribeMessage(WsEvent.DIRECT_MESSAGE_SEND)
+  async onDirectMessage(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: { receiverId: number; content: string },
+  ) {
+    const msg = await this.dmService.send(client.user.id, {
+      receiverId: payload.receiverId,
+      content: payload.content,
+    });
+
+    client.emit(WsEvent.DIRECT_MESSAGE_SEND, {
+      message: msg,
+      senderId: client.user.id,
+    });
+  }
+
+  @SubscribeMessage(WsEvent.GROUP_MESSAGE_SEND)
+  async onGroupMessage(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: { groupId: number; content: string },
+  ) {
+    const msg = await this.chatGroupsService.sendMessage(
+      client.user.id,
+      payload.groupId,
+      {
+        content: payload.content,
+      },
+    );
+
+    client.emit(WsEvent.GROUP_MESSAGE_SEND, {
+      groupId: payload.groupId,
+      message: msg,
+    });
+  }
+
+  @SubscribeMessage(WsEvent.JOIN_DM_ROOM)
+  handleJoinDmRoom(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: { friendId: number },
+  ) {
+    const roomName = this.getDmRoomName(client.user.id, payload.friendId);
+    client.join(roomName);
+    this.logger.log(`User ${client.user.id} joined DM room: ${roomName}`);
+  }
+
+  @SubscribeMessage(WsEvent.LEAVE_DM_ROOM)
+  handleLeaveDmRoom(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: { friendId: number },
+  ) {
+    const roomName = this.getDmRoomName(client.user.id, payload.friendId);
+    client.leave(roomName);
+    this.logger.log(`User ${client.user.id} left DM room: ${roomName}`);
+  }
+
+  public sendDirectMessageToRoom(
+    senderId: number,
+    receiverId: number,
+    payload: any,
+  ) {
+    const roomName = this.getDmRoomName(senderId, receiverId);
+
+    this.server.to(roomName).emit(WsEvent.DIRECT_MESSAGE_RECEIVED, payload);
+  }
+
+  private getDmRoomName(userId1: number, userId2: number): string {
+    const [min, max] = [userId1, userId2].sort((a, b) => a - b);
+    return `dm-${min}-${max}`;
   }
 }

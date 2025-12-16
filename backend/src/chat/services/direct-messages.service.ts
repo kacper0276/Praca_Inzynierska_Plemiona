@@ -52,10 +52,11 @@ export class DirectMessagesService {
 
     const savedMessage = await this.dmRepository.save(message);
 
-    this.wsGateway.sendToUser(receiver.id, WsEvent.DIRECT_MESSAGE_SEND, {
-      message: savedMessage,
-      senderId: sender.id,
-    });
+    this.wsGateway.sendDirectMessageToRoom(
+      sender.id,
+      receiver.id,
+      savedMessage,
+    );
 
     return savedMessage;
   }
