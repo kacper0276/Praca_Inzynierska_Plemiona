@@ -160,11 +160,6 @@ export class ChatComponent implements OnInit, OnDestroy {
         const msg = payload.content;
         const senderId = payload.sender.id;
 
-        console.log(senderId);
-        console.log(msg);
-
-        console.log(payload);
-
         this.handleIncomingMessage(payload, 'dm', senderId);
       })
     );
@@ -173,8 +168,6 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.wsService.onGroupMessage().subscribe((payload: any) => {
         const msg = payload.message;
         const groupId = payload.groupId;
-
-        console.log(payload);
 
         this.handleIncomingMessage(msg, 'group', undefined, groupId);
       })
@@ -249,10 +242,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       id: backendMsg.id,
       content: backendMsg.content,
       isMe: isMe,
-      time: new Date(backendMsg.createdAt).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
+      time: new Date(backendMsg.createdAt).toString(),
       senderName: isMe
         ? 'Ja'
         : backendMsg.sender.username || backendMsg.sender.email,
@@ -326,7 +316,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   getInitials(name: string): string {
     if (name) {
-      console.log(name);
       return `${name.charAt(0)}`.toUpperCase();
     }
     return '';
