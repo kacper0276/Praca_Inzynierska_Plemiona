@@ -6,6 +6,7 @@ import { UpdateUserResposne } from '../interfaces/update-user-response.interface
 import { User, ApiResponse } from '@shared/models';
 import { HttpService } from '@shared/services/http.service';
 import { LocalStorageService } from '@shared/services/local-storage.service';
+import { UserFriendList } from '../interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -44,6 +45,10 @@ export class UserService {
 
   getUserByEmail(email: string): Observable<ApiResponse<User>> {
     return this.http.get<User>(`/users/by-email/${email}`);
+  }
+
+  getUserFriends(): Observable<ApiResponse<UserFriendList[]>> {
+    return this.http.get<UserFriendList[]>('/users/get-user-friends');
   }
 
   private getUserFromStorage(): User | null {

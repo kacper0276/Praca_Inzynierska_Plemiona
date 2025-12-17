@@ -312,6 +312,19 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.isModalOpen = true;
     this.newGroupName = '';
     this.selectedFriends = [];
+    this.fetchFriendsList();
+  }
+
+  private fetchFriendsList(): void {
+    this.userService.getUserFriends().subscribe({
+      next: (res) => {
+        this.allFriends = res.data.map((friend) => ({
+          id: friend.id,
+          name: `${friend.firstName} ${friend.lastName}` || friend.email,
+          avatar: friend.profileImage,
+        })) as MultiSelectItem[];
+      },
+    });
   }
 
   closeGroupModal(): void {
