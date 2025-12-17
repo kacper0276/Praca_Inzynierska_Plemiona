@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { FriendRequest } from '../entities/friend-request.entity';
 import { FriendRequestsRepository } from '../repositories/friend-requests.repository';
-import { UsersRepository } from 'src/users/repositories/users.repository';
 import { DataSource } from 'typeorm';
 import { FriendRequestStatus } from '@core/enums/friend-request-status.enum';
 import { RespondToFriendRequestDto } from '../dto/respond-to-friend-request.dto';
@@ -16,7 +15,6 @@ import { User } from 'src/users/entities/user.entity';
 export class FriendRequestsService {
   constructor(
     private readonly friendRequestsRepository: FriendRequestsRepository,
-    private readonly usersRepository: UsersRepository,
     private readonly dataSource: DataSource,
   ) {}
 
