@@ -15,6 +15,7 @@ import { ChatService } from '@modules/game/services/chat.service';
 import { DirectMessagesService } from '@shared/services/direct-message.service';
 import { WebSocketService } from '@shared/services/web-socket.service';
 import { UserService } from '@modules/auth/services/user.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-chat',
@@ -23,6 +24,8 @@ import { UserService } from '@modules/auth/services/user.service';
 })
 export class ChatComponent implements OnInit, OnDestroy {
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
+
+  backendUrl: string = environment.serverBaseUrl;
 
   searchQuery: string = '';
   friendSearchQuery: string = '';
@@ -319,6 +322,14 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.selectedFriends = this.selectedFriends.filter(
       (f) => f.id !== friend.id
     );
+  }
+
+  getInitials(name: string): string {
+    if (name) {
+      console.log(name);
+      return `${name.charAt(0)}`.toUpperCase();
+    }
+    return '';
   }
 
   ngOnDestroy(): void {

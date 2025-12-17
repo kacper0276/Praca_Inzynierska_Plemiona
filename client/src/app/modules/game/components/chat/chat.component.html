@@ -22,7 +22,15 @@
         [class.active]="selectedChat?.id === chat.id"
         (click)="selectChat(chat)"
       >
-        <img [src]="chat.avatar" class="avatar" alt="User Avatar" />
+        <div class="user-avatar">
+          <img
+            *ngIf="chat.avatar"
+            [src]="backendUrl + chat.avatar"
+            class="avatar"
+            alt="User Avatar"
+          />
+          <span *ngIf="!chat?.avatar">{{ getInitials(chat.name) }}</span>
+        </div>
         <div class="chat-info">
           <div class="name">{{ chat.name }}</div>
           <div class="last-msg">{{ chat.lastMessage }}</div>
@@ -35,7 +43,17 @@
   <main class="chat-window">
     <ng-container *ngIf="selectedChat; else noChatSelected">
       <div class="chat-header">
-        <img [src]="selectedChat.avatar" class="header-avatar" alt="Avatar" />
+        <div class="user-avatar">
+          <img
+            *ngIf="selectedChat.avatar"
+            [src]="backendUrl + selectedChat.avatar"
+            class="avatar"
+            alt="User Avatar"
+          />
+          <span *ngIf="!selectedChat.avatar">{{
+            getInitials(selectedChat.name)
+          }}</span>
+        </div>
         <div class="header-info">
           <h4>{{ selectedChat.name }}</h4>
           <span>Dostępny</span>
