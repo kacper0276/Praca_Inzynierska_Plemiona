@@ -6,7 +6,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { MultiSelectItem } from '../../interfaces/multi-select-item.interface';
+import { MultiSelectItem } from '@shared/interfaces';
 
 @Component({
   selector: 'app-multi-select',

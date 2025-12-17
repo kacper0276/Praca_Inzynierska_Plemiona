@@ -12,17 +12,17 @@ import {
   finalize,
   switchMap,
 } from 'rxjs/operators';
-import { ChatGroupsService } from '@shared/services/chat-groups.service';
 import { ChatItem, User } from '@shared/models';
-import { MessageUi } from '@shared/interfaces/message-ui.interface';
-import { ChatService } from '@modules/game/services/chat.service';
-import { DirectMessagesService } from '@shared/services/direct-message.service';
-import { WebSocketService } from '@shared/services/web-socket.service';
-import { UserService } from '@modules/auth/services/user.service';
 import { environment } from 'src/environments/environment';
-import { UsersService } from '@modules/game/services/users.service';
-import { UserSearchResult } from '@modules/game/interfaces/user-search-result.interface';
-import { MultiSelectItem } from '@shared/interfaces/multi-select-item.interface';
+import { ChatService, UsersService } from '@modules/game/services';
+import { UserService } from '@modules/auth/services';
+import {
+  WebSocketService,
+  ChatGroupsService,
+  DirectMessagesService,
+} from '@shared/services';
+import { UserSearchResult } from '@modules/game/interfaces';
+import { MultiSelectItem, MessageUi } from '@shared/interfaces';
 
 @Component({
   selector: 'app-chat',

@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { RankingService } from '@modules/game/services/ranking.service';
-import { ServerService } from '@modules/game/services/server.service';
-import { ColumnDefinition } from '@shared/interfaces/column-definition.interface';
-import { PaginationEvent } from '@shared/interfaces/pagination-event.interface';
+import { ServerService, RankingService } from '@modules/game/services';
+import { ColumnDefinition, PaginationEvent } from '@shared/interfaces';
 import { Ranking } from '@shared/models';
 
 @Component({

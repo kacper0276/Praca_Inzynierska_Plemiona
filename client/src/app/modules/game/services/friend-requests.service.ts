@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FriendRequestStatus } from '@shared/enums';
 import { ApiResponse, FriendRequest } from '@shared/models';
-import { HttpService } from '@shared/services/http.service';
+import { HttpService } from '@shared/services';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })

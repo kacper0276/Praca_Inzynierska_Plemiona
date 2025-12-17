@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ResourcesService } from '../../services/resources.service';
+import { ResourcesService } from '@modules/game/services';
 import { TranslateService } from '@ngx-translate/core';
 import { Resources } from '@shared/models';
-import { ToastrService } from '@shared/services/toastr.service';
+import { ToastrService } from '@shared/services';
 
 @Component({
   selector: 'app-clan-create',

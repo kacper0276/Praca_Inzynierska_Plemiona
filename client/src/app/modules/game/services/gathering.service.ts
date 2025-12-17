@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { WebSocketEvent } from '@shared/enums';
-import { WebSocketService } from '@shared/services/web-socket.service';
+import { WebSocketService } from '@shared/services';
 import { BehaviorSubject, interval, Subscription } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })

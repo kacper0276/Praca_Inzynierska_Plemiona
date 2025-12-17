@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { BuildingsService } from '@modules/game/services/buildings.service';
-import { ActionEvent } from '@shared/interfaces/action-event.interface';
-import { ColumnDefinition } from '@shared/interfaces/column-definition.interface';
+import { BuildingsService } from '@modules/game/services';
+import { ColumnDefinition, ActionEvent } from '@shared/interfaces';
 import { BuildingData } from '@shared/models';
-import { ConfirmationService } from '@shared/services/confirmation.service';
+import { ConfirmationService } from '@shared/services';
 
 @Component({
   selector: 'app-building-panel',

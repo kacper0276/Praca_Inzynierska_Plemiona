@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiResponse, ChatItem } from '@shared/models';
-import { HttpService } from '@shared/services/http.service';
+import { HttpService } from '@shared/services';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })

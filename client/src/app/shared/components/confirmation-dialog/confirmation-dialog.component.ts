@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfirmationService } from '../../services/confirmation.service';
+import { ConfirmationService } from '@shared/services';
 
 @Component({
   selector: 'app-confirmation-dialog',

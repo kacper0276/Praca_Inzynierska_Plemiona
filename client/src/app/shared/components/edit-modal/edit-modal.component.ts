@@ -5,7 +5,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { ColumnDefinition } from '../../interfaces/column-definition.interface';
+import { ColumnDefinition } from '@shared/interfaces';
 
 @Component({
   selector: 'app-edit-modal',

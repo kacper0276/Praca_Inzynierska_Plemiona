@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ResourcesService } from '@modules/game/services/resources.service';
-import { ActionEvent } from '@shared/interfaces/action-event.interface';
-import { ColumnDefinition } from '@shared/interfaces/column-definition.interface';
+import { ResourcesService } from '@modules/game/services';
+import { ColumnDefinition, ActionEvent } from '@shared/interfaces';
 import { Resources } from '@shared/models';
-import { ConfirmationService } from '@shared/services/confirmation.service';
+import { ConfirmationService } from '@shared/services';
 
 @Component({
   selector: 'app-resource-panel',
