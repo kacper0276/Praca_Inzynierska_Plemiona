@@ -209,7 +209,7 @@ export class UsersService {
         login: ILike(`%${query}%`),
         id: Not(In(idsToExclude)),
       },
-      select: ['id', 'login', 'profileImage', 'email'],
+      select: ['id', 'login', 'profileImage', 'email', 'firstName', 'lastName'],
       take: 10,
     });
   }

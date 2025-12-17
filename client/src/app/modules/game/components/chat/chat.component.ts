@@ -5,9 +5,13 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-import { AuthService } from '@modules/auth/services/auth.service';
+import { Subject, Subscription } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  finalize,
+  switchMap,
+} from 'rxjs/operators';
 import { ChatGroupsService } from '@shared/services/chat-groups.service';
 import { ChatItem, User } from '@shared/models';
 import { MessageUi } from '@shared/interfaces/message-ui.interface';
@@ -16,6 +20,9 @@ import { DirectMessagesService } from '@shared/services/direct-message.service';
 import { WebSocketService } from '@shared/services/web-socket.service';
 import { UserService } from '@modules/auth/services/user.service';
 import { environment } from 'src/environments/environment';
+import { UsersService } from '@modules/game/services/users.service';
+import { UserSearchResult } from '@modules/game/interfaces/user-search-result.interface';
+import { MultiSelectItem } from '@shared/interfaces/multi-select-item.interface';
 
 @Component({
   selector: 'app-chat',
@@ -25,9 +32,11 @@ import { environment } from 'src/environments/environment';
 export class ChatComponent implements OnInit, OnDestroy {
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
+  public searchTerm = new Subject<string>();
+  public searchResults: UserSearchResult[] = [];
+
   backendUrl: string = environment.serverBaseUrl;
 
-  searchQuery: string = '';
   friendSearchQuery: string = '';
   newMessage: string = '';
 
@@ -35,13 +44,11 @@ export class ChatComponent implements OnInit, OnDestroy {
   newGroupName: string = '';
 
   isDropdownOpen: boolean = false;
-  allFriends: User[] = [];
-  filteredFriends: User[] = [];
-  selectedFriends: User[] = [];
+  allFriends: MultiSelectItem[] = [];
+  selectedFriends: MultiSelectItem[] = [];
 
   currentUserId: number = 0;
   allChats: ChatItem[] = [];
-  filteredChats: ChatItem[] = [];
   selectedChat: ChatItem | null = null;
   messages: MessageUi[] = [];
 
@@ -51,12 +58,12 @@ export class ChatComponent implements OnInit, OnDestroy {
   private activeDmFriendId: number | null = null;
 
   constructor(
-    private readonly authService: AuthService,
     private readonly wsService: WebSocketService,
     private readonly chatService: ChatService,
     private readonly groupService: ChatGroupsService,
     private readonly dmService: DirectMessagesService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly usersService: UsersService
   ) {}
 
   ngOnInit(): void {
@@ -66,6 +73,21 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.fetchChatList();
 
     this.listenToWebSockets();
+
+    this.subs.add(
+      this.searchTerm
+        .pipe(
+          debounceTime(300),
+          distinctUntilChanged(),
+          switchMap((term: string) => this.usersService.searchUsers(term))
+        )
+        .subscribe({
+          next: (users) => {
+            this.searchResults = users.data;
+          },
+          error: (err) => console.error('Błąd podczas wyszukiwania:', err),
+        })
+    );
   }
 
   fetchChatList(): void {
@@ -75,17 +97,45 @@ export class ChatComponent implements OnInit, OnDestroy {
           ...c,
           lastMessageDate: new Date(c.lastMessageDate),
         }));
-        this.filterChats();
       },
       error: (err) => console.error('Błąd pobierania czatów', err),
     });
   }
 
-  filterChats(): void {
-    const query = this.searchQuery.toLowerCase();
-    this.filteredChats = this.allChats.filter((chat) =>
-      chat.name.toLowerCase().includes(query)
-    );
+  onSearch(event: Event): void {
+    const term = (event.target as HTMLInputElement).value;
+    this.searchTerm.next(term);
+  }
+
+  createNewDmChat(user: UserSearchResult): void {
+    if (this.activeDmFriendId) {
+      this.wsService.leaveDmRoom(this.activeDmFriendId);
+      this.activeDmFriendId = null;
+    }
+
+    this.messages = [];
+    this.isLoadingMessages = true;
+
+    this.wsService.joinDmRoom(user.id);
+    this.activeDmFriendId = user.id;
+
+    this.selectedChat = {
+      id: user.id,
+      type: 'dm',
+      name:
+        `${user.firstName} ${user.lastName}`.trim() || user.login || user.email,
+      avatar: user.profileImage,
+      lastMessage: '',
+      lastMessageDate: new Date(),
+    } as ChatItem;
+
+    this.dmService
+      .getConversation(user.id)
+      .pipe(finalize(() => (this.isLoadingMessages = false)))
+      .subscribe((res) => {
+        this.messages = res.data.map((m) => this.mapToMessageUi(m));
+        this.scrollToBottom();
+      });
   }
 
   selectChat(chat: ChatItem): void {
@@ -230,7 +280,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
       this.allChats.splice(index, 1);
       this.allChats.unshift(chat);
-      this.filterChats();
     } else {
       this.fetchChatList();
     }
@@ -270,7 +319,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.isDropdownOpen = false;
   }
 
-  onFriendsSelectionChange(selected: User[]): void {
+  onFriendsSelectionChange(selected: MultiSelectItem[]): void {
     this.selectedFriends = selected;
   }
 
@@ -301,7 +350,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   filterFriends(): void {}
 
-  selectFriend(friend: User): void {
+  selectFriend(friend: MultiSelectItem): void {
     if (!this.selectedFriends.find((f) => f.id === friend.id)) {
       this.selectedFriends.push(friend);
     }
@@ -319,6 +368,23 @@ export class ChatComponent implements OnInit, OnDestroy {
       return `${name.charAt(0)}`.toUpperCase();
     }
     return '';
+  }
+
+  public userInitials(
+    firstName: string,
+    lastName: string,
+    login: string
+  ): string {
+    if (firstName && lastName) {
+      return `${firstName.charAt(0)}${lastName.charAt(0)}`;
+    }
+    if (firstName) {
+      return firstName.substring(0, 2);
+    }
+    if (login) {
+      return login.substring(0, 2);
+    }
+    return '?';
   }
 
   ngOnDestroy(): void {

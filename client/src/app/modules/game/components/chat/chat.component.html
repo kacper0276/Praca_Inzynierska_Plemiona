@@ -10,15 +10,36 @@
         type="text"
         class="search-input"
         placeholder="Szukaj użytkownika..."
-        [(ngModel)]="searchQuery"
-        (input)="filterChats()"
+        (keyup)="onSearch($event)"
       />
     </div>
 
     <div class="chat-list">
+      @if(searchResults.length > 0) {
       <div
         class="chat-item"
-        *ngFor="let chat of filteredChats"
+        *ngFor="let user of searchResults"
+        (click)="createNewDmChat(user)"
+      >
+        <div class="user-avatar">
+          <img
+            *ngIf="user.profileImage"
+            [src]="backendUrl + user.profileImage"
+            class="avatar"
+            alt="User Avatar"
+          />
+          <span *ngIf="!user?.profileImage">{{
+            userInitials(user.firstName, user.lastName, user.login)
+          }}</span>
+        </div>
+        <div class="chat-info">
+          <div class="name">{{ user.firstName }} {{ user.lastName }}</div>
+        </div>
+      </div>
+      } @else {
+      <div
+        class="chat-item"
+        *ngFor="let chat of allChats"
         [class.active]="selectedChat?.id === chat.id"
         (click)="selectChat(chat)"
       >
@@ -39,6 +60,7 @@
           {{ chat.lastMessageDate + "Z" | date : "dd-MM-yyyy HH:mm" }}
         </div>
       </div>
+      }
     </div>
   </aside>
 
@@ -119,12 +141,12 @@
     <div class="form-group">
       <label>Dodaj uczestników</label>
 
-      <!-- <app-multi-select
+      <app-multi-select
         [items]="allFriends"
         placeholder="Szukaj znajomych..."
         (selectionChange)="onFriendsSelectionChange($event)"
       >
-      </app-multi-select> -->
+      </app-multi-select>
     </div>
 
     <div class="modal-actions">
