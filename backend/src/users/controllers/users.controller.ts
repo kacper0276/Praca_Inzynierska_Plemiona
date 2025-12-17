@@ -86,6 +86,15 @@ export class UsersController {
     return this.usersService.sendFriendRequest(senderId, receiverId);
   }
 
+  @Get('get-user-friends')
+  @Authenticated()
+  @ApiOkResponse({ description: 'Lista znajomych użytkownika' })
+  @ApiForbiddenResponse({ description: 'Brak uprawnień' })
+  async getUserFriend(@Request() req: any) {
+    const userId = +req.user.sub;
+    return this.usersService.getUserFirends(userId);
+  }
+
   @Get()
   @Roles(UserRole.ADMIN)
   @ApiOkResponse({ description: 'Lista wszystkich użytkowników.' })
