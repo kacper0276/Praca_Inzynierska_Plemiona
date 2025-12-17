@@ -67,4 +67,14 @@ export class DirectMessagesRepository extends BaseRepository<DirectMessage> {
       where: { receiver: { id: userId }, isRead: false },
     });
   }
+
+  async findUserAllMessages(userId: number): Promise<DirectMessage[]> {
+    return this.repository
+      .createQueryBuilder('dm')
+      .leftJoinAndSelect('dm.sender', 'sender')
+      .leftJoinAndSelect('dm.receiver', 'receiver')
+      .where('dm.sender_id = :userId OR dm.receiver_id = :userId', { userId })
+      .orderBy('dm.createdAt', 'DESC')
+      .getMany();
+  }
 }

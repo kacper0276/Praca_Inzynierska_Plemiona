@@ -10,20 +10,24 @@ import { GroupMessagesRepository } from './repositories/group-messages.repositor
 import { ChatGroupsService } from './services/chat-groups.service';
 import { DirectMessagesService } from './services/direct-messages.service';
 import { UsersModule } from 'src/users/users.module';
+import { ChatController } from './controllers/chat.controller';
+import { DirectMessagesController } from './controllers/direct-messages.controller';
+import { ChatService } from './services/chat.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ChatGroup, DirectMessage, GroupMessage]),
     UsersModule,
   ],
-  controllers: [ChatGroupsController],
+  controllers: [ChatGroupsController, ChatController, DirectMessagesController],
   providers: [
     ChatGroupsService,
     DirectMessagesService,
+    ChatService,
     ChatGroupsRepository,
     DirectMessagesRepository,
     GroupMessagesRepository,
   ],
-  exports: [],
+  exports: [ChatGroupsService, DirectMessagesService],
 })
 export class ChatModule {}

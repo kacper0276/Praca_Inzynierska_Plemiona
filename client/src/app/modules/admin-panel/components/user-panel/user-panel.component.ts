@@ -66,14 +66,26 @@ export class UserPanelComponent implements OnInit {
   }
 
   onSaveUser(updatedUser: User): void {
-    console.log('Zapisywanie zmian:', updatedUser);
-    const index = this.usersList.findIndex(
-      (u) => u.email === updatedUser.email
-    );
-    if (index > -1) {
-      this.usersList[index] = updatedUser;
+    if (this.selectedUser !== null) {
+      this.usersService
+        .updateUser(this.selectedUser.email, updatedUser)
+        .subscribe({
+          next: () => {
+            const index = this.usersList.findIndex(
+              (u) => u.email === this.selectedUser?.email
+            );
+            if (index > -1) {
+              this.usersList[index] = updatedUser;
+            }
+          },
+          error: () => {
+            this.closeEditModal();
+          },
+          complete: () => {
+            this.closeEditModal();
+          },
+        });
     }
-    this.closeEditModal();
   }
 
   async onDeleteUser(userToDelete: User): Promise<void> {
@@ -82,10 +94,13 @@ export class UserPanelComponent implements OnInit {
     );
 
     if (result) {
-      console.log('Usuwanie potwierdzone:', userToDelete);
-      this.usersList = this.usersList.filter(
-        (u) => u.email !== userToDelete.email
-      );
+      this.usersService.deleteUser(userToDelete.id ?? -1).subscribe({
+        next: () => {
+          this.usersList = this.usersList.filter(
+            (u) => u.email !== userToDelete.email
+          );
+        },
+      });
       this.closeEditModal();
     } else {
       console.log('Usuwanie anulowane.');

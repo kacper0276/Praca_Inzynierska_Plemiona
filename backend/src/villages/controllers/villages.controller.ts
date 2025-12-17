@@ -11,6 +11,7 @@ import {
   Patch,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { VillagesService } from '../services/villages.service';
 import { VillageStateDto } from '../dto/village-state.dto';
@@ -24,6 +25,7 @@ import {
   ApiForbiddenResponse,
   ApiConflictResponse,
   ApiNoContentResponse,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { Roles } from '@core/decorators/roles.decorator';
 import { UserRole } from '@core/enums/user-role.enum';
@@ -34,6 +36,21 @@ import { Authenticated } from '@core/decorators/authenticated.decorator';
 @Controller('villages')
 export class VillagesController {
   constructor(private readonly villagesService: VillagesService) {}
+
+  @Get('map/:serverId')
+  @Authenticated()
+  @ApiOkResponse({ description: 'Zwraca fragment mapy.' })
+  @ApiQuery({ name: 'x', required: true, type: Number })
+  @ApiQuery({ name: 'y', required: true, type: Number })
+  @ApiQuery({ name: 'range', required: false, type: Number })
+  async getMap(
+    @Param('serverId', ParseIntPipe) serverId: number,
+    @Query('x', ParseIntPipe) x: number,
+    @Query('y', ParseIntPipe) y: number,
+    @Query('range') range: number = 7,
+  ) {
+    return this.villagesService.getMapData(serverId, x, y, range);
+  }
 
   @Get('user/:userId')
   @Authenticated()

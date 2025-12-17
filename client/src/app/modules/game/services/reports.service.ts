@@ -17,4 +17,20 @@ export class ReportsService {
   getAllReports(): Observable<ApiResponse<Report[]>> {
     return this.httpService.get<Report[]>('/reports');
   }
+
+  updateReport(
+    reportId: number,
+    resolvedStatus: boolean
+  ): Observable<ApiResponse<Report>> {
+    return this.httpService.patch<Report>(
+      `/reports/${reportId}/change-status`,
+      {
+        resolvedStatus,
+      }
+    );
+  }
+
+  deleteReport(reportId: number): Observable<ApiResponse<null>> {
+    return this.httpService.delete<null>(`/reports/${reportId}`);
+  }
 }

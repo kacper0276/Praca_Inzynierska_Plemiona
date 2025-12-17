@@ -6,10 +6,11 @@ import {
   Query,
   Param,
   ParseIntPipe,
-  Put,
   Request,
   HttpStatus,
   HttpCode,
+  Patch,
+  Delete,
 } from '@nestjs/common';
 import { ReportsService } from '../services/reports.service';
 import { Report } from '../entities/report.entity';
@@ -63,22 +64,42 @@ export class ReportsController {
     return this.reportsService.listReports(query);
   }
 
-  @Put(':id/resolve')
+  @Patch(':id/change-status')
   @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ description: 'Zgłoszenie zostało pomyślnie rozwiązane.' })
+  @ApiOkResponse({ description: 'Status zgłoszenia został zmieniony.' })
   @ApiNotFoundResponse({
     description: 'Zgłoszenie o podanym ID nie zostało znalezione.',
   })
   @ApiUnauthorizedResponse({ description: 'Brak autoryzacji.' })
   @ApiForbiddenResponse({
-    description: 'Brak uprawnień do rozwiązywania zgłoszeń.',
+    description: 'Brak uprawnień do zmiany statusu zgłoszeń.',
   })
   resolve(
     @Param('id', ParseIntPipe) id: number,
     @Request() req: any,
+    @Body() data: { resolvedStatus: boolean },
   ): Promise<Report> {
     const resolverId = req.user.sub;
-    return this.reportsService.resolveReport(id, resolverId);
+    return this.reportsService.resolveReport(
+      id,
+      resolverId,
+      data.resolvedStatus,
+    );
+  }
+
+  @Delete(':id')
+  @Roles(UserRole.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ description: 'Zgłoszenie zostało pomyślnie usunięte.' })
+  @ApiNotFoundResponse({
+    description: 'Zgłoszenie o podanym ID nie zostało znalezione.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Brak autoryzacji.' })
+  @ApiForbiddenResponse({
+    description: 'Brak uprawnień do usuwania zgłoszeń.',
+  })
+  delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.reportsService.deleteReport(id);
   }
 }

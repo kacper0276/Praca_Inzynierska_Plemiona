@@ -13,3 +13,6 @@ export * from './report.model';
 export * from './friend-request.model';
 export * from './ranking.model';
 export * from './paginated-response.model';
+export * from './chat-item.model';
+export * from './direct-message.model';
+export * from './group-message.model';

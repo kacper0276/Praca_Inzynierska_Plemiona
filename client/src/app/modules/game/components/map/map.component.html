@@ -1,9 +1,54 @@
 <div class="map-container">
-  <div *ngFor="let row of tiles" class="map-row">
-    <div
-      *ngFor="let tile of row"
-      class="map-tile"
-      [class.active]="tile === 1"
-    ></div>
+  <div class="map-panel panel">
+    <div class="map-header">
+      <h3>Mapa Świata</h3>
+      <div class="coordinates">
+        <span class="label">Centrum:</span>
+        <span class="value">{{ viewX }} | {{ viewY }}</span>
+      </div>
+    </div>
+
+    <div class="map-viewport">
+      <button class="nav-btn north" (click)="move(0, -1)">
+        <i class="material-icons">keyboard_arrow_up</i>
+      </button>
+
+      <button class="nav-btn west" (click)="move(-1, 0)">
+        <i class="material-icons">keyboard_arrow_left</i>
+      </button>
+
+      <button class="nav-btn east" (click)="move(1, 0)">
+        <i class="material-icons">keyboard_arrow_right</i>
+      </button>
+
+      <button class="nav-btn south" (click)="move(0, 1)">
+        <i class="material-icons">keyboard_arrow_down</i>
+      </button>
+
+      <div class="grid-display" [style.--grid-size]="gridSize">
+        <div *ngFor="let row of tiles" class="map-row">
+          <div
+            *ngFor="let tile of row"
+            class="map-tile"
+            [class.has-village]="tile.village"
+            (click)="tile.village && goToVillage(tile.village.playerName)"
+          >
+            <div *ngIf="tile.village" class="village-content">
+              <i class="material-icons village-icon">home</i>
+
+              <div class="tooltip panel">
+                <div class="tooltip-header">{{ tile.village.name }}</div>
+                <div class="tooltip-player">{{ tile.village.playerName }}</div>
+                <div class="tooltip-coords">({{ tile.x }}|{{ tile.y }})</div>
+              </div>
+            </div>
+
+            <span *ngIf="!tile.village" class="empty-coords">
+              {{ tile.x }},{{ tile.y }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

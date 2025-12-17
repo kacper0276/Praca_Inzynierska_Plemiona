@@ -190,4 +190,32 @@ export class WebSocketService {
   public onConnectError(): Observable<any> {
     return this.connectionError$.asObservable();
   }
+
+  public sendDirectMessage(receiverId: number, content: string) {
+    this.send(WebSocketEvent.DIRECT_MESSAGE_SEND, { receiverId, content });
+  }
+
+  public sendGroupMessage(groupId: number, content: string) {
+    this.send(WebSocketEvent.GROUP_MESSAGE_SEND, { groupId, content });
+  }
+
+  public onDirectMessage(): Observable<any> {
+    return this.onEvent(WebSocketEvent.DIRECT_MESSAGE_RECEIVED).pipe(
+      map((m) => m.payload)
+    );
+  }
+
+  public onGroupMessage(): Observable<any> {
+    return this.onEvent(WebSocketEvent.GROUP_MESSAGE_RECEIVED).pipe(
+      map((m) => m.payload)
+    );
+  }
+
+  public joinDmRoom(friendId: number): void {
+    this.send(WebSocketEvent.JOIN_DM_ROOM, { friendId });
+  }
+
+  public leaveDmRoom(friendId: number): void {
+    this.send(WebSocketEvent.LEAVE_DM_ROOM, { friendId });
+  }
 }

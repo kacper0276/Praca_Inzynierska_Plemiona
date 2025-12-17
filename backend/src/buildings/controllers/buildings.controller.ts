@@ -32,6 +32,13 @@ import { Authenticated } from '@core/decorators/authenticated.decorator';
 export class BuildingsController {
   constructor(private readonly buildingsService: BuildingsService) {}
 
+  @Get()
+  @ApiOkResponse({ description: 'Zwraca listę budynków dla danej wioski.' })
+  @ApiUnauthorizedResponse({ description: 'Brak autoryzacji (niezalogowany).' })
+  async findAllBuildings() {
+    return this.buildingsService.findAll();
+  }
+
   @Get('village/:villageId')
   @ApiOkResponse({ description: 'Zwraca listę budynków dla danej wioski.' })
   @ApiUnauthorizedResponse({ description: 'Brak autoryzacji (niezalogowany).' })

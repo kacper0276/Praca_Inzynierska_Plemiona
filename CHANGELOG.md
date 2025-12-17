@@ -73,3 +73,4 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 ### Changed
 
 - Zmieniono działanie surowców (na każdym serwerze osobna ilość surowców)
+- Poprawa wizualna aplikacji

@@ -7,4 +7,6 @@ export interface BuildingData extends BaseModel {
   health?: number;
   maxHealth?: number;
   constructionFinishedAt?: Date | null;
+  userLogin?: string;
+  userVillageId?: number;
 }

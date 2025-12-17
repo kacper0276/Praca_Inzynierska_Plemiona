@@ -244,4 +244,53 @@ export class VillagesService {
       await queryRunner.release();
     }
   }
+
+  async getMapData(
+    serverId: number,
+    centerX: number,
+    centerY: number,
+    range: number,
+  ) {
+    const allVillages = await this.villagesRepository.find({
+      where: {
+        server: { id: serverId },
+      } as any,
+      relations: ['user'],
+      select: {
+        id: true,
+        gridSize: true,
+        user: {
+          email: true,
+        },
+      } as any,
+    });
+
+    const minX = centerX - Math.floor(range / 2);
+    const maxX = centerX + Math.floor(range / 2);
+    const minY = centerY - Math.floor(range / 2);
+    const maxY = centerY + Math.floor(range / 2);
+
+    const simulatedMap = allVillages
+      .map((v) => {
+        const idx = v.id - 1;
+        const rowWidth = 5;
+        const offset = 2;
+
+        const simulatedX = (idx % rowWidth) - offset;
+        const simulatedY = Math.floor(idx / rowWidth) - offset;
+
+        return {
+          id: v.id,
+          name: `Wioska ${v.user?.email || 'Nieznana'}`,
+          x: simulatedX,
+          y: simulatedY,
+          playerName: v.user?.email || 'Unknown',
+        };
+      })
+      .filter((v) => {
+        return v.x >= minX && v.x <= maxX && v.y >= minY && v.y <= maxY;
+      });
+
+    return simulatedMap;
+  }
 }

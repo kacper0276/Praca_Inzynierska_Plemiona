@@ -34,6 +34,22 @@ export class BuildingsService {
     @Inject(forwardRef(() => WsGateway)) private readonly wsGateway: WsGateway,
   ) {}
 
+  async findAll() {
+    const buildings = await this.buildingsRepository.findAll({
+      relations: ['village', 'village.user'],
+    });
+
+    const mappedBuildings = buildings.map((building) => {
+      return {
+        ...building,
+        userLogin: building.village.user.login,
+        userVillageId: building.village.id,
+      };
+    });
+
+    return mappedBuildings;
+  }
+
   findAllForVillage(villageId: number) {
     return this.buildingsRepository.findAllByVillageId(villageId);
   }
