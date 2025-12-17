@@ -40,7 +40,10 @@ export class ChatService {
         dmMap.set(otherUser.id, {
           id: otherUser.id,
           type: 'dm',
-          name: otherUser.login || otherUser.email,
+          name:
+            `${otherUser.firstName} ${otherUser.lastName}` ||
+            otherUser.login ||
+            otherUser.email,
           avatar: null,
           lastMessage: dm.content,
           lastMessageDate: dm.createdAt,
