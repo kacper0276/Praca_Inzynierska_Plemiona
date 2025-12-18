@@ -8,7 +8,7 @@ import {
 import { Observable, Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
-import { availableBuildings } from '@shared/consts/available-buildings';
+import { AVAILABLE_BUILDINGS } from '@shared/consts/available-buildings';
 import { WebSocketEvent } from '@shared/enums';
 import { BuildingData, Resources, RadialMenuOption } from '@shared/models';
 import {
@@ -100,7 +100,7 @@ export class GridComponent implements OnInit, OnDestroy {
   activeRadial: { row: number; col: number } | null = null;
   activeEmptyRadial: { row: number; col: number } | null = null;
 
-  availableBuildings: BuildingData[] = availableBuildings;
+  availableBuildings: BuildingData[] = AVAILABLE_BUILDINGS;
 
   emptyPlotOptions: RadialMenuOption[] = EMPTY_PLOT_OPTIONS;
   buildingOptions: RadialMenuOption[] = BUILDING_OPTIONS;

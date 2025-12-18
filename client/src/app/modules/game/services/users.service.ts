@@ -21,6 +21,10 @@ export class UsersService {
     return this.httpService.get<User[]>('/users');
   }
 
+  fetchFriendsWithoutClans(): Observable<ApiResponse<User[]>> {
+    return this.httpService.get<User[]>('/users/without-clans');
+  }
+
   deleteUser(userId: number): Observable<ApiResponse<null>> {
     return this.httpService.delete<null>(`/users/${userId}`);
   }

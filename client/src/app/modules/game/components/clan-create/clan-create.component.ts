@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ResourcesService } from '@modules/game/services';
+import { UserService } from '@modules/auth/services';
+import { ResourcesService, UsersService } from '@modules/game/services';
 import { TranslateService } from '@ngx-translate/core';
+import { CLANS_COST } from '@shared/consts/clans-cost';
+import { MultiSelectItem } from '@shared/interfaces';
 import { Resources } from '@shared/models';
 import { ToastrService } from '@shared/services';
 
@@ -12,20 +15,17 @@ import { ToastrService } from '@shared/services';
 })
 export class ClanCreateComponent implements OnInit {
   form: FormGroup;
-  players = [
-    { id: 2, label: 'PlayerA' },
-    { id: 3, label: 'PlayerB' },
-    { id: 4, label: 'PlayerC' },
-    { id: 5, label: 'PlayerD' },
-  ];
+  userFriends: MultiSelectItem[] = [];
 
-  readonly clanCost: Partial<Resources> = { wood: 500, clay: 300, iron: 200 };
+  readonly clanCost: Partial<Resources> = CLANS_COST;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly resSvc: ResourcesService,
     private readonly toastr: ToastrService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly usersService: UsersService,
+    private readonly userService: UserService
   ) {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -33,7 +33,22 @@ export class ClanCreateComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.fetchFriendsWithoutClans();
+  }
+
+  private fetchFriendsWithoutClans(): void {
+    this.usersService.fetchFriendsWithoutClans().subscribe({
+      next: (res) => {
+        this.userFriends = res.data.map((user) => ({
+          id: user.id,
+          name:
+            `${user.firstName} ${user.lastName}` || user.email || user.login,
+          avatar: user.profileImage,
+        })) as MultiSelectItem[];
+      },
+    });
+  }
 
   createClan() {
     if (this.form.invalid) return;
