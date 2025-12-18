@@ -151,6 +151,11 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.activeDmFriendId = null;
     }
 
+    if (this.selectedChat?.type === 'group' && this.selectedChat) {
+      this.wsService.leaveChatGroup(this.selectedChat.id);
+      this.selectedChat = null;
+    }
+
     this.selectedChat = chat;
     this.messages = [];
     this.isLoadingMessages = true;
@@ -167,6 +172,8 @@ export class ChatComponent implements OnInit, OnDestroy {
           this.scrollToBottom();
         });
     } else {
+      this.wsService.joinChatGroup(chat.id);
+
       this.groupService
         .getGroupMessages(chat.id)
         .pipe(finalize(() => (this.isLoadingMessages = false)))
@@ -216,10 +223,10 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     this.subs.add(
       this.wsService.onGroupMessage().subscribe((payload: any) => {
-        const msg = payload.message;
-        const groupId = payload.groupId;
+        const msg = payload.content;
+        const groupId = payload.group.id;
 
-        this.handleIncomingMessage(msg, 'group', undefined, groupId);
+        this.handleIncomingMessage(payload, 'group', undefined, groupId);
       })
     );
   }
