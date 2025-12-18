@@ -9,6 +9,7 @@ import { ClanCreateComponent } from './components/clan-create/clan-create.compon
 import { ArmyComponent } from './components/army/army.component';
 import { InvitesComponent } from './components/invites/invites.component';
 import { adminGuard } from '@shared/guards/admin.guard';
+import { TasksComponent } from './components/tasks/tasks.component';
 
 const gameRoutes: Routes = [
   {
@@ -35,6 +36,7 @@ const gameRoutes: Routes = [
           import('../profile/profile.module').then((m) => m.ProfileModule),
       },
       { path: 'invitations', component: InvitesComponent },
+      { path: 'tasks', component: TasksComponent },
       { path: '', redirectTo: 'village', pathMatch: 'full' },
     ],
   },

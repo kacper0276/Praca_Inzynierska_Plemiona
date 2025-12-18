@@ -134,6 +134,18 @@
         </a>
       </li>
 
+      <li
+        [class.active]="activeTab === 'tasks'"
+        [title]="isCollapsed ? 'Zadania' : ''"
+      >
+        <a routerLink="tasks">
+          <!-- <mat-icon>groups</mat-icon> -->
+          <!-- TODO: Stworzyć ikonę dla Zadań -->
+          <img src="/assets/icons/shield.png" alt="Tasks" />
+          <span *ngIf="!isCollapsed">Zadania</span>
+        </a>
+      </li>
+
       <li class="report-bug">
         <a (click)="openBugReport()" title="Zgłoś błąd">
           <!-- <mat-icon>bug_report</mat-icon> -->
