@@ -126,6 +126,18 @@ export class UsersController {
     return users;
   }
 
+  @Get('without-clans')
+  @Authenticated()
+  @ApiOkResponse({
+    description: 'Zwraca znajomych użytkownika którzy nie mają klanu',
+  })
+  @ApiForbiddenResponse({ description: 'Brak uprawnień' })
+  async findWithoutClans(@Request() req: any) {
+    const userId = +req.user.sub;
+
+    return this.usersService.getFriendsWithoutClans(userId);
+  }
+
   @Get(':id')
   @Authenticated()
   @ApiOkResponse({ description: 'Dane użytkownika.' })

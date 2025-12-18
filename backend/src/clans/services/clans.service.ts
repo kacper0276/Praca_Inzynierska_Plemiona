@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Clan } from '../entities/clan.entity';
 import { ClansRepository } from '../repositories/clans.repository';
 import { UsersRepository } from 'src/users/repositories/users.repository';
@@ -23,23 +27,55 @@ export class ClansService {
   }
 
   async create(createClanDto: CreateClanDto): Promise<Clan> {
-    const { memberIds, ...clanData } = createClanDto;
+    const { memberIds, founderId, ...clanData } = createClanDto;
 
-    let members: User[] = [];
+    const founder = await this.usersRepository.findOne(
+      {
+        id: founderId,
+      },
+      { relations: ['foundedClan'] },
+    );
+
+    if (!founder) {
+      throw new NotFoundException('Użytkownik nie istnieje.');
+    }
+
+    if (founder.clan) {
+      throw new BadRequestException(
+        'Jesteś już członkiem lub założycielem innego klanu.',
+      );
+    }
+
+    let members: User[] = [founder];
+
     if (memberIds && memberIds.length > 0) {
-      members = await this.usersRepository.findAll({
+      const invitedUsers = await this.usersRepository.findAll({
         where: { id: In(memberIds) },
+        relations: ['clan'],
       });
-      if (members.length !== memberIds.length) {
+
+      if (invitedUsers.length !== memberIds.length) {
         throw new NotFoundException(
-          'Jeden lub więcej użytkowników o podanych ID nie istnieje.',
+          'Nie znaleziono wszystkich zaproszonych użytkowników.',
         );
       }
+
+      const alreadyInClan = invitedUsers.filter((u) => u.clan !== null);
+
+      if (alreadyInClan.length > 0) {
+        const names = alreadyInClan.map((u) => u.login).join(', ');
+        throw new BadRequestException(
+          `Następujący użytkownicy są już w innych klanach: ${names}`,
+        );
+      }
+
+      members = [...members, ...invitedUsers];
     }
 
     const newClan = this.clansRepository.create({
       ...clanData,
-      members,
+      founder: founder,
+      members: members,
     });
 
     return this.clansRepository.save(newClan);
