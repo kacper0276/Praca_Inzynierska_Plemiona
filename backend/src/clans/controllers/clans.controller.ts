@@ -27,6 +27,7 @@ import { UserRole } from '@core/enums/user-role.enum';
 import { CreateClanDto } from '../dto/create-clan.dto';
 import { Public } from '@core/decorators/public.decorator';
 import { UpdateClanDto } from '../dto/update-clan.dto';
+import { Message } from '@core/decorators/message.decorator';
 
 @ApiTags('Clans')
 @ApiBearerAuth('access-token')
@@ -36,6 +37,7 @@ export class ClansController {
 
   @Post()
   @Roles(UserRole.ADMIN, UserRole.USER)
+  @Message('Utworzono klan')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Klan został pomyślnie utworzony.' })
   @ApiBadRequestResponse({ description: 'Przesłane dane są nieprawidłowe.' })

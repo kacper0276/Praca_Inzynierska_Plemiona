@@ -59,4 +59,12 @@ export class CreateClanDto {
   })
   @IsInt()
   founderId: number;
+
+  @ApiProperty({
+    description: 'Id serwera na którym ma być utworzony klan',
+    example: 1,
+    required: true,
+  })
+  @IsInt()
+  serverId: number;
 }
