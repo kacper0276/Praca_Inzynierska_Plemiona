@@ -51,4 +51,20 @@ export class CreateClanDto {
     message: 'Identyfikatory użytkowników nie mogą się powtarzać.',
   })
   readonly memberIds?: number[];
+
+  @ApiProperty({
+    description: 'Id użytkownika który zakłada klan',
+    example: 1,
+    required: true,
+  })
+  @IsInt()
+  founderId: number;
+
+  @ApiProperty({
+    description: 'Id serwera na którym ma być utworzony klan',
+    example: 1,
+    required: true,
+  })
+  @IsInt()
+  serverId: number;
 }

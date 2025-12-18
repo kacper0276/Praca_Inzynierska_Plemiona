@@ -1,6 +1,14 @@
-import { Entity, Column, ManyToMany, JoinTable } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { BaseEntity } from '@core/entities/base.entity';
+import { Server } from 'src/servers/entities/server.entity';
 
 @Entity({ name: 'clans' })
 export class Clan extends BaseEntity {
@@ -10,7 +18,14 @@ export class Clan extends BaseEntity {
   @Column({ nullable: true })
   description?: string;
 
-  @ManyToMany(() => User, (user) => user.clans)
-  @JoinTable()
+  @OneToOne(() => User, (user) => user.foundedClan)
+  @JoinColumn({ name: 'founderId' })
+  founder: User;
+
+  @OneToMany(() => User, (user) => user.clan)
   members: User[];
+
+  @ManyToOne(() => Server, (server) => server.clans, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'serverId' })
+  server: Server;
 }

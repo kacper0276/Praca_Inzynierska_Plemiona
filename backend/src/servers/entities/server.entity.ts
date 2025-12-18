@@ -4,6 +4,7 @@ import { ServerStatusLog } from './server-status-log.entity';
 import { ServerStatus } from '../enums/server-status.enum';
 import { Village } from 'src/villages/entities/village.entity';
 import { Resources } from 'src/resources/entities/resources.entity';
+import { Clan } from 'src/clans/entities/clan.entity';
 
 @Entity({ name: 'servers' })
 export class Server extends BaseEntity {
@@ -34,4 +35,7 @@ export class Server extends BaseEntity {
 
   @OneToMany(() => Resources, (resource) => resource.server)
   resources: Resources[];
+
+  @OneToMany(() => Clan, (clan) => clan.server)
+  clans: Clan[];
 }

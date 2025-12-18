@@ -1,7 +1,7 @@
 import { BuildingName } from '../enums';
 import { BuildingData } from '../models';
 
-export const availableBuildings: BuildingData[] = [
+export const AVAILABLE_BUILDINGS: BuildingData[] = [
   {
     id: 1,
     name: BuildingName.RESIDENTIAL_HOUSE,
