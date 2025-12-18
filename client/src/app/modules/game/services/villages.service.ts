@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ApiResponse } from '@shared/models';
-import { HttpService } from '@shared/services/http.service';
-import { MapVillage } from '../interfaces/map-village.interface';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
+import { HttpService } from '@shared/services';
+import { MapVillage } from '../interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class VillagesService {

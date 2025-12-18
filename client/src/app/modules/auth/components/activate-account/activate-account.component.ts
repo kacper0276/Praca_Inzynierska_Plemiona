@@ -1,9 +1,9 @@
 import { Component, ElementRef, QueryList, ViewChildren } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
-import { ToastrService } from '@shared/services/toastr.service';
+import { AuthService } from '@modules/auth/services';
+import { ToastrService } from '@shared/services';
 
 @Component({
   selector: 'app-activate-account',

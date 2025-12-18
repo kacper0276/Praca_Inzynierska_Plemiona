@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { ToastrService } from '../../services/toastr.service';
-import { CreateReport } from '@modules/game/interfaces/create-report.interface';
-import { ReportsService } from '@modules/game/services/reports.service';
+import { CreateReport } from '@modules/game/interfaces';
+import { ReportsService } from '@modules/game/services';
+import { ToastrService } from '@shared/services';
 
 @Component({
   selector: 'app-bug-report',

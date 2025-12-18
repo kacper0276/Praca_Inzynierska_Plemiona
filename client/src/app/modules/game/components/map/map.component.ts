@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { MapTile } from '@modules/game/interfaces/map-tile.interface';
-import { MapVillage } from '@modules/game/interfaces/map-village.interface';
-import { VillagesService } from '@modules/game/services/villages.service';
+import { MapTile, MapVillage } from '@modules/game/interfaces';
+import { VillagesService } from '@modules/game/services';
 
 @Component({
   selector: 'app-map',

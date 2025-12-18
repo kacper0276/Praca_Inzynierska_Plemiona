@@ -10,35 +10,77 @@
         type="text"
         class="search-input"
         placeholder="Szukaj użytkownika..."
-        [(ngModel)]="searchQuery"
-        (input)="filterChats()"
+        (keyup)="onSearch($event)"
       />
     </div>
 
     <div class="chat-list">
+      @if(searchResults.length > 0) {
       <div
         class="chat-item"
-        *ngFor="let chat of filteredChats"
+        *ngFor="let user of searchResults"
+        (click)="createNewDmChat(user)"
+      >
+        <div class="user-avatar">
+          <img
+            *ngIf="user.profileImage"
+            [src]="backendUrl + user.profileImage"
+            class="avatar"
+            alt="User Avatar"
+          />
+          <span *ngIf="!user?.profileImage">{{
+            userInitials(user.firstName, user.lastName, user.login)
+          }}</span>
+        </div>
+        <div class="chat-info">
+          <div class="name">{{ user.firstName }} {{ user.lastName }}</div>
+        </div>
+      </div>
+      } @else {
+      <div
+        class="chat-item"
+        *ngFor="let chat of allChats"
         [class.active]="selectedChat?.id === chat.id"
         (click)="selectChat(chat)"
       >
-        <img [src]="chat.avatar" class="avatar" alt="User Avatar" />
+        <div class="user-avatar">
+          <img
+            *ngIf="chat.avatar"
+            [src]="backendUrl + chat.avatar"
+            class="avatar"
+            alt="User Avatar"
+          />
+          <span *ngIf="!chat?.avatar">{{ getInitials(chat.name) }}</span>
+        </div>
         <div class="chat-info">
           <div class="name">{{ chat.name }}</div>
           <div class="last-msg">{{ chat.lastMessage }}</div>
         </div>
-        <div class="timestamp">{{ chat.time }}</div>
+        <div class="timestamp">
+          {{ chat.lastMessageDate + "Z" | date : "dd-MM-yyyy HH:mm" }}
+        </div>
       </div>
+      }
     </div>
   </aside>
 
   <main class="chat-window">
     <ng-container *ngIf="selectedChat; else noChatSelected">
       <div class="chat-header">
-        <img [src]="selectedChat.avatar" class="header-avatar" alt="Avatar" />
+        <div class="user-avatar">
+          <img
+            *ngIf="selectedChat.avatar"
+            [src]="backendUrl + selectedChat.avatar"
+            class="avatar"
+            alt="User Avatar"
+          />
+          <span *ngIf="!selectedChat.avatar">{{
+            getInitials(selectedChat.name)
+          }}</span>
+        </div>
         <div class="header-info">
           <h4>{{ selectedChat.name }}</h4>
-          <span>Dostępny</span>
+          <!-- <span>Dostępny</span> -->
         </div>
       </div>
 
@@ -49,7 +91,9 @@
           [ngClass]="{ sent: msg.isMe, received: !msg.isMe }"
         >
           <div class="bubble">{{ msg.content }}</div>
-          <span class="time">{{ msg.time }}</span>
+          <span class="time">{{
+            msg.time + "Z" | date : "dd-MM-yyyy HH:mm"
+          }}</span>
         </div>
       </div>
 
@@ -97,12 +141,12 @@
     <div class="form-group">
       <label>Dodaj uczestników</label>
 
-      <!-- <app-multi-select
+      <app-multi-select
         [items]="allFriends"
         placeholder="Szukaj znajomych..."
         (selectionChange)="onFriendsSelectionChange($event)"
       >
-      </app-multi-select> -->
+      </app-multi-select>
     </div>
 
     <div class="modal-actions">

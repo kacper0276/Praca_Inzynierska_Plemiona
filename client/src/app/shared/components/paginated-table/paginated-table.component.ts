@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ColumnDefinition } from '../../interfaces/column-definition.interface';
-import { ActionEvent } from '../../interfaces/action-event.interface';
-import { PaginationEvent } from '@shared/interfaces/pagination-event.interface';
+import {
+  ColumnDefinition,
+  ActionEvent,
+  PaginationEvent,
+} from '@shared/interfaces';
 
 @Component({
   selector: 'app-paginated-table',

@@ -209,9 +209,32 @@ export class UsersService {
         login: ILike(`%${query}%`),
         id: Not(In(idsToExclude)),
       },
-      select: ['id', 'login', 'profileImage', 'email'],
+      select: ['id', 'login', 'profileImage', 'email', 'firstName', 'lastName'],
       take: 10,
     });
+  }
+
+  async getUserFirends(userId: number): Promise<User[]> {
+    const user = await this.usersRepository.findOneById(userId, {
+      relations: ['friends'],
+      select: {
+        friends: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          profileImage: true,
+        },
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(
+        `Użytkownik o ID ${userId} nie został znaleziony.`,
+      );
+    }
+
+    return user.friends;
   }
 
   async sendFriendRequest(

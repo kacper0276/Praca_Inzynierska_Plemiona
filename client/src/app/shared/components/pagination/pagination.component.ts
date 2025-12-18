@@ -6,7 +6,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { PaginationEvent } from '@shared/interfaces/pagination-event.interface';
+import { PaginationEvent } from '@shared/interfaces';
 
 @Component({
   selector: 'app-pagination',

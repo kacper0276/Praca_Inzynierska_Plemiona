@@ -6,15 +6,14 @@ import {
   distinctUntilChanged,
   switchMap,
 } from 'rxjs';
-import { UsersService } from '../../services/users.service';
-import { UserSearchResult } from '../../interfaces/user-search-result.interface';
 import { environment } from '../../../../../environments/environment';
-import { FriendRequestsService } from '../../services/friend-requests.service';
 import { Router } from '@angular/router';
-import { UserService } from '../../../auth/services/user.service';
 import { FriendRequestStatus } from '@shared/enums';
 import { FriendRequest } from '@shared/models';
-import { FriendRequestNotificationService } from '@shared/services/friend-request-notification.service';
+import { UserService } from '@modules/auth/services';
+import { UserSearchResult } from '@modules/game/interfaces';
+import { UsersService, FriendRequestsService } from '@modules/game/services';
+import { FriendRequestNotificationService } from '@shared/services';
 
 @Component({
   selector: 'app-invites',

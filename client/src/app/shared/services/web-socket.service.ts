@@ -218,4 +218,12 @@ export class WebSocketService {
   public leaveDmRoom(friendId: number): void {
     this.send(WebSocketEvent.LEAVE_DM_ROOM, { friendId });
   }
+
+  public joinChatGroup(groupId: number): void {
+    this.send(WebSocketEvent.JOIN_GROUP_ROOM, { groupId });
+  }
+
+  public leaveChatGroup(groupId: number): void {
+    this.send(WebSocketEvent.LEAVE_GROUP_ROOM, { groupId });
+  }
 }

@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService } from '@modules/auth/services';
 import { TranslateService } from '@ngx-translate/core';
-import { DeviceDetectorService } from 'ngx-device-detector';
-import { ToastrService } from '@shared/services/toastr.service';
-import { UserService } from '@modules/auth/services/user.service';
-import { ThemeService } from '@shared/services/theme.service';
-import { LocalStorageService } from '@shared/services/local-storage.service';
+import {
+  ToastrService,
+  ThemeService,
+  LocalStorageService,
+} from '@shared/services';
 import { Theme } from '@shared/types/theme.type';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-root',

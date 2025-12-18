@@ -1,15 +1,16 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { UserService } from '../../../auth/services/user.service';
-import { AuthService } from '../../../auth/services/auth.service';
 import { Router } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { Observable, Subscription } from 'rxjs';
 import { User } from '@shared/models';
-import { FriendRequestNotificationService } from '@shared/services/friend-request-notification.service';
-import { ThemeService } from '@shared/services/theme.service';
 import { Theme } from '@shared/types/theme.type';
-import { LocalStorageService } from '@shared/services/local-storage.service';
+import { UserService, AuthService } from '@modules/auth/services';
+import {
+  ThemeService,
+  FriendRequestNotificationService,
+  LocalStorageService,
+} from '@shared/services';
 
 @Component({
   selector: 'app-side-menu',

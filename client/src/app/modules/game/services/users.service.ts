@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { UserSearchResult } from '../interfaces/user-search-result.interface';
 import { Observable, of } from 'rxjs';
 import { ApiResponse, User } from '@shared/models';
-import { HttpService } from '@shared/services/http.service';
-import { UpdateUser } from '@modules/auth/interfaces/update-user.interface';
-import { UpdateUserResposne } from '@modules/auth/interfaces/update-user-response.interface';
+import { HttpService } from '@shared/services';
+import { UserSearchResult } from '../interfaces';
+import { UpdateUser, UpdateUserResposne } from '@modules/auth/interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {

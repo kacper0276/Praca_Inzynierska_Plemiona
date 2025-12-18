@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from '@shared/services/http.service';
+import { HttpService } from '@shared/services';
 
 @Injectable({ providedIn: 'root' })
 export class ClansService {

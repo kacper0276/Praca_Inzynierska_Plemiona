@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { UsersService } from '../../../game/services/users.service';
+import { UsersService } from '@modules/game/services';
+import { ColumnDefinition, ActionEvent } from '@shared/interfaces';
 import { User } from '@shared/models';
-import { ActionEvent } from '@shared/interfaces/action-event.interface';
-import { ColumnDefinition } from '@shared/interfaces/column-definition.interface';
-import { ConfirmationService } from '@shared/services/confirmation.service';
+import { ConfirmationService } from '@shared/services';
 
 @Component({
   selector: 'app-user-panel',

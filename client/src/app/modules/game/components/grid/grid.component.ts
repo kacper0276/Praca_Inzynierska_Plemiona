@@ -6,21 +6,22 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { ResourcesService } from '../../services/resources.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
-import { GatheringService } from '../../services/gathering.service';
-import { UserService } from '../../../auth/services/user.service';
 import { availableBuildings } from '@shared/consts/available-buildings';
 import { WebSocketEvent } from '@shared/enums';
 import { BuildingData, Resources, RadialMenuOption } from '@shared/models';
-import { ToastrService } from '@shared/services/toastr.service';
-import { WebSocketService } from '@shared/services/web-socket.service';
 import {
   BUILDING_OPTIONS,
   EMPTY_PLOT_OPTIONS,
 } from '@shared/consts/radial-menu.options';
-import { ServerService } from '@modules/game/services/server.service';
+import { UserService } from '@modules/auth/services';
+import {
+  ResourcesService,
+  GatheringService,
+  ServerService,
+} from '@modules/game/services';
+import { ToastrService, WebSocketService } from '@shared/services';
 
 @Component({
   selector: 'app-grid',

@@ -10,9 +10,8 @@ import { EMPTY, Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
-import { AuthService } from '@modules/auth/services/auth.service';
-import { TokenService } from '@modules/auth/services/token.service';
+import { AuthService, TokenService } from '@modules/auth/services';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthInterceptor implements HttpInterceptor {

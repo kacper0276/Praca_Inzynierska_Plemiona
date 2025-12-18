@@ -7,7 +7,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { RadialMenuOption } from '../../models';
+import { RadialMenuOption } from '@shared/models';
 
 @Component({
   selector: 'app-radial-menu',

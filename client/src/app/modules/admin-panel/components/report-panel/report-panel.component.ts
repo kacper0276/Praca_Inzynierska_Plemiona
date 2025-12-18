@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ReportsService } from '../../../game/services/reports.service';
-import { ActionEvent } from '@shared/interfaces/action-event.interface';
-import { ColumnDefinition } from '@shared/interfaces/column-definition.interface';
-import { ConfirmationService } from '@shared/services/confirmation.service';
+import { ReportsService } from '@modules/game/services';
+import { ColumnDefinition, ActionEvent } from '@shared/interfaces';
 import { Report } from '@shared/models';
+import { ConfirmationService } from '@shared/services';
 
 @Component({
   selector: 'app-report-panel',

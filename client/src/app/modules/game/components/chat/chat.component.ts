@@ -5,16 +5,24 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-import { AuthService } from '@modules/auth/services/auth.service';
-import { ChatGroupsService } from '@shared/services/chat-groups.service';
+import { Subject, Subscription } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  finalize,
+  switchMap,
+} from 'rxjs/operators';
 import { ChatItem, User } from '@shared/models';
-import { MessageUi } from '@shared/interfaces/message-ui.interface';
-import { ChatService } from '@modules/game/services/chat.service';
-import { DirectMessagesService } from '@shared/services/direct-message.service';
-import { WebSocketService } from '@shared/services/web-socket.service';
-import { UserService } from '@modules/auth/services/user.service';
+import { environment } from 'src/environments/environment';
+import { ChatService, UsersService } from '@modules/game/services';
+import { UserService } from '@modules/auth/services';
+import {
+  WebSocketService,
+  ChatGroupsService,
+  DirectMessagesService,
+} from '@shared/services';
+import { UserSearchResult } from '@modules/game/interfaces';
+import { MultiSelectItem, MessageUi } from '@shared/interfaces';
 
 @Component({
   selector: 'app-chat',
@@ -24,7 +32,11 @@ import { UserService } from '@modules/auth/services/user.service';
 export class ChatComponent implements OnInit, OnDestroy {
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
-  searchQuery: string = '';
+  public searchTerm = new Subject<string>();
+  public searchResults: UserSearchResult[] = [];
+
+  backendUrl: string = environment.serverBaseUrl;
+
   friendSearchQuery: string = '';
   newMessage: string = '';
 
@@ -32,13 +44,11 @@ export class ChatComponent implements OnInit, OnDestroy {
   newGroupName: string = '';
 
   isDropdownOpen: boolean = false;
-  allFriends: User[] = [];
-  filteredFriends: User[] = [];
-  selectedFriends: User[] = [];
+  allFriends: MultiSelectItem[] = [];
+  selectedFriends: MultiSelectItem[] = [];
 
   currentUserId: number = 0;
   allChats: ChatItem[] = [];
-  filteredChats: ChatItem[] = [];
   selectedChat: ChatItem | null = null;
   messages: MessageUi[] = [];
 
@@ -48,12 +58,12 @@ export class ChatComponent implements OnInit, OnDestroy {
   private activeDmFriendId: number | null = null;
 
   constructor(
-    private readonly authService: AuthService,
     private readonly wsService: WebSocketService,
     private readonly chatService: ChatService,
     private readonly groupService: ChatGroupsService,
     private readonly dmService: DirectMessagesService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly usersService: UsersService
   ) {}
 
   ngOnInit(): void {
@@ -63,6 +73,21 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.fetchChatList();
 
     this.listenToWebSockets();
+
+    this.subs.add(
+      this.searchTerm
+        .pipe(
+          debounceTime(300),
+          distinctUntilChanged(),
+          switchMap((term: string) => this.usersService.searchUsers(term))
+        )
+        .subscribe({
+          next: (users) => {
+            this.searchResults = users.data;
+          },
+          error: (err) => console.error('Błąd podczas wyszukiwania:', err),
+        })
+    );
   }
 
   fetchChatList(): void {
@@ -72,17 +97,45 @@ export class ChatComponent implements OnInit, OnDestroy {
           ...c,
           lastMessageDate: new Date(c.lastMessageDate),
         }));
-        this.filterChats();
       },
       error: (err) => console.error('Błąd pobierania czatów', err),
     });
   }
 
-  filterChats(): void {
-    const query = this.searchQuery.toLowerCase();
-    this.filteredChats = this.allChats.filter((chat) =>
-      chat.name.toLowerCase().includes(query)
-    );
+  onSearch(event: Event): void {
+    const term = (event.target as HTMLInputElement).value;
+    this.searchTerm.next(term);
+  }
+
+  createNewDmChat(user: UserSearchResult): void {
+    if (this.activeDmFriendId) {
+      this.wsService.leaveDmRoom(this.activeDmFriendId);
+      this.activeDmFriendId = null;
+    }
+
+    this.messages = [];
+    this.isLoadingMessages = true;
+
+    this.wsService.joinDmRoom(user.id);
+    this.activeDmFriendId = user.id;
+
+    this.selectedChat = {
+      id: user.id,
+      type: 'dm',
+      name:
+        `${user.firstName} ${user.lastName}`.trim() || user.login || user.email,
+      avatar: user.profileImage,
+      lastMessage: '',
+      lastMessageDate: new Date(),
+    } as ChatItem;
+
+    this.dmService
+      .getConversation(user.id)
+      .pipe(finalize(() => (this.isLoadingMessages = false)))
+      .subscribe((res) => {
+        this.messages = res.data.map((m) => this.mapToMessageUi(m));
+        this.scrollToBottom();
+      });
   }
 
   selectChat(chat: ChatItem): void {
@@ -96,6 +149,11 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (this.selectedChat?.type === 'dm' && this.activeDmFriendId) {
       this.wsService.leaveDmRoom(this.activeDmFriendId);
       this.activeDmFriendId = null;
+    }
+
+    if (this.selectedChat?.type === 'group' && this.selectedChat) {
+      this.wsService.leaveChatGroup(this.selectedChat.id);
+      this.selectedChat = null;
     }
 
     this.selectedChat = chat;
@@ -114,6 +172,8 @@ export class ChatComponent implements OnInit, OnDestroy {
           this.scrollToBottom();
         });
     } else {
+      this.wsService.joinChatGroup(chat.id);
+
       this.groupService
         .getGroupMessages(chat.id)
         .pipe(finalize(() => (this.isLoadingMessages = false)))
@@ -157,23 +217,16 @@ export class ChatComponent implements OnInit, OnDestroy {
         const msg = payload.content;
         const senderId = payload.sender.id;
 
-        console.log(senderId);
-        console.log(msg);
-
-        console.log(payload);
-
         this.handleIncomingMessage(payload, 'dm', senderId);
       })
     );
 
     this.subs.add(
       this.wsService.onGroupMessage().subscribe((payload: any) => {
-        const msg = payload.message;
-        const groupId = payload.groupId;
+        const msg = payload.content;
+        const groupId = payload.group.id;
 
-        console.log(payload);
-
-        this.handleIncomingMessage(msg, 'group', undefined, groupId);
+        this.handleIncomingMessage(payload, 'group', undefined, groupId);
       })
     );
   }
@@ -234,7 +287,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
       this.allChats.splice(index, 1);
       this.allChats.unshift(chat);
-      this.filterChats();
     } else {
       this.fetchChatList();
     }
@@ -246,10 +298,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       id: backendMsg.id,
       content: backendMsg.content,
       isMe: isMe,
-      time: new Date(backendMsg.createdAt).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
+      time: new Date(backendMsg.createdAt).toString(),
       senderName: isMe
         ? 'Ja'
         : backendMsg.sender.username || backendMsg.sender.email,
@@ -270,6 +319,19 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.isModalOpen = true;
     this.newGroupName = '';
     this.selectedFriends = [];
+    this.fetchFriendsList();
+  }
+
+  private fetchFriendsList(): void {
+    this.userService.getUserFriends().subscribe({
+      next: (res) => {
+        this.allFriends = res.data.map((friend) => ({
+          id: friend.id,
+          name: `${friend.firstName} ${friend.lastName}` || friend.email,
+          avatar: friend.profileImage,
+        })) as MultiSelectItem[];
+      },
+    });
   }
 
   closeGroupModal(): void {
@@ -277,7 +339,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.isDropdownOpen = false;
   }
 
-  onFriendsSelectionChange(selected: User[]): void {
+  onFriendsSelectionChange(selected: MultiSelectItem[]): void {
     this.selectedFriends = selected;
   }
 
@@ -308,7 +370,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   filterFriends(): void {}
 
-  selectFriend(friend: User): void {
+  selectFriend(friend: MultiSelectItem): void {
     if (!this.selectedFriends.find((f) => f.id === friend.id)) {
       this.selectedFriends.push(friend);
     }
@@ -319,6 +381,30 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.selectedFriends = this.selectedFriends.filter(
       (f) => f.id !== friend.id
     );
+  }
+
+  getInitials(name: string): string {
+    if (name) {
+      return `${name.charAt(0)}`.toUpperCase();
+    }
+    return '';
+  }
+
+  public userInitials(
+    firstName: string,
+    lastName: string,
+    login: string
+  ): string {
+    if (firstName && lastName) {
+      return `${firstName.charAt(0)}${lastName.charAt(0)}`;
+    }
+    if (firstName) {
+      return firstName.substring(0, 2);
+    }
+    if (login) {
+      return login.substring(0, 2);
+    }
+    return '?';
   }
 
   ngOnDestroy(): void {

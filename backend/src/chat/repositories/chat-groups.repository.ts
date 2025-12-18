@@ -39,7 +39,7 @@ export class ChatGroupsRepository extends BaseRepository<ChatGroup> {
   findOneById(id: number): Promise<ChatGroup | null> {
     return this.repository.findOne({
       where: { id },
-      relations: ['members', 'owner'],
+      relations: ['members'],
     });
   }
 
