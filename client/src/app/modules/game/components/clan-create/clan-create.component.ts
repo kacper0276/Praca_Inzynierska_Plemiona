@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '@modules/auth/services';
-import { ResourcesService, UsersService } from '@modules/game/services';
+import { CreateClan } from '@modules/game/interfaces';
+import {
+  ClansService,
+  ResourcesService,
+  ServerService,
+  UsersService,
+} from '@modules/game/services';
 import { TranslateService } from '@ngx-translate/core';
 import { CLANS_COST } from '@shared/consts/clans-cost';
 import { MultiSelectItem } from '@shared/interfaces';
@@ -25,10 +31,13 @@ export class ClanCreateComponent implements OnInit {
     private readonly toastr: ToastrService,
     private readonly translate: TranslateService,
     private readonly usersService: UsersService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly serverService: ServerService,
+    private readonly clansService: ClansService
   ) {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
+      description: [''],
       members: [[]],
     });
   }
@@ -50,6 +59,12 @@ export class ClanCreateComponent implements OnInit {
     });
   }
 
+  onFriendsSelectionChange(selected: MultiSelectItem[]): void {
+    this.form.patchValue({
+      members: selected,
+    });
+  }
+
   createClan() {
     if (this.form.invalid) return;
     if (!this.resSvc.spendResources(this.clanCost)) {
@@ -57,12 +72,30 @@ export class ClanCreateComponent implements OnInit {
       return;
     }
 
-    const payload = {
+    const memberIds = this.form.value.members.map(
+      (member: MultiSelectItem) => member.id
+    );
+
+    const founderId = this.userService.getCurrentUser()?.id;
+
+    const serverId = this.serverService.getServer()?.id;
+
+    const payload: CreateClan = {
       name: this.form.get('name')?.value,
-      invited: this.form.get('members')?.value || [],
+      description: this.form.get('description')?.value,
+      memberIds: memberIds || [],
+      founderId,
+      serverId,
     };
 
-    this.toastr.showSuccess(this.translate.instant('CLAN_CREATED'));
-    this.form.reset({ name: '', members: [] });
+    this.clansService.createClan(payload).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.form.reset();
+      },
+      error: () => {
+        this.toastr.showError(this.translate.instant('CLAN_CREATE_ERROR'));
+      },
+    });
   }
 }

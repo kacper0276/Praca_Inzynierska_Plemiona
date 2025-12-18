@@ -1,9 +1,14 @@
 <div class="main-container">
   <h3>Utwórz klan</h3>
-  <form [formGroup]="form">
+  <form [formGroup]="form" (ngSubmit)="createClan()">
     <div class="form-row">
       <label for="clanName">Nazwa klanu</label>
       <input formControlName="name" type="text" id="clanName" />
+    </div>
+
+    <div class="form-row">
+      <label for="clanDescription">Opis klanu</label>
+      <input formControlName="description" type="text" id="clanDescription" />
     </div>
 
     <div class="form-row">
@@ -11,6 +16,7 @@
       <app-multi-select
         [items]="userFriends"
         placeholder="Dodaj znajomych do klanu"
+        (selectionChange)="onFriendsSelectionChange($event)"
       ></app-multi-select>
     </div>
 
@@ -45,7 +51,7 @@
     </div>
 
     <div class="actions">
-      <button type="submit" [disabled]="form.invalid">Utwórz klan</button>
+      <button type="submit" [disabled]="!form.valid">Utwórz klan</button>
     </div>
   </form>
 </div>
