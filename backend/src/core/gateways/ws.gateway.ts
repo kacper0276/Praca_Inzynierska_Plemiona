@@ -408,6 +408,26 @@ export class WsGateway
     this.logger.log(`User ${client.user.id} left DM room: ${roomName}`);
   }
 
+  @SubscribeMessage(WsEvent.JOIN_GROUP_ROOM)
+  handleJoinGroupRoom(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: { groupId: number },
+  ) {
+    const groupName = this.getGroupRoomName(payload.groupId);
+    client.join(groupName);
+    this.logger.log(`User ${client.user.id} joined GROUP room: ${groupName}`);
+  }
+
+  @SubscribeMessage(WsEvent.LEAVE_GROUP_ROOM)
+  handleLeaveGroupRoom(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: { groupId: number },
+  ) {
+    const groupName = this.getGroupRoomName(payload.groupId);
+    client.leave(groupName);
+    this.logger.log(`User ${client.user.id} left GROUP room: ${groupName}`);
+  }
+
   public sendDirectMessageToRoom(
     senderId: number,
     receiverId: number,
@@ -418,8 +438,20 @@ export class WsGateway
     this.server.to(roomName).emit(WsEvent.DIRECT_MESSAGE_RECEIVED, payload);
   }
 
+  public sendGroupMessageToRoom(groupId: number, payload: any) {
+    const roomName = this.getGroupRoomName(groupId);
+
+    console.log('Wysyłam');
+
+    this.server.to(roomName).emit(WsEvent.GROUP_MESSAGE_RECEIVED, payload);
+  }
+
   private getDmRoomName(userId1: number, userId2: number): string {
     const [min, max] = [userId1, userId2].sort((a, b) => a - b);
     return `dm-${min}-${max}`;
+  }
+
+  private getGroupRoomName(groupId: number): string {
+    return `group-${groupId}`;
   }
 }

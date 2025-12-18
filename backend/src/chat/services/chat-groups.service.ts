@@ -73,14 +73,7 @@ export class ChatGroupsService {
 
     const savedMessage = await this.messagesRepository.save(message);
 
-    for (const member of group.members) {
-      if (member.id !== userId) {
-        this.wsGateway.sendToUser(member.id, WsEvent.GROUP_MESSAGE_SEND, {
-          groupId: group.id,
-          message: savedMessage,
-        });
-      }
-    }
+    this.wsGateway.sendGroupMessageToRoom(groupId, savedMessage);
 
     return savedMessage;
   }
