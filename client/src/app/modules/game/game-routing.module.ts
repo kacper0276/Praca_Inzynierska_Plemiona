@@ -16,7 +16,6 @@ const gameRoutes: Routes = [
   {
     path: '',
     component: GameComponent,
-    canActivate: [authGuard],
     children: [
       {
         path: 'village/:userEmail',
@@ -60,7 +59,6 @@ const gameRoutes: Routes = [
         path: '',
         redirectTo: 'village',
         pathMatch: 'full',
-        canActivate: [authGuard],
       },
     ],
   },
