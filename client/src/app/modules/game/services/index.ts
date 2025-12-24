@@ -10,3 +10,4 @@ export * from './server.service';
 export * from './servers.service';
 export * from './users.service';
 export * from './villages.service';
+export * from './quests.service';
