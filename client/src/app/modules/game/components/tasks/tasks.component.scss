@@ -1,0 +1,173 @@
+.quests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.quest-card {
+  background: var(--panel);
+  border: 1px solid var(--game-border);
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: relative;
+  transition: all 0.3s ease;
+
+  &.completed {
+    border-color: var(--success);
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
+  }
+
+  &.claimed {
+    opacity: 0.6;
+    filter: grayscale(0.5);
+  }
+}
+
+.quest-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  .quest-main-info {
+    display: flex;
+    gap: 12px;
+
+    .quest-type-icon {
+      background: var(--game-bg);
+      color: var(--accent);
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 28px;
+    }
+
+    h4 {
+      margin: 0;
+      color: var(--text);
+      font-size: 1.1rem;
+    }
+
+    .description {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+  }
+}
+
+.quest-badge {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--game-bg);
+  color: var(--muted);
+
+  &[data-status="completed"] {
+    background: var(--success);
+    color: white;
+  }
+}
+
+.requirements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .req-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 5px;
+    font-size: 13px;
+
+    .req-label {
+      color: var(--text);
+    }
+    .req-values {
+      color: var(--accent);
+      font-weight: bold;
+    }
+  }
+}
+
+.mini-progress {
+  grid-column: span 2;
+  height: 6px;
+  background: var(--game-bg);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid var(--input-border);
+
+  .mini-bar {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.5s ease;
+  }
+}
+
+.quest-footer {
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid var(--input-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .label {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+
+  .rewards-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+.reward-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--game-bg);
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--text);
+  border: 1px solid var(--cell-border);
+
+  i {
+    font-size: 14px;
+    color: var(--accent);
+  }
+}
+
+.claim-btn {
+  background: var(--success);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+  }
+}
+
+.claimed-icon {
+  color: var(--success);
+  i {
+    font-size: 32px;
+  }
+}
