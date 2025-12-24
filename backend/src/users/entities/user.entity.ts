@@ -17,6 +17,7 @@ import { FriendRequest } from '../../friend-requests/entities/friend-request.ent
 import { DirectMessage } from 'src/chat/entities/direct-message.entity';
 import { ChatGroup } from 'src/chat/entities/chat-group.entity';
 import { Server } from 'src/servers/entities/server.entity';
+import { AdminPermission } from '@core/enums/admin-permissions.enum';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -55,6 +56,13 @@ export class User extends BaseEntity {
 
   @Column({ default: null })
   deleteAt: Date | null;
+
+  @Column({
+    type: 'set',
+    enum: AdminPermission,
+    default: [],
+  })
+  permissions: AdminPermission[];
 
   @OneToMany(() => Resources, (resources) => resources.user)
   resources: Resources[];
