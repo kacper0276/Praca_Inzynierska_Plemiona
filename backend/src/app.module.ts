@@ -34,6 +34,7 @@ import { join } from 'path';
 import { FriendRequestsModule } from './friend-requests/friend-requests.module';
 import { ChatModule } from './chat/chat.module';
 import { RankingModule } from './ranking/ranking.module';
+import { QuestsModule } from './quests/quests.module';
 
 @Module({
   imports: [
@@ -119,6 +120,7 @@ import { RankingModule } from './ranking/ranking.module';
     FriendRequestsModule,
     ChatModule,
     RankingModule,
+    QuestsModule,
   ],
   controllers: [],
   providers: [

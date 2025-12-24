@@ -1,0 +1,91 @@
+<div class="main-container">
+  <h3>Dziennik Zadań</h3>
+
+  <div class="quests-grid">
+    <div
+      *ngFor="let prog of userQuests"
+      class="quest-card"
+      [ngClass]="{
+        completed: prog.isCompleted && !prog.completedAt,
+        claimed: prog.isCompleted && prog.completedAt
+      }"
+    >
+      <div class="quest-header">
+        <div class="quest-main-info">
+          <i class="material-icons quest-type-icon">assignment</i>
+          <div class="quest-text">
+            <h4>{{ prog.quest.title }}</h4>
+            <p class="description">{{ prog.quest.description }}</p>
+          </div>
+        </div>
+
+        <div
+          class="quest-badge"
+          [attr.data-status]="
+            prog.isCompleted
+              ? prog.completedAt
+                ? 'claimed'
+                : 'completed'
+              : 'active'
+          "
+        >
+          {{
+            prog.completedAt
+              ? "Odebrano"
+              : prog.isCompleted
+              ? "Gotowe"
+              : "W toku"
+          }}
+        </div>
+      </div>
+
+      <div class="quest-content">
+        <div class="requirements-list">
+          <div *ngFor="let objProg of prog.objectivesProgress" class="req-item">
+            <span class="req-label">{{ objProg.objective.description }}</span>
+            <span class="req-values"
+              >{{ objProg.currentCount }} /
+              {{ objProg.objective.goalCount }}</span
+            >
+            <div class="mini-progress">
+              <div
+                class="mini-bar"
+                [style.width.%]="calculateObjectiveProgress(objProg)"
+                [style.background-color]="
+                  objProg.isCompleted ? 'var(--success)' : ''
+                "
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quest-footer">
+        <div class="rewards-container">
+          <span class="label">Nagroda główna:</span>
+          <div class="rewards-row">
+            <div
+              *ngFor="let reward of getQuestRewards(prog.quest)"
+              class="reward-pill"
+            >
+              <i class="material-icons">{{ reward.icon }}</i>
+              <span>{{ reward.amount }} {{ reward.label }}</span>
+            </div>
+          </div>
+        </div>
+
+        <button
+          *ngIf="prog.isCompleted && !prog.completedAt"
+          (click)="claimReward(prog.id ?? -1)"
+          class="claim-btn"
+        >
+          Odbierz nagrodę
+        </button>
+
+        <div *ngIf="prog.isCompleted && prog.completedAt" class="claimed-icon">
+          <i class="material-icons">check_circle</i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -9,18 +9,32 @@ import { ClanCreateComponent } from './components/clan-create/clan-create.compon
 import { ArmyComponent } from './components/army/army.component';
 import { InvitesComponent } from './components/invites/invites.component';
 import { adminGuard } from '@shared/guards/admin.guard';
+import { TasksComponent } from './components/tasks/tasks.component';
+import { authGuard } from '@shared/guards/auth.guard';
 
 const gameRoutes: Routes = [
   {
     path: '',
     component: GameComponent,
     children: [
-      { path: 'village/:userEmail', component: GridComponent },
-      { path: 'map', component: MapComponent },
-      { path: 'army', component: ArmyComponent },
-      { path: 'chat', component: ChatComponent },
-      { path: 'ranking', component: RankingComponent },
-      { path: 'clan', component: ClanCreateComponent },
+      {
+        path: 'village/:userEmail',
+        component: GridComponent,
+        canActivate: [authGuard],
+      },
+      { path: 'map', component: MapComponent, canActivate: [authGuard] },
+      { path: 'army', component: ArmyComponent, canActivate: [authGuard] },
+      { path: 'chat', component: ChatComponent, canActivate: [authGuard] },
+      {
+        path: 'ranking',
+        component: RankingComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'clan',
+        component: ClanCreateComponent,
+        canActivate: [authGuard],
+      },
       {
         path: 'admin-panel',
         loadChildren: () =>
@@ -33,9 +47,19 @@ const gameRoutes: Routes = [
         path: 'profile',
         loadChildren: () =>
           import('../profile/profile.module').then((m) => m.ProfileModule),
+        canActivate: [authGuard],
       },
-      { path: 'invitations', component: InvitesComponent },
-      { path: '', redirectTo: 'village', pathMatch: 'full' },
+      {
+        path: 'invitations',
+        component: InvitesComponent,
+        canActivate: [authGuard],
+      },
+      { path: 'tasks', component: TasksComponent, canActivate: [authGuard] },
+      {
+        path: '',
+        redirectTo: 'village',
+        pathMatch: 'full',
+      },
     ],
   },
 ];

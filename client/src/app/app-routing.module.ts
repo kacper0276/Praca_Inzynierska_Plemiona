@@ -4,12 +4,21 @@ import { ActivateAccountComponent } from '@modules/auth/components/activate-acco
 import { LoginComponent } from '@modules/auth/components/login/login.component';
 import { RegisterComponent } from '@modules/auth/components/register/register.component';
 import { TitleScreenComponent } from '@modules/title-screen/title-screen.component';
+import { noAuthGuard } from '@shared/guards/no-auth.guard';
 
 const routes: Routes = [
   { path: '', component: TitleScreenComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'activate-account', component: ActivateAccountComponent },
+  { path: 'login', component: LoginComponent, canActivate: [noAuthGuard] },
+  {
+    path: 'register',
+    component: RegisterComponent,
+    canActivate: [noAuthGuard],
+  },
+  {
+    path: 'activate-account',
+    component: ActivateAccountComponent,
+    canActivate: [noAuthGuard],
+  },
   {
     path: 'game',
     loadChildren: () =>
