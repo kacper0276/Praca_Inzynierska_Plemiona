@@ -13,7 +13,7 @@
       <div class="form-group">
         <label [for]="col.key">{{ col.header }}</label>
 
-        @if (isBooleanField(col.key)) {
+        @if (col.type === 'checkbox' || isBooleanField(col.key)) {
         <div class="checkbox-wrapper">
           <input
             type="checkbox"
@@ -21,11 +21,20 @@
             [id]="col.key"
             [(ngModel)]="editableItem[col.key]"
           />
-          <!-- <label [for]="col.key" class="checkbox-label">
-            {{ editableItem[col.key] ? "Rozwiązany" : "Nie rozwiązany" }}
-          </label> -->
         </div>
-        }@else {
+        } @else if (col.type === 'select') {
+        <select
+          [id]="col.key"
+          [ngModel]="getValue(col)"
+          (ngModelChange)="updateValue(col, $event)"
+          [disabled]="col?.isReadOnly ?? false"
+          class="form-control"
+        >
+          @for (opt of col.options; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+        } @else {
         <input
           type="text"
           [id]="col.key"

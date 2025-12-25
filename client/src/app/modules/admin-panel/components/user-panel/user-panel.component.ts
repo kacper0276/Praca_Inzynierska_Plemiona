@@ -23,10 +23,16 @@ export class UserPanelComponent implements OnInit {
     {
       key: 'role',
       header: 'Role',
+      type: 'select',
+      options: [
+        { label: 'Administrator', value: 'admin' },
+        { label: 'Użytkownik', value: 'user' },
+      ],
     },
     {
       key: 'isActive',
       header: 'Aktywne',
+      type: 'checkbox',
     },
   ];
   isModalOpen = false;
