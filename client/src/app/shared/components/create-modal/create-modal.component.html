@@ -1,0 +1,58 @@
+@if (isVisible) {
+<div class="modal-overlay" (click)="closeModal()">
+  <div class="modal-panel" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Dodaj nowy element</h3>
+      <button class="icon-btn" (click)="closeModal()" aria-label="Zamknij">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="modal-content">
+      @for (col of formColumns; track col.key) {
+      <div class="form-group">
+        <label [for]="'create-' + col.key">{{ col.header }}</label>
+
+        @if (col.type === 'checkbox') {
+        <div class="checkbox-wrapper">
+          <input
+            type="checkbox"
+            class="styled-checkbox"
+            [id]="'create-' + col.key"
+            [(ngModel)]="newItem[col.key]"
+          />
+        </div>
+        } @else if (col.type === 'select') {
+        <select
+          [id]="'create-' + col.key"
+          [(ngModel)]="newItem[col.key]"
+          class="form-control"
+        >
+          @for (opt of col.options; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+        } @else {
+        <input
+          type="text"
+          [id]="'create-' + col.key"
+          [(ngModel)]="newItem[col.key]"
+          class="form-control"
+          [placeholder]="'Wpisz ' + col.header.toLowerCase()"
+        />
+        }
+      </div>
+      }
+    </div>
+
+    <div class="modal-footer">
+      <div class="actions-right">
+        <button class="btn btn-secondary" (click)="closeModal()">Anuluj</button>
+        <button class="btn btn-primary" (click)="saveChanges()">
+          Dodaj element
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+}

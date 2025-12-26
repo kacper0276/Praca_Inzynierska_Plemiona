@@ -23,6 +23,7 @@ import { AdjustResourceQuantityPipe } from './pipes/adjust-resource-quantity.pip
 import { PaginatedTableComponent } from './components/paginated-table/paginated-table.component';
 import { PaginationComponent } from './components/pagination/pagination.component';
 import { SecondsToTimePipe } from './pipes/seconds-to-time.pipe';
+import { CreateModalComponent } from './components/create-modal/create-modal.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { SecondsToTimePipe } from './pipes/seconds-to-time.pipe';
     PaginatedTableComponent,
     PaginationComponent,
     SecondsToTimePipe,
+    CreateModalComponent,
   ],
   imports: [
     CommonModule,
@@ -77,6 +79,7 @@ import { SecondsToTimePipe } from './pipes/seconds-to-time.pipe';
     AdjustResourceQuantityPipe,
     PaginatedTableComponent,
     SecondsToTimePipe,
+    CreateModalComponent,
   ],
 })
 export class SharedModule {}

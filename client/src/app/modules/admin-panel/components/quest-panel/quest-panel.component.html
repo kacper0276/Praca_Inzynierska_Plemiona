@@ -1,1 +1,31 @@
-<p>quest-panel works!</p>
+<div class="wrapper">
+  <div class="panel-header">
+    <h2>Zarządzanie Zadaniami</h2>
+    <button class="add-btn" (click)="openCreateModal()">
+      <mat-icon>add</mat-icon>
+      <span>Nowe Zadanie</span>
+    </button>
+  </div>
+
+  <app-table
+    [columns]="questColumns"
+    [data]="questsList"
+    (action)="handleQuestAction($event)"
+  ></app-table>
+
+  <app-edit-modal
+    [isVisible]="isEditModalOpen"
+    [item]="selectedQuest"
+    [columns]="questColumns"
+    (save)="onSaveQuest($event)"
+    (delete)="onDeleteQuest($event)"
+    (close)="closeModals()"
+  ></app-edit-modal>
+
+  <app-create-modal
+    [isVisible]="isCreateModalOpen"
+    [columns]="questColumns"
+    (save)="onCreateQuest($event)"
+    (close)="closeModals()"
+  ></app-create-modal>
+</div>

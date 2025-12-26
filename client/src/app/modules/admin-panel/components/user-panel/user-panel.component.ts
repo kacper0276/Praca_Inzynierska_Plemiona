@@ -35,7 +35,8 @@ export class UserPanelComponent implements OnInit {
       type: 'checkbox',
     },
   ];
-  isModalOpen = false;
+  isModalOpen: boolean = false;
+  isCreateModalOpen: boolean = false;
   selectedUser: User | null = null;
 
   constructor(
@@ -68,6 +69,18 @@ export class UserPanelComponent implements OnInit {
   closeEditModal(): void {
     this.isModalOpen = false;
     this.selectedUser = null;
+  }
+
+  openCreateModal(): void {
+    this.isCreateModalOpen = true;
+  }
+
+  closeCreateModal(): void {
+    this.isCreateModalOpen = false;
+  }
+
+  onAddUser(newUser: User): void {
+    console.log(newUser);
   }
 
   onSaveUser(updatedUser: User): void {

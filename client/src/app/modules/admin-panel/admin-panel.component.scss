@@ -1,4 +1,4 @@
-@use "../../../styles/variables.scss" as *;
+@use "variables" as *;
 
 $admin-panel-bg: var(--panel, $white);
 $admin-panel-text: var(--text, $black-200);
