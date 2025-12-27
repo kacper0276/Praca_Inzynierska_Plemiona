@@ -11,4 +11,10 @@ export class ClansService {
   createClan(newClan: CreateClan): Observable<ApiResponse<Clan>> {
     return this.httpService.post<Clan>('/clans', newClan);
   }
+
+  getCurrentClan(serverId: number): Observable<ApiResponse<Clan | null>> {
+    return this.httpService.get<Clan | null>(
+      `/clans/get-user-clan-for-server/${serverId}`
+    );
+  }
 }

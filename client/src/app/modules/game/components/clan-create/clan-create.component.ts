@@ -11,7 +11,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { CLANS_COST } from '@shared/consts/clans-cost';
 import { MultiSelectItem } from '@shared/interfaces';
-import { Resources } from '@shared/models';
+import { Clan, Resources } from '@shared/models';
 import { ToastrService } from '@shared/services';
 
 @Component({
@@ -24,6 +24,10 @@ export class ClanCreateComponent implements OnInit {
   userFriends: MultiSelectItem[] = [];
 
   readonly clanCost: Partial<Resources> = CLANS_COST;
+
+  currentClan: Clan | null = null;
+
+  currentView: 'create' | 'manage' = 'create';
 
   constructor(
     private readonly fb: FormBuilder,
@@ -43,11 +47,14 @@ export class ClanCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fetchFriendsWithoutClans();
+    const serverId = this.serverService.getServer()?.id ?? -1;
+
+    this.fetchCurrentClan(serverId);
+    this.fetchFriendsWithoutClans(serverId);
   }
 
-  private fetchFriendsWithoutClans(): void {
-    this.usersService.fetchFriendsWithoutClans().subscribe({
+  private fetchFriendsWithoutClans(serverId: number): void {
+    this.usersService.fetchFriendsWithoutClans(serverId).subscribe({
       next: (res) => {
         this.userFriends = res.data.map((user) => ({
           id: user.id,
@@ -55,6 +62,20 @@ export class ClanCreateComponent implements OnInit {
             `${user.firstName} ${user.lastName}` || user.email || user.login,
           avatar: user.profileImage,
         })) as MultiSelectItem[];
+      },
+    });
+  }
+
+  private fetchCurrentClan(serverId: number): void {
+    this.clansService.getCurrentClan(serverId).subscribe({
+      next: (res) => {
+        this.currentClan = res.data;
+        console.log(res.data);
+
+        this.currentView = res.data !== null ? 'manage' : 'create';
+      },
+      error: () => {
+        this.currentView = 'create';
       },
     });
   }

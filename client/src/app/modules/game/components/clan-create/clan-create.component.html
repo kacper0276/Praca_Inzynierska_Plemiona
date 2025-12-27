@@ -1,3 +1,4 @@
+@if (currentView === 'create') {
 <div class="main-container">
   <h3>Utwórz klan</h3>
   <form [formGroup]="form" (ngSubmit)="createClan()">
@@ -55,3 +56,6 @@
     </div>
   </form>
 </div>
+} @else {
+<p>Nazwa twojego klanu {{ currentClan?.name }}</p>
+}
