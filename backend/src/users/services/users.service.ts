@@ -237,22 +237,24 @@ export class UsersService {
     return user.friends;
   }
 
-  async getFriendsWithoutClans(userId: number): Promise<User[]> {
-    const user = await this.usersRepository.findOneById(userId, {
-      relations: ['friends', 'friends.clan'],
-    });
-
-    if (!user) {
-      throw new NotFoundException(
-        `Użytkownik o ID ${userId} nie został znaleziony.`,
-      );
-    }
-
-    const friendsWithoutClans = user.friends.filter(
-      (user) => user.clan === null,
+  async getFriendsWithoutClans(
+    userId: number,
+    serverId: number,
+  ): Promise<User[]> {
+    const user = await this.usersRepository.findOne(
+      { id: userId },
+      { relations: ['friends', 'friends.clans', 'friends.clans.server'] },
     );
 
-    return friendsWithoutClans;
+    if (!user) throw new NotFoundException('Użytkownik nie znaleziony');
+
+    return user.friends.filter((friend) => {
+      const isInClanOnThisServer = friend.clans.some(
+        (clan) => clan.server.id === serverId,
+      );
+
+      return !isInClanOnThisServer;
+    });
   }
 
   async sendFriendRequest(

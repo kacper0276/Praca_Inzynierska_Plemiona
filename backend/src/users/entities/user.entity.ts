@@ -70,15 +70,11 @@ export class User extends BaseEntity {
   @OneToMany(() => Village, (village) => village.user)
   villages: Village[];
 
-  @OneToOne(() => Clan, (clan) => clan.founder)
-  foundedClan: Clan;
+  @OneToMany(() => Clan, (clan) => clan.founder)
+  foundedClans: Clan[];
 
-  @ManyToOne(() => Clan, (clan) => clan.members, {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
-  @JoinColumn({ name: 'clanId' })
-  clan: Clan | null;
+  @ManyToMany(() => Clan, (clan) => clan.members)
+  clans: Clan[];
 
   @ManyToMany(() => User, (user) => user.friends)
   @JoinTable({ name: 'user_friends' })

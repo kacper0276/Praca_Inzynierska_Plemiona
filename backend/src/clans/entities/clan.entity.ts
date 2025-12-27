@@ -5,6 +5,8 @@ import {
   OneToOne,
   JoinColumn,
   ManyToOne,
+  JoinTable,
+  ManyToMany,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { BaseEntity } from '@core/entities/base.entity';
@@ -18,11 +20,12 @@ export class Clan extends BaseEntity {
   @Column({ nullable: true })
   description?: string;
 
-  @OneToOne(() => User, (user) => user.foundedClan)
+  @ManyToOne(() => User, (user) => user.foundedClans)
   @JoinColumn({ name: 'founderId' })
   founder: User;
 
-  @OneToMany(() => User, (user) => user.clan)
+  @ManyToMany(() => User, (user) => user.clans)
+  @JoinTable({ name: 'clan_members' })
   members: User[];
 
   @ManyToOne(() => Server, (server) => server.clans, { onDelete: 'CASCADE' })
