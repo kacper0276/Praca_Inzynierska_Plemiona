@@ -1,0 +1,86 @@
+.clan-header {
+  margin-bottom: 20px;
+  h2 {
+    color: var(--text);
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  button {
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    &.active {
+      background: var(--text);
+    }
+  }
+}
+
+.tab-content {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 4px;
+}
+
+.member-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #444;
+  .btn-kick {
+    background: red;
+    color: var(--text);
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+  }
+}
+
+.chat-box {
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    .msg {
+      margin-bottom: 8px;
+      &.mine {
+        text-align: right;
+      }
+      p {
+        padding: 8px;
+        border-radius: 4px;
+        display: inline-block;
+      }
+    }
+  }
+  .chat-input {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    input {
+      flex: 1;
+    }
+  }
+}
+
+.res-grid {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+  input {
+    width: 100%;
+    padding: 8px;
+  }
+}
+
+.btn-send {
+  width: 100%;
+  padding: 10px;
+  color: var(--text);
+  border: none;
+  cursor: pointer;
+}

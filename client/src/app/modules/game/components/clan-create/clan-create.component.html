@@ -1,61 +1,42 @@
-@if (currentView === 'create') {
-<div class="main-container">
-  <h3>Utwórz klan</h3>
-  <form [formGroup]="form" (ngSubmit)="createClan()">
-    <div class="form-row">
-      <label for="clanName">Nazwa klanu</label>
-      <input formControlName="name" type="text" id="clanName" />
-    </div>
+<h3>Utwórz klan</h3>
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="form-row">
+    <label>Nazwa klanu</label>
+    <input formControlName="name" type="text" />
+  </div>
 
-    <div class="form-row">
-      <label for="clanDescription">Opis klanu</label>
-      <input formControlName="description" type="text" id="clanDescription" />
-    </div>
+  <div class="form-row">
+    <label>Opis klanu</label>
+    <input formControlName="description" type="text" />
+  </div>
 
-    <div class="form-row">
-      <label>Zaproszeni gracze</label>
-      <app-multi-select
-        [items]="userFriends"
-        placeholder="Dodaj znajomych do klanu"
-        (selectionChange)="onFriendsSelectionChange($event)"
-      ></app-multi-select>
-    </div>
+  <div class="form-row">
+    <label>Zaproszeni gracze</label>
+    <app-multi-select
+      [items]="userFriends"
+      (selectionChange)="onFriendsChange($event)"
+    ></app-multi-select>
+  </div>
 
-    <div class="form-row">
-      <label>Koszt utworzenia klanu</label>
-      <div class="clan-cost-item">
-        <span>
-          <img
-            src="/assets/icons/wood.png"
-            alt=""
-            style="width: 24px; height: 24px"
-          />
-          {{ clanCost.wood }}
-        </span>
-        <span>
-          <img
-            src="/assets/icons/clay.png"
-            alt=""
-            style="width: 24px; height: 24px"
-          />
-          {{ clanCost.clay }}
-        </span>
-        <span>
-          <img
-            src="/assets/icons/iron.png"
-            alt=""
-            style="width: 24px; height: 24px"
-          />
-          {{ clanCost.iron }}
-        </span>
-      </div>
+  <div class="form-row">
+    <label>Koszt utworzenia</label>
+    <div class="clan-cost-item">
+      <span
+        ><img src="/assets/icons/wood.png" width="24" />
+        {{ clanCost.wood }}</span
+      >
+      <span
+        ><img src="/assets/icons/clay.png" width="24" />
+        {{ clanCost.clay }}</span
+      >
+      <span
+        ><img src="/assets/icons/iron.png" width="24" />
+        {{ clanCost.iron }}</span
+      >
     </div>
+  </div>
 
-    <div class="actions">
-      <button type="submit" [disabled]="!form.valid">Utwórz klan</button>
-    </div>
-  </form>
-</div>
-} @else {
-<p>Nazwa twojego klanu {{ currentClan?.name }}</p>
-}
+  <div class="actions">
+    <button type="submit" [disabled]="form.invalid">Utwórz klan</button>
+  </div>
+</form>
