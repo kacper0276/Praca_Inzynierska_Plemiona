@@ -1,11 +1,16 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { UserService } from '@modules/auth/services';
+import { TokenService, UserService } from '@modules/auth/services';
 import { catchError, map, of } from 'rxjs';
 
 export const noAuthGuard: CanActivateFn = (route, state) => {
   const userService = inject(UserService);
+  const tokenService = inject(TokenService);
   const router = inject(Router);
+
+  if (!tokenService.getJwtToken()) {
+    return true;
+  }
 
   return userService.getUserFromToken().pipe(
     map((res) => {
