@@ -25,6 +25,7 @@
   <app-create-modal
     [isVisible]="isCreateModalOpen"
     [columns]="questColumns"
+    [objectives]="true"
     (save)="onCreateQuest($event)"
     (close)="closeModals()"
   ></app-create-modal>

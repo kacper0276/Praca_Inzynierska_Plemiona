@@ -6,6 +6,6 @@ export interface ColumnDefinition {
   isAction?: boolean;
   editField?: string;
   isReadOnly?: boolean;
-  type?: 'text' | 'checkbox' | 'select';
+  type?: 'text' | 'checkbox' | 'select' | 'number';
   options?: ColumnOption[];
 }

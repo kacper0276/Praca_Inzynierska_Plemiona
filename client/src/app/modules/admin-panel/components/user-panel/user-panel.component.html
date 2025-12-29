@@ -30,6 +30,7 @@
   <app-create-modal
     [isVisible]="isCreateModalOpen"
     [columns]="userColumns"
+    [objectives]="false"
     (save)="onAddUser($event)"
     (close)="closeCreateModal()"
   ></app-create-modal>

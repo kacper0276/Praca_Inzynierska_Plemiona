@@ -2,56 +2,98 @@
 <div class="modal-overlay" (click)="closeModal()">
   <div class="modal-panel" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>Dodaj nowy element</h3>
-      <button class="icon-btn" (click)="closeModal()" aria-label="Zamknij">
+      <h3>Dodaj nowe zadanie</h3>
+      <button class="icon-btn" (click)="closeModal()">
         <mat-icon>close</mat-icon>
       </button>
     </div>
 
     <div class="modal-content">
-      @for (col of formColumns; track col.key) {
-      <div class="form-group">
-        <label [for]="'create-' + col.key">{{ col.header }}</label>
-
-        @if (col.type === 'checkbox') {
-        <div class="checkbox-wrapper">
+      <div class="main-fields">
+        @for (col of formColumns; track col.key) {
+        <div class="form-group">
+          <label [for]="'create-' + col.key">{{ col.header }}</label>
+          @if (col.type === 'checkbox') {
           <input
             type="checkbox"
-            class="styled-checkbox"
             [id]="'create-' + col.key"
             [(ngModel)]="newItem[col.key]"
           />
-        </div>
-        } @else if (col.type === 'select') {
-        <select
-          [id]="'create-' + col.key"
-          [(ngModel)]="newItem[col.key]"
-          class="form-control"
-        >
-          @for (opt of col.options; track opt.value) {
-          <option [value]="opt.value">{{ opt.label }}</option>
+          } @else if (col.type === 'select') {
+          <select
+            [id]="'create-' + col.key"
+            [(ngModel)]="newItem[col.key]"
+            class="form-control"
+          >
+            @for (opt of col.options; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+          } @else {
+          <input
+            [type]="col.type === 'number' ? 'number' : 'text'"
+            [id]="'create-' + col.key"
+            [(ngModel)]="newItem[col.key]"
+            class="form-control"
+          />
           }
-        </select>
-        } @else {
-        <input
-          type="text"
-          [id]="'create-' + col.key"
-          [(ngModel)]="newItem[col.key]"
-          class="form-control"
-          [placeholder]="'Wpisz ' + col.header.toLowerCase()"
-        />
+        </div>
+        }
+      </div>
+
+      @if (objectives) {
+      <div class="objectives-section">
+        <div class="section-header">
+          <h4>Cele zadania (Podzadania)</h4>
+          <button class="btn-add-small" (click)="addObjective()">
+            <mat-icon>add</mat-icon> Dodaj cel
+          </button>
+        </div>
+
+        @for (obj of newItem.objectives; track $index) {
+        <div class="objective-card">
+          <div class="obj-main-row">
+            <input
+              type="text"
+              [(ngModel)]="obj.description"
+              placeholder="Opis podzadania"
+              class="form-control"
+            />
+            <input
+              type="number"
+              [(ngModel)]="obj.goalCount"
+              placeholder="Ilość"
+              class="form-control count-input"
+            />
+            <button class="btn-delete" (click)="removeObjective($index)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          <div class="obj-rewards-row">
+            <div class="reward-field">
+              <label>Drewno</label>
+              <input type="number" [(ngModel)]="obj.woodReward" />
+            </div>
+            <div class="reward-field">
+              <label>Glina</label>
+              <input type="number" [(ngModel)]="obj.clayReward" />
+            </div>
+            <div class="reward-field">
+              <label>Żelazo</label>
+              <input type="number" [(ngModel)]="obj.ironReward" />
+            </div>
+          </div>
+        </div>
         }
       </div>
       }
     </div>
 
     <div class="modal-footer">
-      <div class="actions-right">
-        <button class="btn btn-secondary" (click)="closeModal()">Anuluj</button>
-        <button class="btn btn-primary" (click)="saveChanges()">
-          Dodaj element
-        </button>
-      </div>
+      <button class="btn btn-secondary" (click)="closeModal()">Anuluj</button>
+      <button class="btn btn-primary" (click)="saveChanges()">
+        Zapisz zadanie
+      </button>
     </div>
   </div>
 </div>

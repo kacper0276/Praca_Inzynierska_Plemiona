@@ -12,12 +12,12 @@ import { ConfirmationService } from '@shared/services';
 export class QuestPanelComponent implements OnInit {
   questsList: Quest[] = [];
   questColumns: ColumnDefinition[] = [
-    { key: 'title', header: 'Tytuł' },
-    { key: 'description', header: 'Opis' },
-    { key: 'woodReward', header: 'Drewno' },
-    { key: 'clayReward', header: 'Glina' },
-    { key: 'ironReward', header: 'Żelazo' },
-    { key: 'populationReward', header: 'Ludność' },
+    { key: 'title', header: 'Tytuł', type: 'text' },
+    { key: 'description', header: 'Opis', type: 'text' },
+    { key: 'woodReward', header: 'Drewno', type: 'number' },
+    { key: 'clayReward', header: 'Glina', type: 'number' },
+    { key: 'ironReward', header: 'Żelazo', type: 'number' },
+    { key: 'populationReward', header: 'Ludność', type: 'number' },
     { key: 'isAction', header: 'Akcje', isAction: true },
   ];
 
