@@ -35,13 +35,7 @@ export class ClansService {
     userId: number,
     serverId: number,
   ): Promise<Clan | null> {
-    return await this.clansRepository.findOne(
-      {
-        server: { id: serverId } as any,
-        members: { id: userId },
-      } as any,
-      { relations: ['members', 'server'] },
-    );
+    return await this.clansRepository.findUserClanWithMembers(userId, serverId);
   }
 
   async create(createClanDto: CreateClanDto): Promise<Clan> {
