@@ -152,6 +152,12 @@ option {
   color: white;
 }
 
+.btn-add-small {
+  background-color: rgba($color: $blue-600, $alpha: 0.7);
+  border: none;
+  outline: none;
+}
+
 .icon-btn {
   background: transparent;
   border: none;

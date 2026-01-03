@@ -23,13 +23,20 @@ export class UserPanelComponent implements OnInit {
     {
       key: 'role',
       header: 'Role',
+      type: 'select',
+      options: [
+        { label: 'Administrator', value: 'admin' },
+        { label: 'Użytkownik', value: 'user' },
+      ],
     },
     {
       key: 'isActive',
       header: 'Aktywne',
+      type: 'checkbox',
     },
   ];
-  isModalOpen = false;
+  isModalOpen: boolean = false;
+  isCreateModalOpen: boolean = false;
   selectedUser: User | null = null;
 
   constructor(
@@ -62,6 +69,18 @@ export class UserPanelComponent implements OnInit {
   closeEditModal(): void {
     this.isModalOpen = false;
     this.selectedUser = null;
+  }
+
+  openCreateModal(): void {
+    this.isCreateModalOpen = true;
+  }
+
+  closeCreateModal(): void {
+    this.isCreateModalOpen = false;
+  }
+
+  onAddUser(newUser: User): void {
+    console.log(newUser);
   }
 
   onSaveUser(updatedUser: User): void {

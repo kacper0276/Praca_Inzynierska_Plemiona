@@ -7,6 +7,7 @@ import { ResourcePanelComponent } from './components/resource-panel/resource-pan
 import { ReportPanelComponent } from './components/report-panel/report-panel.component';
 import { ClanPanelComponent } from './components/clan-panel/clan-panel.component';
 import { adminGuard } from '@shared/guards/admin.guard';
+import { QuestPanelComponent } from './components/quest-panel/quest-panel.component';
 
 const routes: Routes = [
   {
@@ -37,6 +38,11 @@ const routes: Routes = [
       {
         path: 'guilds',
         component: ClanPanelComponent,
+        canActivate: [adminGuard],
+      },
+      {
+        path: 'quests',
+        component: QuestPanelComponent,
         canActivate: [adminGuard],
       },
     ],

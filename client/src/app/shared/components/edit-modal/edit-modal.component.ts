@@ -60,8 +60,12 @@ export class EditModalComponent {
     }
   }
 
-  isBooleanField(key: string): boolean {
-    return typeof this.editableItem?.[key] === 'boolean';
+  isBooleanField(colKey: string): boolean {
+    const col = this.columns.find((c) => c.key === colKey);
+    return (
+      col?.type === 'checkbox' ||
+      typeof this.editableItem?.[colKey] === 'boolean'
+    );
   }
 
   saveChanges(): void {

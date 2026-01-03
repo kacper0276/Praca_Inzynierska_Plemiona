@@ -1,4 +1,16 @@
 <div class="wrapper">
+  <div class="panel-header">
+    <h2>Zarządzanie użytkownikami</h2>
+    <button
+      class="add-btn"
+      (click)="openCreateModal()"
+      title="Dodaj użytkownika"
+    >
+      <mat-icon>add</mat-icon>
+      <span>Dodaj użytkownika</span>
+    </button>
+  </div>
+
   <app-table
     [columns]="userColumns"
     [data]="usersList"
@@ -14,4 +26,12 @@
     (delete)="onDeleteUser($event)"
     (close)="closeEditModal()"
   ></app-edit-modal>
+
+  <app-create-modal
+    [isVisible]="isCreateModalOpen"
+    [columns]="userColumns"
+    [objectives]="false"
+    (save)="onAddUser($event)"
+    (close)="closeCreateModal()"
+  ></app-create-modal>
 </div>

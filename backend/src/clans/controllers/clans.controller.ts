@@ -9,6 +9,7 @@ import {
   HttpStatus,
   ParseIntPipe,
   Patch,
+  Request,
 } from '@nestjs/common';
 import { ClansService } from '../services/clans.service';
 import {
@@ -28,6 +29,7 @@ import { CreateClanDto } from '../dto/create-clan.dto';
 import { Public } from '@core/decorators/public.decorator';
 import { UpdateClanDto } from '../dto/update-clan.dto';
 import { Message } from '@core/decorators/message.decorator';
+import { Authenticated } from '@core/decorators/authenticated.decorator';
 
 @ApiTags('Clans')
 @ApiBearerAuth('access-token')
@@ -67,6 +69,23 @@ export class ClansController {
   })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.clansService.findOne(id);
+  }
+
+  @Get('get-user-clan-for-server/:serverId')
+  @Authenticated()
+  @ApiOkResponse({ description: 'Zwraca klan użytkownika dla danego serwera' })
+  @ApiBadRequestResponse({
+    description: 'Nie znaleziono klanu',
+  })
+  @ApiForbiddenResponse({
+    description: 'Brak uprawnień (rola inna niż admin).',
+  })
+  async findUserClanForServer(
+    @Param('serverId', ParseIntPipe) serverId: number,
+    @Request() req: any,
+  ) {
+    const userId = +req.user.sub;
+    return this.clansService.findUserClanForServer(userId, serverId);
   }
 
   @Patch(':id')

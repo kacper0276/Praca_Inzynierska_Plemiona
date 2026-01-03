@@ -31,6 +31,19 @@ export class ClansService {
     return this.clansRepository.findOne({ id }, { relations: ['members'] });
   }
 
+  async findUserClanForServer(
+    userId: number,
+    serverId: number,
+  ): Promise<Clan | null> {
+    return await this.clansRepository.findOne(
+      {
+        server: { id: serverId } as any,
+        members: { id: userId },
+      } as any,
+      { relations: ['members', 'server'] },
+    );
+  }
+
   async create(createClanDto: CreateClanDto): Promise<Clan> {
     const { memberIds, founderId, serverId, ...clanData } = createClanDto;
 
@@ -41,17 +54,17 @@ export class ClansService {
 
         const founder = await userRepo.findOne({
           where: { id: founderId },
-          relations: ['clan'],
+          relations: ['clans', 'clans.server'],
         });
 
-        if (!founder) {
-          throw new NotFoundException('Użytkownik nie istnieje.');
-        }
+        if (!founder) throw new NotFoundException('Użytkownik nie istnieje.');
 
-        if (founder.clan) {
-          throw new BadRequestException(
-            'Jesteś już członkiem lub założycielem innego klanu.',
-          );
+        const isAlreadyInClanOnThisServer = founder.clans.some(
+          (clan) => clan.server.id === serverId,
+        );
+
+        if (isAlreadyInClanOnThisServer) {
+          throw new BadRequestException('Masz już klan na tym serwerze.');
         }
 
         await this.resourcesService.spendResources(
@@ -66,24 +79,17 @@ export class ClansService {
         if (memberIds && memberIds.length > 0) {
           const invitedUsers = await userRepo.find({
             where: { id: In(memberIds) },
-            relations: ['clan'],
+            relations: ['clans', 'clans.server'],
           });
 
-          if (invitedUsers.length !== memberIds.length) {
-            throw new NotFoundException(
-              'Nie znaleziono wszystkich zaproszonych użytkowników.',
-            );
+          for (const user of invitedUsers) {
+            if (user.clans.some((c) => c.server.id === serverId)) {
+              throw new BadRequestException(
+                `Użytkownik ${user.login} należy już do innego klanu na tym serwerze.`,
+              );
+            }
           }
-
-          const alreadyInClan = invitedUsers.filter((u) => u.clan !== null);
-          if (alreadyInClan.length > 0) {
-            const names = alreadyInClan.map((u) => u.login).join(', ');
-            throw new BadRequestException(
-              `Następujący użytkownicy są już w innych klanach: ${names}`,
-            );
-          }
-
-          members = [...members, ...invitedUsers];
+          members = [...new Set([...members, ...invitedUsers])];
         }
 
         const newClan = clanRepo.create({

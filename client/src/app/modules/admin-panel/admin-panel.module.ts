@@ -7,6 +7,7 @@ import { ResourcePanelComponent } from './components/resource-panel/resource-pan
 import { ReportPanelComponent } from './components/report-panel/report-panel.component';
 import { ClanPanelComponent } from './components/clan-panel/clan-panel.component';
 import { SharedModule } from '@shared/shared.module';
+import { QuestPanelComponent } from './components/quest-panel/quest-panel.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { SharedModule } from '@shared/shared.module';
     ResourcePanelComponent,
     ReportPanelComponent,
     ClanPanelComponent,
+    QuestPanelComponent,
   ],
   imports: [AdminPanelRoutingModule, SharedModule],
 })

@@ -1,0 +1,8 @@
+<div class="main-container">
+  @if (currentClan) {
+  <app-clan-view [clan]="currentClan" (refresh)="loadClanData()">
+  </app-clan-view>
+  } @else {
+  <app-clan-create (created)="loadClanData()"> </app-clan-create>
+  }
+</div>

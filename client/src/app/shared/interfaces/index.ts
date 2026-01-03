@@ -1,4 +1,5 @@
 export * from './action-event.interface';
+export * from './column-option.interface';
 export * from './column-definition.interface';
 export * from './confirmation-state.interface';
 export * from './create-chat-group.interface';
@@ -7,3 +8,4 @@ export * from './create-group-message.interface';
 export * from './message-ui.interface';
 export * from './multi-select-item.interface';
 export * from './pagination-event.interface';
+export * from './column-definition.interface';

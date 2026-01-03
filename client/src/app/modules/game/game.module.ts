@@ -16,6 +16,8 @@ import { ArmyComponent } from './components/army/army.component';
 import { InvitesComponent } from './components/invites/invites.component';
 import { SharedModule } from '@shared/shared.module';
 import { TasksComponent } from './components/tasks/tasks.component';
+import { ClanComponent } from './components/clan/clan.component';
+import { ClanViewComponent } from './components/clan-view/clan-view.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +34,8 @@ import { TasksComponent } from './components/tasks/tasks.component';
     ArmyComponent,
     InvitesComponent,
     TasksComponent,
+    ClanComponent,
+    ClanViewComponent,
   ],
   imports: [SharedModule, FormsModule, DragDropModule, GameRoutingModule],
 })

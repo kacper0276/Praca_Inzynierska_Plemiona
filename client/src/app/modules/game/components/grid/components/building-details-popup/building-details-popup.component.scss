@@ -1,5 +1,5 @@
-@use "../../../../../../../styles/mixins.scss" as *;
-@use "../../../../../../../styles/variables.scss" as *;
+@use "mixins" as *;
+@use "variables" as *;
 
 .buttons {
   display: flex;

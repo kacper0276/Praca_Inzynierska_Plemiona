@@ -69,8 +69,13 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Stworzono ranking graczy dla danego serwera
 - Stworzono paginację
 - Budynki nie tworzą i ulepszają się od razu, musi minąć określony czas nim to nastąpi
+- Dodano tabelę dla zadań
+- Dodano interfejs dla zadań
+- Stworzono zakładkę w panelu admina dla zadań
+- Dodano pole "Permisje administratora" by móc dodawać dostęp do poszczególnych zakładek
 
 ### Changed
 
 - Zmieniono działanie surowców (na każdym serwerze osobna ilość surowców)
 - Poprawa wizualna aplikacji
+- Poprawa w importach plików projektu

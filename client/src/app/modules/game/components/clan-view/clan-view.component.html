@@ -1,0 +1,67 @@
+<div class="clan-container">
+  <div class="clan-header">
+    <h2>{{ clan.name }}</h2>
+    <div class="tabs">
+      <button [class.active]="tab === 'members'" (click)="tab = 'members'">
+        Członkowie
+      </button>
+      <button [class.active]="tab === 'chat'" (click)="tab = 'chat'">
+        Czat
+      </button>
+      <button [class.active]="tab === 'resources'" (click)="tab = 'resources'">
+        Surowce
+      </button>
+    </div>
+  </div>
+
+  <div class="tab-content">
+    @if (tab === 'members') {
+    <div class="member-list">
+      @for (m of clan.members; track m.id) {
+      <div class="member-item">
+        <span
+          >{{ m.login }} @if(m.id === clan.founder.id){
+          <small>(Lider)</small> }</span
+        >
+        @if (isFounder && m.id !== currentUserId) {
+        <button class="btn-kick" (click)="kick(m.id ?? -1)">Usuń</button>
+        }
+      </div>
+      }
+    </div>
+    } @if (tab === 'chat') {
+    <div class="chat-box">
+      <div class="messages">
+        @for (msg of messages; track msg.id) {
+        <div class="msg" [class.mine]="msg.senderId === currentUserId">
+          <small>{{ msg.senderName }}</small>
+          <p>{{ msg.content }}</p>
+        </div>
+        }
+      </div>
+      <div class="chat-input">
+        <input
+          [(ngModel)]="msgText"
+          (keyup.enter)="sendMsg()"
+          placeholder="Wiadomość..."
+        />
+        <button (click)="sendMsg()">Wyślij</button>
+      </div>
+    </div>
+    } @if (tab === 'resources') {
+    <form [formGroup]="resForm" (ngSubmit)="sendRes()">
+      <select formControlName="to">
+        @for (m of clan.members; track m.id) { @if (m.id !== currentUserId) {
+        <option [value]="m.id">{{ m.login }}</option>
+        } }
+      </select>
+      <div class="res-grid">
+        <input type="number" formControlName="wood" placeholder="Drewno" />
+        <input type="number" formControlName="clay" placeholder="Glina" />
+        <input type="number" formControlName="iron" placeholder="Żelazo" />
+      </div>
+      <button type="submit" class="btn-send">Wyślij surowce</button>
+    </form>
+    }
+  </div>
+</div>

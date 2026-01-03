@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '@modules/auth/services';
-import { CreateClan } from '@modules/game/interfaces';
 import {
   ClansService,
   ResourcesService,
@@ -11,7 +10,6 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { CLANS_COST } from '@shared/consts/clans-cost';
 import { MultiSelectItem } from '@shared/interfaces';
-import { Resources } from '@shared/models';
 import { ToastrService } from '@shared/services';
 
 @Component({
@@ -20,20 +18,20 @@ import { ToastrService } from '@shared/services';
   styleUrls: ['./clan-create.component.scss'],
 })
 export class ClanCreateComponent implements OnInit {
+  @Output() created = new EventEmitter<void>();
   form: FormGroup;
   userFriends: MultiSelectItem[] = [];
-
-  readonly clanCost: Partial<Resources> = CLANS_COST;
+  readonly clanCost = CLANS_COST;
 
   constructor(
-    private readonly fb: FormBuilder,
-    private readonly resSvc: ResourcesService,
-    private readonly toastr: ToastrService,
-    private readonly translate: TranslateService,
-    private readonly usersService: UsersService,
-    private readonly userService: UserService,
-    private readonly serverService: ServerService,
-    private readonly clansService: ClansService
+    private fb: FormBuilder,
+    private clansService: ClansService,
+    private usersService: UsersService,
+    private serverService: ServerService,
+    private userService: UserService,
+    private resSvc: ResourcesService,
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -43,11 +41,12 @@ export class ClanCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fetchFriendsWithoutClans();
+    const serverId = this.serverService.getServer()?.id ?? -1;
+    this.fetchFriendsWithoutClans(serverId);
   }
 
-  private fetchFriendsWithoutClans(): void {
-    this.usersService.fetchFriendsWithoutClans().subscribe({
+  private fetchFriendsWithoutClans(serverId: number): void {
+    this.usersService.fetchFriendsWithoutClans(serverId).subscribe({
       next: (res) => {
         this.userFriends = res.data.map((user) => ({
           id: user.id,
@@ -59,43 +58,25 @@ export class ClanCreateComponent implements OnInit {
     });
   }
 
-  onFriendsSelectionChange(selected: MultiSelectItem[]): void {
-    this.form.patchValue({
-      members: selected,
-    });
+  onFriendsChange(selected: MultiSelectItem[]): void {
+    this.form.patchValue({ members: selected });
   }
 
-  createClan() {
-    if (this.form.invalid) return;
+  submit(): void {
     if (!this.resSvc.spendResources(this.clanCost)) {
       this.toastr.showError(this.translate.instant('NOT_ENOUGH_RES_CLAN'));
       return;
     }
 
-    const memberIds = this.form.value.members.map(
-      (member: MultiSelectItem) => member.id
-    );
-
-    const founderId = this.userService.getCurrentUser()?.id;
-
-    const serverId = this.serverService.getServer()?.id;
-
-    const payload: CreateClan = {
-      name: this.form.get('name')?.value,
-      description: this.form.get('description')?.value,
-      memberIds: memberIds || [],
-      founderId,
-      serverId,
+    const payload = {
+      ...this.form.value,
+      memberIds: this.form.value.members.map((m: any) => m.id),
+      founderId: this.userService.getCurrentUser()?.id,
+      serverId: this.serverService.getServer()?.id,
     };
 
-    this.clansService.createClan(payload).subscribe({
-      next: (res) => {
-        console.log(res);
-        this.form.reset();
-      },
-      error: () => {
-        this.toastr.showError(this.translate.instant('CLAN_CREATE_ERROR'));
-      },
+    this.clansService.createClan(payload).subscribe(() => {
+      this.created.emit();
     });
   }
 }
