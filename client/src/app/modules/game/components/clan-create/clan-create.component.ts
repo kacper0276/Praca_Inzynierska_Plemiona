@@ -24,14 +24,14 @@ export class ClanCreateComponent implements OnInit {
   readonly clanCost = CLANS_COST;
 
   constructor(
-    private fb: FormBuilder,
-    private clansService: ClansService,
-    private usersService: UsersService,
-    private serverService: ServerService,
-    private userService: UserService,
-    private resSvc: ResourcesService,
-    private toastr: ToastrService,
-    private translate: TranslateService
+    private readonly fb: FormBuilder,
+    private readonly clansService: ClansService,
+    private readonly usersService: UsersService,
+    private readonly serverService: ServerService,
+    private readonly userService: UserService,
+    private readonly resSvc: ResourcesService,
+    private readonly toastr: ToastrService,
+    private readonly translate: TranslateService
   ) {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],

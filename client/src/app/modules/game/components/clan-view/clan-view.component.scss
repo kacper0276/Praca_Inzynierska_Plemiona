@@ -95,3 +95,52 @@
   border: none;
   cursor: pointer;
 }
+
+.btn-add {
+  background-color: $green-600;
+  color: $white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.multi-select-list {
+  height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--text);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  .btn-cancel {
+    background: $gray-600;
+    color: $white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .btn-confirm {
+    background: $blue-600;
+    color: $white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+
+    &:disabled {
+      background: $gray-400;
+      cursor: not-allowed;
+    }
+  }
+}

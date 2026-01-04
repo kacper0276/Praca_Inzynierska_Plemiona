@@ -17,7 +17,13 @@
   <div class="tab-content">
     @if (tab === 'members') {
     <div class="member-list">
-      @for (m of clan.members; track m.id) {
+      @if (isFounder) {
+      <div class="add-member-row">
+        <button class="btn-add" (click)="openAddMemberModal()">
+          + Dodaj członka
+        </button>
+      </div>
+      } @for (m of clan.members; track m.id) {
       <div class="member-item">
         <span
           >{{ m.login }} @if(m?.id === clan.founder.id){
@@ -29,7 +35,41 @@
       </div>
       }
     </div>
-    } @if (tab === 'chat') {
+
+    @if (isAddModalOpen) {
+    <app-modal
+      [modalTitle]="'Dodaj nowych członków'"
+      (close)="isAddModalOpen = false"
+    >
+      <div modal-header>
+        <small>Wybierz graczy z listy:</small>
+      </div>
+
+      <div modal-body class="multi-select-list">
+        @if (userFriends.length === 0) {
+        <p>Brak dostępnych graczy do dodania.</p>
+        } @else {
+        <app-multi-select
+          [items]="userFriends"
+          (selectionChange)="onFriendsChange($event)"
+        ></app-multi-select>
+        }
+      </div>
+
+      <div modal-footer class="modal-footer">
+        <button class="btn-cancel" (click)="isAddModalOpen = false">
+          Anuluj
+        </button>
+        <button
+          class="btn-confirm"
+          [disabled]="selectedUsers.length === 0"
+          (click)="addSelectedMembers()"
+        >
+          Dodaj ({{ selectedUsers.length }})
+        </button>
+      </div>
+    </app-modal>
+    } } @if (tab === 'chat') {
     <div class="chat-box">
       <div class="messages">
         @for (msg of messages; track msg.id) {

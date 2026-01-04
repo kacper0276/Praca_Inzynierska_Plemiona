@@ -1,7 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '@modules/auth/services';
-import { ClansService, ResourcesService } from '@modules/game/services';
+import {
+  ClansService,
+  ResourcesService,
+  ServerService,
+  UsersService,
+} from '@modules/game/services';
+import { MultiSelectItem } from '@shared/interfaces';
 import { Clan } from '@shared/models';
 import { ToastrService } from '@shared/services';
 
@@ -20,12 +26,18 @@ export class ClanViewComponent {
   messages: any[] = [];
   resForm: FormGroup;
 
+  isAddModalOpen: boolean = false;
+  userFriends: MultiSelectItem[] = [];
+  selectedUsers: MultiSelectItem[] = [];
+
   constructor(
-    private userService: UserService,
-    private clansService: ClansService,
-    private resSvc: ResourcesService,
-    private toastr: ToastrService,
-    private fb: FormBuilder
+    private readonly userService: UserService,
+    private readonly clansService: ClansService,
+    private readonly resSvc: ResourcesService,
+    private readonly toastr: ToastrService,
+    private readonly fb: FormBuilder,
+    private readonly usersService: UsersService,
+    private readonly serverService: ServerService
   ) {
     this.resForm = this.fb.group({
       to: ['', Validators.required],
@@ -49,6 +61,49 @@ export class ClanViewComponent {
         },
       });
     }
+  }
+
+  openAddMemberModal() {
+    this.isAddModalOpen = true;
+    this.selectedUsers = [];
+
+    const currentServer = this.serverService.getServer();
+
+    if (currentServer && currentServer.id) {
+      this.fetchFriendsWithoutClans(currentServer.id);
+    }
+  }
+
+  addSelectedMembers() {
+    if (this.selectedUsers.length === 0) return;
+
+    const idsToAdd = this.selectedUsers.map((selectedUser) => selectedUser.id);
+
+    if (this.clan && this.clan.id) {
+      this.clansService.addMembers(this.clan.id, idsToAdd).subscribe({
+        next: () => {
+          this.refresh.emit();
+          this.isAddModalOpen = false;
+        },
+      });
+    }
+  }
+
+  onFriendsChange(selected: MultiSelectItem[]): void {
+    this.selectedUsers = selected;
+  }
+
+  private fetchFriendsWithoutClans(serverId: number): void {
+    this.usersService.fetchFriendsWithoutClans(serverId).subscribe({
+      next: (res) => {
+        this.userFriends = res.data.map((user) => ({
+          id: user.id,
+          name:
+            `${user.firstName} ${user.lastName}` || user.email || user.login,
+          avatar: user.profileImage,
+        })) as MultiSelectItem[];
+      },
+    });
   }
 
   sendMsg() {

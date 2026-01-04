@@ -26,4 +26,10 @@ export class ClansService {
       `/clans/delete-member/${clanId}/${userId}`
     );
   }
+
+  addMembers(clanId: number, userIds: number[]): Observable<ApiResponse<null>> {
+    return this.httpService.post<null>(`/clans/${clanId}/add-members`, {
+      userIds,
+    });
+  }
 }
