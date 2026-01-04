@@ -24,39 +24,55 @@ export class ArmyService {
     private readonly wsGateway: WsGateway,
   ) {}
 
-  async getArmyByVillageId(villageId: number): Promise<ArmyUnit[]> {
+  private async findUserVillage(
+    userId: number,
+    serverId: number,
+    manager?: any,
+  ) {
+    const repo = manager
+      ? manager.getRepository(Village)
+      : this.dataSource.getRepository(Village);
+    const village = await repo.findOne({
+      where: {
+        user: { id: userId },
+        server: { id: serverId },
+      },
+      relations: ['user', 'server'],
+    });
+
+    if (!village) {
+      throw new NotFoundException(
+        `Nie znaleziono wioski dla użytkownika na serwerze ${serverId}.`,
+      );
+    }
+    return village;
+  }
+
+  async getArmyByServerAndUser(
+    serverId: number,
+    userId: number,
+  ): Promise<ArmyUnit[]> {
+    const village = await this.findUserVillage(userId, serverId);
+
     return this.armyRepository.find({
-      where: { village: { id: villageId } },
+      where: { village: { id: village.id } },
       order: { type: 'ASC' },
     });
   }
 
-  async checkVillageOwnership(
-    userId: number,
-    villageId: number,
-  ): Promise<boolean> {
-    const village = await this.dataSource.getRepository(Village).findOne({
-      where: { id: villageId, user: { id: userId } },
-    });
-    return !!village;
-  }
-
-  async recruitUnits(dto: RecruitUnitDto): Promise<ArmyUnit> {
-    const { villageId, unitType, amount } = dto;
+  async recruitUnits(userId: number, dto: RecruitUnitDto): Promise<ArmyUnit> {
+    const { serverId, unitType, amount } = dto;
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const village = await queryRunner.manager.findOne(Village, {
-        where: { id: villageId },
-        relations: ['user', 'server'],
-      });
-
-      if (!village) {
-        throw new NotFoundException(`Wioska o ID ${villageId} nie istnieje.`);
-      }
+      const village = await this.findUserVillage(
+        userId,
+        serverId,
+        queryRunner.manager,
+      );
 
       const costPerUnit = ARMY_COSTS[unitType];
       const totalCost = {
@@ -66,20 +82,19 @@ export class ArmyService {
       };
 
       const updatedResources = await this.resourcesService.spendResources(
-        village.user.id,
-        village.server.id,
+        userId,
+        serverId,
         totalCost,
         queryRunner.manager,
       );
 
       let unit = await queryRunner.manager.findOne(ArmyUnit, {
-        where: { village: { id: villageId }, type: unitType },
+        where: { village: { id: village.id }, type: unitType },
         lock: { mode: 'pessimistic_write' },
       });
 
       if (unit) {
         unit.count += amount;
-        unit = await queryRunner.manager.save(unit);
       } else {
         unit = queryRunner.manager.create(ArmyUnit, {
           type: unitType,
@@ -87,13 +102,13 @@ export class ArmyService {
           level: 1,
           village: village,
         });
-        unit = await queryRunner.manager.save(unit);
       }
+      unit = await queryRunner.manager.save(unit);
 
       await queryRunner.commitTransaction();
 
       this.wsGateway.sendToUser(
-        village.user.id,
+        userId,
         WsEvent.RESOURCE_UPDATE,
         updatedResources,
       );
@@ -101,46 +116,37 @@ export class ArmyService {
       return unit;
     } catch (err) {
       await queryRunner.rollbackTransaction();
-
       if (
         err instanceof BadRequestException ||
         err instanceof NotFoundException
-      ) {
+      )
         throw err;
-      }
-      console.error(err);
-      throw new InternalServerErrorException(
-        'Wystąpił błąd podczas rekrutacji.',
-      );
+      throw new InternalServerErrorException('Błąd rekrutacji');
     } finally {
       await queryRunner.release();
     }
   }
 
-  async upgradeUnit(dto: UpgradeUnitDto): Promise<ArmyUnit> {
-    const { villageId, unitType } = dto;
+  async upgradeUnit(userId: number, dto: UpgradeUnitDto): Promise<ArmyUnit> {
+    const { serverId, unitType } = dto;
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const village = await queryRunner.manager.findOne(Village, {
-        where: { id: villageId },
-        relations: ['user', 'server'],
-      });
-
-      if (!village) {
-        throw new NotFoundException(`Wioska o ID ${villageId} nie istnieje.`);
-      }
+      const village = await this.findUserVillage(
+        userId,
+        serverId,
+        queryRunner.manager,
+      );
 
       let unit = await queryRunner.manager.findOne(ArmyUnit, {
-        where: { village: { id: villageId }, type: unitType },
+        where: { village: { id: village.id }, type: unitType },
         lock: { mode: 'pessimistic_write' },
       });
 
       let currentLevel = 1;
-
       if (!unit) {
         unit = queryRunner.manager.create(ArmyUnit, {
           village,
@@ -150,12 +156,10 @@ export class ArmyService {
         });
         unit = await queryRunner.manager.save(unit);
       }
-
       currentLevel = unit.level;
       const nextLevel = currentLevel + 1;
 
       const baseCost = ARMY_COSTS[unitType];
-
       const upgradeCost = {
         wood: (baseCost.wood || 0) * nextLevel * 2,
         clay: (baseCost.clay || 0) * nextLevel * 2,
@@ -163,8 +167,8 @@ export class ArmyService {
       };
 
       const updatedResources = await this.resourcesService.spendResources(
-        village.user.id,
-        village.server.id,
+        userId,
+        serverId,
         upgradeCost,
         queryRunner.manager,
       );
@@ -173,9 +177,8 @@ export class ArmyService {
       await queryRunner.manager.save(unit);
 
       await queryRunner.commitTransaction();
-
       this.wsGateway.sendToUser(
-        village.user.id,
+        userId,
         WsEvent.RESOURCE_UPDATE,
         updatedResources,
       );
@@ -183,17 +186,12 @@ export class ArmyService {
       return unit;
     } catch (err) {
       await queryRunner.rollbackTransaction();
-
       if (
         err instanceof BadRequestException ||
         err instanceof NotFoundException
-      ) {
+      )
         throw err;
-      }
-      console.error(err);
-      throw new InternalServerErrorException(
-        'Wystąpił błąd podczas ulepszania jednostki.',
-      );
+      throw new InternalServerErrorException('Błąd ulepszania');
     } finally {
       await queryRunner.release();
     }

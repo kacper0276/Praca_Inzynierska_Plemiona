@@ -3,9 +3,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UnitType } from '@core/enums/unit-type.enum';
 
 export class UpgradeUnitDto {
-  @ApiProperty({ description: 'ID wioski', example: 1 })
+  @ApiProperty({ description: 'ID serwera', example: 1 })
   @IsInt()
-  villageId: number;
+  serverId: number;
 
   @ApiProperty({
     description: 'Typ jednostki do ulepszenia',

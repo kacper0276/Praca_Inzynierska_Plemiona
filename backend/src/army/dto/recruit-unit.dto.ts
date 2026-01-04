@@ -3,12 +3,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UnitType } from '@core/enums/unit-type.enum';
 
 export class RecruitUnitDto {
-  @ApiProperty({
-    description: 'ID wioski, w której rekrutujemy',
-    example: 1,
-  })
+  @ApiProperty({ description: 'ID serwera', example: 1 })
   @IsInt()
-  villageId: number;
+  serverId: number;
 
   @ApiProperty({
     description: 'Typ jednostki do rekrutacji',
