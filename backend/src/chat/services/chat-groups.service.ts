@@ -82,6 +82,24 @@ export class ChatGroupsService {
     return this.groupsRepository.findUserGroups(userId);
   }
 
+  async getChatByName(chatName: string, userId: number): Promise<ChatGroup> {
+    const group = await this.groupsRepository.findOne(
+      { name: chatName },
+      { relations: ['members'] },
+    );
+
+    if (!group) {
+      throw new NotFoundException('Grupa nie została znaleziona.');
+    }
+
+    const isMember = group.members.some((member) => member.id === userId);
+    if (!isMember) {
+      throw new ForbiddenException('Nie jesteś członkiem tej grupy.');
+    }
+
+    return group;
+  }
+
   async getGroupMessages(
     userId: number,
     groupId: number,

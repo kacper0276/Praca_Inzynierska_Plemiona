@@ -71,21 +71,31 @@
     </app-modal>
     } } @if (tab === 'chat') {
     <div class="chat-box">
-      <div class="messages">
-        @for (msg of messages; track msg.id) {
-        <div class="msg" [class.mine]="msg.senderId === currentUserId">
-          <small>{{ msg.senderName }}</small>
-          <p>{{ msg.content }}</p>
-        </div>
-        }
-      </div>
+      <ng-container *ngIf="selectedChat">
+        <div class="messages-area" #scrollContainer>
+          <div
+            class="message"
+            *ngFor="let msg of messages"
+            [ngClass]="{ sent: msg.isMe, received: !msg.isMe }"
+          >
+            <span class="sender-name">
+              <strong>{{ msg.senderName }}</strong>
+            </span>
+            <div class="bubble">{{ msg.content }}</div>
+            <span class="time">{{
+              msg.time + "Z" | date : "dd-MM-yyyy HH:mm"
+            }}</span>
+          </div>
+        </div></ng-container
+      >
       <div class="chat-input">
         <input
           [(ngModel)]="msgText"
           (keyup.enter)="sendMsg()"
           placeholder="Wiadomość..."
+          (keydown.enter)="sendMsg()"
         />
-        <button (click)="sendMsg()">Wyślij</button>
+        <button (click)="sendMsg()" class="send-msg-button">Wyślij</button>
       </div>
     </div>
     } @if (tab === 'resources') {

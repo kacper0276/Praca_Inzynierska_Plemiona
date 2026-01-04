@@ -205,6 +205,12 @@
         word-wrap: break-word;
       }
 
+      sender-name {
+        font-size: 0.8rem;
+        margin-bottom: 4px;
+        color: var(--text);
+      }
+
       .time {
         font-size: 0.7rem;
         margin-top: 4px;

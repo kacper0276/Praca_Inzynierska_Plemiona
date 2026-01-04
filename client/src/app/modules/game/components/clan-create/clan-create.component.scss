@@ -3,16 +3,16 @@
   font-weight: 600;
 }
 
+h3 {
+  color: var(--text);
+}
+
 .main-container {
   display: flex;
   flex-direction: column;
   min-height: 100%;
   padding: 2rem;
   background-color: var(--bg);
-
-  h3 {
-    color: var(--text);
-  }
 
   form {
     display: flex;

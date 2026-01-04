@@ -14,6 +14,7 @@ import { DataSource, In } from 'typeorm';
 import { ResourcesService } from 'src/resources/services/resources.service';
 import { Server } from 'src/servers/entities/server.entity';
 import { CLANS_COST } from '@core/consts/clans-cost';
+import { ChatGroup } from 'src/chat/entities/chat-group.entity';
 
 @Injectable()
 export class ClansService {
@@ -23,6 +24,10 @@ export class ClansService {
     private readonly resourcesService: ResourcesService,
     private readonly dataSource: DataSource,
   ) {}
+
+  private getClanChatName(serverId: number, clanName: string): string {
+    return `${serverId}-${clanName}`;
+  }
 
   findAll(): Promise<Clan[]> {
     return this.clansRepository.findAll({ relations: ['members'] });
@@ -45,15 +50,11 @@ export class ClansService {
     currentUserId: number,
   ): Promise<void> {
     const clan = await this.clansRepository.findOne(
-      {
-        id: clanId,
-      },
-      { relations: ['founder', 'members'] },
+      { id: clanId },
+      { relations: ['founder', 'members', 'server'] },
     );
 
-    if (!clan) {
-      throw new NotFoundException('Nie znaleziono klanu.');
-    }
+    if (!clan) throw new NotFoundException('Nie znaleziono klanu.');
 
     if (clan.founder.id !== currentUserId) {
       throw new ForbiddenException(
@@ -65,7 +66,7 @@ export class ClansService {
       where: { id: In(userIds) },
     });
 
-    if (!usersToAdd || usersToAdd.length === 0) {
+    if (!usersToAdd.length) {
       throw new BadRequestException('Nie znaleziono wskazanych użytkowników.');
     }
 
@@ -74,37 +75,64 @@ export class ClansService {
       (u) => !currentMemberIds.has(u.id),
     );
 
-    if (newUniqueMembers.length === 0) {
-      return;
-    }
+    if (newUniqueMembers.length === 0) return;
 
     clan.members.push(...newUniqueMembers);
     await this.clansRepository.save(clan);
+
+    const chatName = this.getClanChatName(clan.server.id, clan.name);
+    const chatGroupRepo = this.dataSource.getRepository(ChatGroup);
+
+    const chatGroup = await chatGroupRepo.findOne({
+      where: { name: chatName },
+      relations: ['members'],
+    });
+
+    if (chatGroup) {
+      const currentChatIds = new Set(chatGroup.members.map((m) => m.id));
+      const membersToAddToChat = newUniqueMembers.filter(
+        (u) => !currentChatIds.has(u.id),
+      );
+      if (membersToAddToChat.length > 0) {
+        chatGroup.members.push(...membersToAddToChat);
+        await chatGroupRepo.save(chatGroup);
+      }
+    }
   }
 
   async kickUserFromClan(clanId: number, userId: number): Promise<void> {
     const clan = await this.clansRepository.findOne(
-      {
-        id: clanId,
-      },
-      { relations: ['members'] },
+      { id: clanId },
+      { relations: ['members', 'server'] },
     );
 
-    if (!clan) {
-      throw new NotFoundException('Nie znaleziono klanu');
-    }
+    if (!clan) throw new NotFoundException('Nie znaleziono klanu');
 
-    const memberIndex = clan.members.findIndex(
-      (member) => member.id === userId,
-    );
-
+    const memberIndex = clan.members.findIndex((m) => m.id === userId);
     if (memberIndex === -1) {
       throw new BadRequestException('Użytkownik nie należy do tego klanu');
     }
 
     clan.members.splice(memberIndex, 1);
-
     await this.clansRepository.save(clan);
+
+    const chatName = this.getClanChatName(clan.server.id, clan.name);
+    const chatGroupRepo = this.dataSource.getRepository(ChatGroup);
+
+    const chatGroup = await chatGroupRepo.findOne({
+      where: { name: chatName },
+      relations: ['members'],
+    });
+
+    if (chatGroup) {
+      const chatMemberIndex = chatGroup.members.findIndex(
+        (m) => m.id === userId,
+      );
+      if (chatMemberIndex !== -1) {
+        chatGroup.members.splice(chatMemberIndex, 1);
+        await chatGroupRepo.save(chatGroup);
+      }
+    }
   }
 
   async create(createClanDto: CreateClanDto): Promise<Clan> {
@@ -114,6 +142,8 @@ export class ClansService {
       async (transactionalEntityManager) => {
         const clanRepo = transactionalEntityManager.getRepository(Clan);
         const userRepo = transactionalEntityManager.getRepository(User);
+        const chatGroupRepo =
+          transactionalEntityManager.getRepository(ChatGroup);
 
         const founder = await userRepo.findOne({
           where: { id: founderId },
@@ -155,6 +185,22 @@ export class ClansService {
           members = [...new Set([...members, ...invitedUsers])];
         }
 
+        const chatName = this.getClanChatName(serverId, clanData.name);
+
+        let chatGroup = await chatGroupRepo.findOne({
+          where: { name: chatName },
+          relations: ['members'],
+        });
+
+        if (!chatGroup) {
+          chatGroup = chatGroupRepo.create({
+            name: chatName,
+            description: `Czat klanu ${clanData.name}`,
+            members: members,
+          });
+          await chatGroupRepo.save(chatGroup);
+        }
+
         const newClan = clanRepo.create({
           ...clanData,
           founder: founder,
@@ -175,6 +221,17 @@ export class ClansService {
   }
 
   async remove(id: number): Promise<void> {
-    await this.clansRepository.delete(id);
+    const clan = await this.findOne(id);
+    if (clan) {
+      await this.clansRepository.delete(id);
+
+      const chatName = this.getClanChatName(clan.server.id, clan.name);
+      const chatGroupRepo = this.dataSource.getRepository(ChatGroup);
+      const chatGroup = await chatGroupRepo.findOneBy({ name: chatName });
+
+      if (chatGroup) {
+        await chatGroupRepo.remove(chatGroup);
+      }
+    }
   }
 }

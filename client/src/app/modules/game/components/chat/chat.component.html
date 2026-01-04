@@ -90,6 +90,9 @@
           *ngFor="let msg of messages"
           [ngClass]="{ sent: msg.isMe, received: !msg.isMe }"
         >
+          <span>
+            <strong>{{ msg.senderName }}</strong>
+          </span>
           <div class="bubble">{{ msg.content }}</div>
           <span class="time">{{
             msg.time + "Z" | date : "dd-MM-yyyy HH:mm"
