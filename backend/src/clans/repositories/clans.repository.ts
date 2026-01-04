@@ -24,6 +24,25 @@ export class ClansRepository extends BaseRepository<Clan> {
     return this.repository.findOne({ where: { id }, ...options });
   }
 
+  async findUserClanWithMembers(
+    userId: number,
+    serverId: number,
+  ): Promise<Clan | null> {
+    return this.repository
+      .createQueryBuilder('clan')
+      .leftJoinAndSelect('clan.members', 'all_members')
+      .leftJoinAndSelect('clan.server', 'server')
+      .leftJoinAndSelect('clan.founder', 'founder')
+      .innerJoin(
+        'clan.members',
+        'member_filter',
+        'member_filter.id = :userId',
+        { userId },
+      )
+      .where('server.id = :serverId', { serverId })
+      .getOne();
+  }
+
   create(data: Partial<Clan>): Clan {
     return this.repository.create(data);
   }

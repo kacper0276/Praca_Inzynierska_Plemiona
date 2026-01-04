@@ -27,6 +27,8 @@ import {
 import { UpdateResourceDto } from '../dto/update-resource.dto';
 import { CreateResourceDto } from '../dto/create-resource.dto';
 import { Authenticated } from '@core/decorators/authenticated.decorator';
+import { CurrentUser } from '@core/decorators/current-user.decorator';
+import { TransferResourcesDto } from '../dto/transfer-resources.dto';
 
 @ApiTags('Resources')
 @ApiBearerAuth('access-token')
@@ -88,6 +90,25 @@ export class ResourcesController {
   })
   create(@Body() createResourceDto: CreateResourceDto) {
     return this.resourcesService.create(createResourceDto);
+  }
+
+  @Post('transfer')
+  @Authenticated()
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({
+    description: 'Surowce zostały pomyślnie przetransferowane.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Niewystarczająca ilość surowców lub błędne dane.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Nie znaleziono użytkownika lub serwera.',
+  })
+  transfer(
+    @CurrentUser() user: any,
+    @Body() transferDto: TransferResourcesDto,
+  ) {
+    return this.resourcesService.transferResources(user.sub, transferDto);
   }
 
   @Patch(':id')

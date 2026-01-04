@@ -1,3 +1,5 @@
+@use "variables" as *;
+
 .clan-header {
   margin-bottom: 20px;
   h2 {
@@ -12,8 +14,12 @@
     padding: 8px 16px;
     border: none;
     cursor: pointer;
+    background: $blue-800;
+    color: $white;
+    border-radius: 5px;
+
     &.active {
-      background: var(--text);
+      background: $blue-600;
     }
   }
 }
@@ -29,6 +35,11 @@
   justify-content: space-between;
   padding: 10px;
   border-bottom: 1px solid #444;
+
+  span {
+    color: var(--text);
+  }
+
   .btn-kick {
     background: red;
     color: var(--text);
@@ -67,6 +78,16 @@
   }
 }
 
+.resources-select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+
+  option {
+    color: #444 !important;
+  }
+}
+
 .res-grid {
   display: flex;
   gap: 10px;
@@ -81,6 +102,57 @@
   width: 100%;
   padding: 10px;
   color: var(--text);
+  background: $green-600;
   border: none;
   cursor: pointer;
+  border-radius: 4px;
+}
+
+.btn-add {
+  background-color: $green-600;
+  color: $white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.multi-select-list {
+  height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--text);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  .btn-cancel {
+    background: $gray-600;
+    color: $white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .btn-confirm {
+    background: $blue-600;
+    color: $white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+
+    &:disabled {
+      background: $gray-400;
+      cursor: not-allowed;
+    }
+  }
 }

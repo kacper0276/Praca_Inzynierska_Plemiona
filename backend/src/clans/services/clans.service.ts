@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -35,13 +36,75 @@ export class ClansService {
     userId: number,
     serverId: number,
   ): Promise<Clan | null> {
-    return await this.clansRepository.findOne(
+    return await this.clansRepository.findUserClanWithMembers(userId, serverId);
+  }
+
+  async addMembersToClan(
+    clanId: number,
+    userIds: number[],
+    currentUserId: number,
+  ): Promise<void> {
+    const clan = await this.clansRepository.findOne(
       {
-        server: { id: serverId } as any,
-        members: { id: userId },
-      } as any,
-      { relations: ['members', 'server'] },
+        id: clanId,
+      },
+      { relations: ['founder', 'members'] },
     );
+
+    if (!clan) {
+      throw new NotFoundException('Nie znaleziono klanu.');
+    }
+
+    if (clan.founder.id !== currentUserId) {
+      throw new ForbiddenException(
+        'Tylko założyciel klanu może dodawać nowych członków.',
+      );
+    }
+
+    const usersToAdd = await this.usersRepository.find({
+      where: { id: In(userIds) },
+    });
+
+    if (!usersToAdd || usersToAdd.length === 0) {
+      throw new BadRequestException('Nie znaleziono wskazanych użytkowników.');
+    }
+
+    const currentMemberIds = new Set(clan.members.map((m) => m.id));
+    const newUniqueMembers = usersToAdd.filter(
+      (u) => !currentMemberIds.has(u.id),
+    );
+
+    if (newUniqueMembers.length === 0) {
+      return;
+    }
+
+    clan.members.push(...newUniqueMembers);
+    await this.clansRepository.save(clan);
+  }
+
+  async kickUserFromClan(clanId: number, userId: number): Promise<void> {
+    const clan = await this.clansRepository.findOne(
+      {
+        id: clanId,
+      },
+      { relations: ['members'] },
+    );
+
+    if (!clan) {
+      throw new NotFoundException('Nie znaleziono klanu');
+    }
+
+    const memberIndex = clan.members.findIndex(
+      (member) => member.id === userId,
+    );
+
+    if (memberIndex === -1) {
+      throw new BadRequestException('Użytkownik nie należy do tego klanu');
+    }
+
+    clan.members.splice(memberIndex, 1);
+
+    await this.clansRepository.save(clan);
   }
 
   async create(createClanDto: CreateClanDto): Promise<Clan> {
