@@ -9,7 +9,6 @@ import {
   HttpStatus,
   ParseIntPipe,
   Patch,
-  Request,
 } from '@nestjs/common';
 import { ClansService } from '../services/clans.service';
 import {
@@ -112,9 +111,9 @@ export class ClansController {
   })
   async findUserClanForServer(
     @Param('serverId', ParseIntPipe) serverId: number,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ) {
-    const userId = +req.user.sub;
+    const userId = +user.sub;
     return this.clansService.findUserClanForServer(userId, serverId);
   }
 

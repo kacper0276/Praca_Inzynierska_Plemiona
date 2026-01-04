@@ -10,7 +10,6 @@ import {
   ParseIntPipe,
   Patch,
   Query,
-  Request,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,6 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { QuestsService } from '../services/quests.service';
 import { CreateQuestDto } from '../dto/create-quest.dto';
+import { CurrentUser } from '@core/decorators/current-user.decorator';
 
 @ApiTags('Quests')
 @ApiBearerAuth('access-token')
@@ -41,9 +41,9 @@ export class QuestsController {
   })
   async getMyQuests(
     @Param('serverId', ParseIntPipe) serverId: number,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ) {
-    return this.questsService.getUserQuests(req.user.sub, serverId);
+    return this.questsService.getUserQuests(user.sub, serverId);
   }
 
   @Post(':questId/start/:serverId')
@@ -52,9 +52,9 @@ export class QuestsController {
   async startQuest(
     @Param('questId', ParseIntPipe) questId: number,
     @Param('serverId', ParseIntPipe) serverId: number,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ) {
-    return this.questsService.startQuest(req.user.sub, serverId, questId);
+    return this.questsService.startQuest(user.sub, serverId, questId);
   }
 
   @Patch('objective/:objectiveId/progress')
@@ -64,10 +64,10 @@ export class QuestsController {
     @Param('objectiveId', ParseIntPipe) objectiveId: number,
     @Query('serverId', ParseIntPipe) serverId: number,
     @Query('amount', ParseIntPipe) amount: number,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ) {
     return this.questsService.updateObjectiveProgress(
-      req.user.sub,
+      user.sub,
       serverId,
       objectiveId,
       amount,

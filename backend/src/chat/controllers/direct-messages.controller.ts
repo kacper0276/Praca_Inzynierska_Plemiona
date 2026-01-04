@@ -4,7 +4,6 @@ import {
   Post,
   Body,
   Param,
-  Request,
   ParseIntPipe,
 } from '@nestjs/common';
 import {
@@ -16,6 +15,7 @@ import {
 import { DirectMessagesService } from '../services/direct-messages.service';
 import { CreateDirectMessageDto } from '../dto/create-direct-message.dto';
 import { Authenticated } from '../../core/decorators/authenticated.decorator';
+import { CurrentUser } from '@core/decorators/current-user.decorator';
 
 @ApiTags('Direct Messages')
 @ApiBearerAuth('access-token')
@@ -26,8 +26,11 @@ export class DirectMessagesController {
   @Post()
   @Authenticated()
   @ApiCreatedResponse({ description: 'Wiadomość została wysłana.' })
-  async send(@Body() createDmDto: CreateDirectMessageDto, @Request() req: any) {
-    const senderId = req.user.sub;
+  async send(
+    @Body() createDmDto: CreateDirectMessageDto,
+    @CurrentUser() user: any,
+  ) {
+    const senderId = user.sub;
     return this.dmService.send(senderId, createDmDto);
   }
 
@@ -36,9 +39,9 @@ export class DirectMessagesController {
   @ApiOkResponse({ description: 'Historia rozmowy z użytkownikiem.' })
   async getConversation(
     @Param('friendId', ParseIntPipe) friendId: number,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ) {
-    const userId = req.user.sub;
+    const userId = user.sub;
     return this.dmService.getConversation(userId, friendId);
   }
 }

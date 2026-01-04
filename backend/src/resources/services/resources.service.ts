@@ -136,7 +136,7 @@ export class ResourcesService {
     serverId: number,
     cost: Partial<Resources>,
     transactionalManager?: EntityManager,
-  ): Promise<void> {
+  ): Promise<Resources> {
     const repo = transactionalManager
       ? transactionalManager.getRepository(Resources)
       : this.repository;
@@ -166,7 +166,7 @@ export class ResourcesService {
     userResources.clay -= cost.clay || 0;
     userResources.iron -= cost.iron || 0;
 
-    await repo.save(userResources);
+    return await repo.save(userResources);
   }
 
   async hasEnoughResources(
