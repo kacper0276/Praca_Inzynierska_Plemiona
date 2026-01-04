@@ -1,17 +1,29 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Resources } from '../entities/resources.entity';
 import { ResourcesRepository } from '../repositories/resources.repository';
 import { CreateResourceDto } from '../dto/create-resource.dto';
 import { UpdateResourceDto } from '../dto/update-resource.dto';
 import { UsersRepository } from 'src/users/repositories/users.repository';
-import { EntityManager } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { ResourceCost } from '@core/consts/building-costs';
+import { TransferResourcesDto } from '../dto/transfer-resources.dto';
+import { WsGateway } from '@core/gateways/ws.gateway';
+import { WsEvent } from '@core/enums/ws-event.enum';
 
 @Injectable()
 export class ResourcesService {
   constructor(
     private readonly repository: ResourcesRepository,
     private readonly usersRepository: UsersRepository,
+    private readonly dataSource: DataSource,
+    @Inject(forwardRef(() => WsGateway)) private readonly wsGateway: WsGateway,
   ) {}
 
   findAll() {
@@ -178,5 +190,95 @@ export class ResourcesService {
     const hasIron = userResources.iron >= (cost.iron || 0);
 
     return hasWood && hasClay && hasIron;
+  }
+
+  async transferResources(
+    senderId: number,
+    dto: TransferResourcesDto,
+  ): Promise<void> {
+    const { receiverId, serverId, wood = 0, clay = 0, iron = 0 } = dto;
+
+    if (senderId === receiverId) {
+      throw new BadRequestException(
+        'Nie możesz wysłać surowców do samego siebie.',
+      );
+    }
+
+    if (wood === 0 && clay === 0 && iron === 0) {
+      throw new BadRequestException(
+        'Musisz przesłać przynajmniej jeden surowiec.',
+      );
+    }
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const senderResources = await queryRunner.manager.findOne(Resources, {
+        where: { user: { id: senderId }, server: { id: serverId } },
+        lock: { mode: 'pessimistic_write' },
+      });
+
+      if (!senderResources) {
+        throw new NotFoundException('Nie znaleziono zasobów nadawcy.');
+      }
+
+      if (
+        senderResources.wood < wood ||
+        senderResources.clay < clay ||
+        senderResources.iron < iron
+      ) {
+        throw new BadRequestException('Niewystarczająca ilość surowców.');
+      }
+
+      const receiverResources = await queryRunner.manager.findOne(Resources, {
+        where: { user: { id: receiverId }, server: { id: serverId } },
+        lock: { mode: 'pessimistic_write' },
+      });
+
+      if (!receiverResources) {
+        throw new NotFoundException('Nie znaleziono zasobów odbiorcy.');
+      }
+
+      senderResources.wood -= wood;
+      senderResources.clay -= clay;
+      senderResources.iron -= iron;
+
+      receiverResources.wood += wood;
+      receiverResources.clay += clay;
+      receiverResources.iron += iron;
+
+      const updatedSender = await queryRunner.manager.save(senderResources);
+      const updatedReceiver = await queryRunner.manager.save(receiverResources);
+
+      await queryRunner.commitTransaction();
+
+      this.wsGateway.sendToUser(
+        senderId,
+        WsEvent.RESOURCE_UPDATE,
+        updatedSender,
+      );
+
+      this.wsGateway.sendToUser(
+        receiverId,
+        WsEvent.RESOURCE_UPDATE,
+        updatedReceiver,
+      );
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+
+      if (
+        err instanceof BadRequestException ||
+        err instanceof NotFoundException
+      ) {
+        throw err;
+      }
+      throw new InternalServerErrorException(
+        'Wystąpił błąd podczas transferu surowców.',
+      );
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
