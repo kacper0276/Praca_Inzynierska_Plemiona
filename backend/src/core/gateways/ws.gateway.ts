@@ -440,9 +440,6 @@ export class WsGateway
 
   public sendGroupMessageToRoom(groupId: number, payload: any) {
     const roomName = this.getGroupRoomName(groupId);
-
-    console.log('Wysyłam');
-
     this.server.to(roomName).emit(WsEvent.GROUP_MESSAGE_RECEIVED, payload);
   }
 

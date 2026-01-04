@@ -13,21 +13,25 @@ export class ChatService {
   async getOverview(userId: number): Promise<ChatOverviewDto[]> {
     const groups = await this.groupsRepo.findUserGroupsWithLastMessage(userId);
 
-    const groupDtos: ChatOverviewDto[] = groups.map((g) => {
-      const lastMsg = g.messages?.sort(
-        (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
-      )[0];
-      return {
-        id: g.id,
-        type: 'group',
-        name: g.name,
-        avatar: g.image,
-        lastMessage: lastMsg ? lastMsg.content : 'Utworzono grupę',
-        lastMessageDate: lastMsg ? lastMsg.createdAt : (g['createdAt'] as Date),
-        senderName: lastMsg?.sender?.login || '',
-        isRead: true,
-      };
-    });
+    const groupDtos: ChatOverviewDto[] = groups
+      .filter((group) => !group.description.includes('Czat klanu'))
+      .map((g) => {
+        const lastMsg = g.messages?.sort(
+          (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+        )[0];
+        return {
+          id: g.id,
+          type: 'group',
+          name: g.name,
+          avatar: g.image,
+          lastMessage: lastMsg ? lastMsg.content : 'Utworzono grupę',
+          lastMessageDate: lastMsg
+            ? lastMsg.createdAt
+            : (g['createdAt'] as Date),
+          senderName: lastMsg?.sender?.login || '',
+          isRead: true,
+        };
+      });
 
     const allDms = await this.dmsRepo.findUserAllMessages(userId);
     const dmMap = new Map<number, ChatOverviewDto>();
