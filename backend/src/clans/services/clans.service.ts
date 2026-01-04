@@ -38,6 +38,31 @@ export class ClansService {
     return await this.clansRepository.findUserClanWithMembers(userId, serverId);
   }
 
+  async kickUserFromClan(clanId: number, userId: number): Promise<void> {
+    const clan = await this.clansRepository.findOne(
+      {
+        id: clanId,
+      },
+      { relations: ['members'] },
+    );
+
+    if (!clan) {
+      throw new NotFoundException('Nie znaleziono klanu');
+    }
+
+    const memberIndex = clan.members.findIndex(
+      (member) => member.id === userId,
+    );
+
+    if (memberIndex === -1) {
+      throw new BadRequestException('Użytkownik nie należy do tego klanu');
+    }
+
+    clan.members.splice(memberIndex, 1);
+
+    await this.clansRepository.save(clan);
+  }
+
   async create(createClanDto: CreateClanDto): Promise<Clan> {
     const { memberIds, founderId, serverId, ...clanData } = createClanDto;
 

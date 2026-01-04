@@ -108,6 +108,23 @@ export class ClansController {
     return this.clansService.update(id, updateClanDto);
   }
 
+  @Delete('delete-member/:clanId/:userId')
+  @Authenticated()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'Członek klanu został pomyślnie usunięty.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Klan lub użytkownik o podanym ID nie został znaleziony.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Brak autoryzacji (niezalogowany).' })
+  removeMemberFromClan(
+    @Param('clanId', ParseIntPipe) clanId: number,
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
+    return this.clansService.kickUserFromClan(clanId, userId);
+  }
+
   @Delete(':id')
   @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
