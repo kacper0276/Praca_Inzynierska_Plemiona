@@ -3,9 +3,7 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Post,
-  Request,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
@@ -25,6 +23,7 @@ import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { Authenticated } from '@core/decorators/authenticated.decorator';
 import { Message } from '@core/decorators/message.decorator';
 import { Public } from '@core/decorators/public.decorator';
+import { CurrentUser } from '@core/decorators/current-user.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -110,8 +109,8 @@ export class AuthController {
     description: 'Zwraca dane profilu zalogowanego użytkownika.',
   })
   @ApiUnauthorizedResponse({ description: 'Brak lub nieprawidłowy token.' })
-  async getProfile(@Request() req) {
-    const userId = req.user.sub;
+  async getProfile(@CurrentUser() user: any) {
+    const userId = user.sub;
     return this.authService.getProfile(userId);
   }
 }

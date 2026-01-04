@@ -3,7 +3,6 @@ import {
   Get,
   Param,
   Query,
-  Request,
   ParseIntPipe,
   DefaultValuePipe,
 } from '@nestjs/common';
@@ -17,6 +16,7 @@ import {
 } from '@nestjs/swagger';
 import { RankingService } from '../services/ranking.service';
 import { Authenticated } from '@core/decorators/authenticated.decorator';
+import { CurrentUser } from '@core/decorators/current-user.decorator';
 
 @ApiTags('Ranking')
 @ApiBearerAuth('access-token')
@@ -35,11 +35,11 @@ export class RankingController {
     @Param('serverName') serverName: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ) {
     return this.rankingService.getRankingForServer(
       serverName,
-      req.user.sub,
+      user.sub,
       page,
       limit,
     );

@@ -35,6 +35,7 @@ import { FriendRequestsModule } from './friend-requests/friend-requests.module';
 import { ChatModule } from './chat/chat.module';
 import { RankingModule } from './ranking/ranking.module';
 import { QuestsModule } from './quests/quests.module';
+import { ArmyModule } from './army/army.module';
 
 @Module({
   imports: [
@@ -121,6 +122,7 @@ import { QuestsModule } from './quests/quests.module';
     ChatModule,
     RankingModule,
     QuestsModule,
+    ArmyModule,
   ],
   controllers: [],
   providers: [

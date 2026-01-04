@@ -1,8 +1,9 @@
-import { Controller, Get, Request } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
 import { Authenticated } from '../../core/decorators/authenticated.decorator';
 import { ChatService } from '../services/chat.service';
 import { ChatOverviewDto } from '../models/chat-overview-item.model';
+import { CurrentUser } from '@core/decorators/current-user.decorator';
 
 @ApiTags('Chat')
 @ApiBearerAuth('access-token')
@@ -13,7 +14,7 @@ export class ChatController {
   @Get('overview')
   @Authenticated()
   @ApiOkResponse({ type: [ChatOverviewDto] })
-  async getOverview(@Request() req: any) {
-    return this.chatService.getOverview(req.user.sub);
+  async getOverview(@CurrentUser() user: any) {
+    return this.chatService.getOverview(user.sub);
   }
 }

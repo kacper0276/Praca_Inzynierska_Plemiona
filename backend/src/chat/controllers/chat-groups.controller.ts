@@ -4,7 +4,6 @@ import {
   Post,
   Body,
   Param,
-  Request,
   ParseIntPipe,
 } from '@nestjs/common';
 import {
@@ -47,9 +46,9 @@ export class ChatGroupsController {
   async sendMessage(
     @Param('id', ParseIntPipe) groupId: number,
     @Body() dto: CreateGroupMessageDto,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ) {
-    const userId = req.user.sub;
+    const userId = user.sub;
     return this.chatGroupsService.sendMessage(userId, groupId, dto);
   }
 
@@ -71,8 +70,8 @@ export class ChatGroupsController {
   @ApiOkResponse({
     description: 'Pobrano listę grup, do których należy użytkownik.',
   })
-  async getUserGroups(@Request() req: any) {
-    const userId = req.user.sub;
+  async getUserGroups(@CurrentUser() user: any) {
+    const userId = user.sub;
     return this.chatGroupsService.getUserGroups(userId);
   }
 
@@ -85,9 +84,9 @@ export class ChatGroupsController {
   })
   async getGroupMessages(
     @Param('id', ParseIntPipe) groupId: number,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ) {
-    const userId = req.user.sub;
+    const userId = user.sub;
     return this.chatGroupsService.getGroupMessages(userId, groupId);
   }
 }

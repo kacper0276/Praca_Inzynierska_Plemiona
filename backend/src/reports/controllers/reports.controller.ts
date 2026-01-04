@@ -6,7 +6,6 @@ import {
   Query,
   Param,
   ParseIntPipe,
-  Request,
   HttpStatus,
   HttpCode,
   Patch,
@@ -29,6 +28,7 @@ import { UserRole } from '@core/enums/user-role.enum';
 import { Roles } from '@core/decorators/roles.decorator';
 import { ListReportsQueryDto } from '../dto/list-reports.query.dto';
 import { Authenticated } from '@core/decorators/authenticated.decorator';
+import { CurrentUser } from '@core/decorators/current-user.decorator';
 
 @ApiTags('Reports')
 @ApiBearerAuth('access-token')
@@ -47,9 +47,9 @@ export class ReportsController {
   })
   create(
     @Body() createReportDto: CreateReportDto,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ): Promise<Report> {
-    const reporterId = req.user.sub;
+    const reporterId = user.sub;
     return this.reportsService.createReport(reporterId, createReportDto);
   }
 
@@ -77,10 +77,10 @@ export class ReportsController {
   })
   resolve(
     @Param('id', ParseIntPipe) id: number,
-    @Request() req: any,
+    @CurrentUser() user: any,
     @Body() data: { resolvedStatus: boolean },
   ): Promise<Report> {
-    const resolverId = req.user.sub;
+    const resolverId = user.sub;
     return this.reportsService.resolveReport(
       id,
       resolverId,

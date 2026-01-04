@@ -11,3 +11,4 @@ export * from './servers.service';
 export * from './users.service';
 export * from './villages.service';
 export * from './quests.service';
+export * from './army.service';

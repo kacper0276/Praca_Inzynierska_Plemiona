@@ -5,7 +5,6 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Request,
 } from '@nestjs/common';
 import { FriendRequestsService } from '../services/friend-requests.service';
 import {
@@ -19,6 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { Authenticated } from '@core/decorators/authenticated.decorator';
 import { RespondToFriendRequestDto } from '../dto/respond-to-friend-request.dto';
+import { CurrentUser } from '@core/decorators/current-user.decorator';
 
 @ApiTags('Friend Requests')
 @ApiBearerAuth('access-token')
@@ -30,8 +30,8 @@ export class FriendRequestsController {
   @Authenticated()
   @ApiOkResponse({ description: 'Lista wysłanych zaproszeń do znajomych.' })
   @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
-  async getSentFriendRequests(@Request() req: any) {
-    const userId = req.user.sub;
+  async getSentFriendRequests(@CurrentUser() user: any) {
+    const userId = user.sub;
     return this.friendRequestsService.getSentFriendRequests(userId);
   }
 
@@ -39,8 +39,8 @@ export class FriendRequestsController {
   @Authenticated()
   @ApiOkResponse({ description: 'Lista otrzymanych zaproszeń do znajomych.' })
   @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
-  async getReceivedFriendRequests(@Request() req: any) {
-    const userId = req.user.sub;
+  async getReceivedFriendRequests(@CurrentUser() user: any) {
+    const userId = user.sub;
     return this.friendRequestsService.getReceivedFriendRequests(userId);
   }
 
@@ -51,8 +51,8 @@ export class FriendRequestsController {
       'Lista wszystkich zaproszeń do znajomych (wysłanych i otrzymanych).',
   })
   @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
-  async getAllFriendRequests(@Request() req: any) {
-    const userId = req.user.sub;
+  async getAllFriendRequests(@CurrentUser() user: any) {
+    const userId = user.sub;
     return this.friendRequestsService.getAllFriendRequests(userId);
   }
 
@@ -70,9 +70,9 @@ export class FriendRequestsController {
   async respondToFriendRequest(
     @Param('id', ParseIntPipe) id: number,
     @Body() respondDto: RespondToFriendRequestDto,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ) {
-    const userId = req.user.sub;
+    const userId = user.sub;
     return this.friendRequestsService.respondToFriendRequest(
       id,
       userId,

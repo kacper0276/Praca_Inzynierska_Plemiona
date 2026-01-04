@@ -30,6 +30,7 @@ import {
 import { Roles } from '@core/decorators/roles.decorator';
 import { UserRole } from '@core/enums/user-role.enum';
 import { Authenticated } from '@core/decorators/authenticated.decorator';
+import { CurrentUser } from '@core/decorators/current-user.decorator';
 
 @ApiTags('Villages')
 @ApiBearerAuth('access-token')
@@ -63,9 +64,9 @@ export class VillagesController {
   })
   async getByUserId(
     @Param('userId', ParseIntPipe) userId: number,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ) {
-    if (req.user.role !== UserRole.ADMIN && req.user.sub !== userId) {
+    if (user.role !== UserRole.ADMIN && user.sub !== userId) {
       throw new ForbiddenException('Nie masz uprawnień do tego zasobu.');
     }
     return this.villagesService.getVillageForUser(userId);
@@ -79,10 +80,10 @@ export class VillagesController {
   async updateVillage(
     @Param('id', ParseIntPipe) id: number,
     @Body() villageStateDto: VillageStateDto,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ) {
-    if (req.user.role !== UserRole.ADMIN) {
-      const village = await this.villagesService.getByUserId(req.user.sub);
+    if (user.role !== UserRole.ADMIN) {
+      const village = await this.villagesService.getByUserId(user.sub);
       if (village.id !== id) {
         throw new ForbiddenException('Możesz edytować tylko własną wioskę.');
       }

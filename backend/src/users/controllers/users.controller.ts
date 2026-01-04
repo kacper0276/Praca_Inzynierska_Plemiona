@@ -10,7 +10,6 @@ import {
   HttpCode,
   HttpStatus,
   ForbiddenException,
-  Request,
   UseInterceptors,
   UploadedFiles,
 } from '@nestjs/common';
@@ -33,6 +32,7 @@ import { Authenticated } from '@core/decorators/authenticated.decorator';
 import { AuthService } from 'src/auth/services/auth.service';
 import { MulterConfigInterceptor } from '@core/interceptors/multer-config.interceptor';
 import { UpdateUserDeletionTimeDto } from '../dto/update-user-deletion-time.dto';
+import { CurrentUser } from '@core/decorators/current-user.decorator';
 
 @ApiTags('Users')
 @ApiBearerAuth('access-token')
@@ -65,9 +65,9 @@ export class UsersController {
   @ApiConflictResponse({ description: 'Zaproszenie już istnieje.' })
   async sendFriendRequestByEmail(
     @Param('email') email: string,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ) {
-    const senderId = req.user.sub;
+    const senderId = user.sub;
     return this.usersService.sendFriendRequestByEmail(senderId, email);
   }
 
@@ -80,9 +80,9 @@ export class UsersController {
   @ApiConflictResponse({ description: 'Zaproszenie już istnieje.' })
   async sendFriendRequest(
     @Param('receiverId', ParseIntPipe) receiverId: number,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ) {
-    const senderId = req.user.sub;
+    const senderId = user.sub;
     return this.usersService.sendFriendRequest(senderId, receiverId);
   }
 
@@ -90,8 +90,8 @@ export class UsersController {
   @Authenticated()
   @ApiOkResponse({ description: 'Lista znajomych użytkownika' })
   @ApiForbiddenResponse({ description: 'Brak uprawnień' })
-  async getUserFriend(@Request() req: any) {
-    const userId = +req.user.sub;
+  async getUserFriend(@CurrentUser() user: any) {
+    const userId = user.sub;
     return this.usersService.getUserFirends(userId);
   }
 
@@ -120,8 +120,8 @@ export class UsersController {
   @Authenticated()
   @ApiOkResponse({ description: 'Lista użytkowników pasujących do zapytania.' })
   @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
-  async searchUsers(@Param('query') query: string, @Request() req: any) {
-    const currentUserId = req.user.sub;
+  async searchUsers(@Param('query') query: string, @CurrentUser() user: any) {
+    const currentUserId = user.sub;
     const users = await this.usersService.searchUsers(query, currentUserId);
     return users;
   }
@@ -133,10 +133,10 @@ export class UsersController {
   })
   @ApiForbiddenResponse({ description: 'Brak uprawnień' })
   async findWithoutClans(
-    @Request() req: any,
+    @CurrentUser() user: any,
     @Param('serverId', ParseIntPipe) serverId: number,
   ) {
-    const userId = +req.user.sub;
+    const userId = user.sub;
 
     return this.usersService.getFriendsWithoutClans(userId, serverId);
   }
@@ -146,8 +146,11 @@ export class UsersController {
   @ApiOkResponse({ description: 'Dane użytkownika.' })
   @ApiNotFoundResponse({ description: 'Użytkownik nie znaleziony.' })
   @ApiForbiddenResponse({ description: 'Brak uprawnień.' })
-  async findOne(@Param('id', ParseIntPipe) id: number, @Request() req) {
-    if (req.user.role !== UserRole.ADMIN && req.user.sub !== id) {
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() currentUser: any,
+  ) {
+    if (currentUser.role !== UserRole.ADMIN && currentUser.sub !== id) {
       throw new ForbiddenException(
         'Nie masz uprawnień do przeglądania tego profilu.',
       );
@@ -164,9 +167,9 @@ export class UsersController {
   async update(
     @Param('email') email: string,
     @Body() updateUserDto: UpdateUserDto,
-    @Request() req: any,
+    @CurrentUser() user: any,
   ) {
-    const userMakingRequest = req.user;
+    const userMakingRequest = user;
 
     if (userMakingRequest.role !== UserRole.ADMIN) {
       throw new ForbiddenException(
@@ -191,14 +194,14 @@ export class UsersController {
   async updateAndLogin(
     @Param('email') email: string,
     @Body() updateUserDto: UpdateUserDto,
-    @Request() req: any,
+    @CurrentUser() user: any,
     @UploadedFiles()
     files: {
       profileImage?: Express.Multer.File[];
       backgroundImage?: Express.Multer.File[];
     },
   ) {
-    const userMakingRequest = req.user;
+    const userMakingRequest = user;
 
     if (
       userMakingRequest.role !== UserRole.ADMIN ||
