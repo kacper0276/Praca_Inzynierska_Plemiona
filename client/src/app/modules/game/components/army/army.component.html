@@ -1,78 +1,140 @@
 <div class="army-container">
-  <h3 class="title">Armia</h3>
-
-  <div class="units-grid">
-    <div
-      class="unit-card"
-      *ngFor="let unit of units"
-      [class.selected]="unit.unitType"
-      (click)="selectUnit(unit.unitType)"
-      role="button"
-      tabindex="0"
-    >
-      <div class="unit-top">
-        <div class="unit-illustration" aria-hidden>
-          <span class="shield">🛡️</span>
-        </div>
-
-        <div class="unit-info">
-          <div class="unit-header">
-            <strong>{{ unit.name }}</strong>
-            <span class="level">Lv. {{ unit.level }}</span>
-          </div>
-
-          <div class="unit-body">
-            <div class="unit-count">
-              Posiada: <span class="badge">{{ unit.count }}</span>
-            </div>
-
-            <div class="unit-cost">
-              Koszt:
-              <span class="cost"
-                ><span class="icon">🌲</span>{{ unit.cost.wood }}</span
-              >
-              <span class="cost"
-                ><span class="icon">⛰️</span>{{ unit.cost.clay }}</span
-              >
-              <span class="cost"
-                ><span class="icon">⛓️</span>{{ unit.cost.iron }}</span
-              >
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="unit-actions">
-        <button
-          mat-raised-button
-          class="upgrade-btn"
-          (click)="upgradeUnit(unit); $event.stopPropagation()"
-        >
-          <mat-icon>arrow_upward</mat-icon>
-          Ulepsz
-        </button>
-      </div>
-    </div>
+  <div class="header-section">
+    <h3 class="title">Koszary</h3>
+    <span class="subtitle">Zarządzaj armią i rekrutuj jednostki</span>
   </div>
 
-  <div class="create-panel" *ngIf="selectedUnit">
-    <div class="create-card">
-      <div class="create-header">
-        <h4>Twórz {{ selectedUnit.name }}</h4>
-        <div class="create-meta">Lv. {{ selectedUnit.level }}</div>
-      </div>
+  <div class="content-wrapper">
+    <div class="units-grid">
+      <div
+        class="unit-card"
+        *ngFor="let unit of units"
+        [class.selected]="selectedUnit?.type === unit.type"
+        (click)="selectUnit(unit)"
+        tabindex="0"
+      >
+        <div class="card-content">
+          <div class="unit-icon">
+            <span>{{ unit.icon }}</span>
+          </div>
 
-      <div class="create-body">
-        <label class="create-label">
-          Ilość
-          <input type="number" [(ngModel)]="createAmount" min="1" />
-        </label>
+          <div class="unit-details">
+            <div class="unit-header">
+              <h4>{{ unit.name }}</h4>
+              <span class="level-badge">Lv. {{ unit.level }}</span>
+            </div>
 
-        <div class="create-actions">
-          <button mat-raised-button color="accent" (click)="createUnits()">
-            Stwórz
+            <div class="unit-stats">
+              <div class="stat-row">
+                <span class="label">Dostępne:</span>
+                <span class="value">{{ unit.count }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="upgrade-cost-preview">
+            <small>Ulepszenie:</small>
+            <div class="resources-mini">
+              <span *ngIf="getUpgradeCost(unit).wood > 0"
+                ><i class="wood"></i> {{ getUpgradeCost(unit).wood }}</span
+              >
+              <span *ngIf="getUpgradeCost(unit).clay > 0"
+                ><i class="stone"></i> {{ getUpgradeCost(unit).clay }}</span
+              >
+              <span *ngIf="getUpgradeCost(unit).iron > 0"
+                ><i class="iron"></i> {{ getUpgradeCost(unit).iron }}</span
+              >
+            </div>
+          </div>
+
+          <button
+            class="upgrade-btn"
+            (click)="upgradeUnit(unit, $event)"
+            matTooltip="Ulepsz poziom"
+          >
+            <mat-icon>arrow_upward</mat-icon>
           </button>
         </div>
+      </div>
+    </div>
+
+    <div class="recruit-panel" *ngIf="selectedUnit">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="big-icon">{{ selectedUnit.icon }}</span>
+          <div>
+            <h4>{{ selectedUnit.name }}</h4>
+            <small>{{ selectedUnit.description }}</small>
+          </div>
+        </div>
+        <button mat-icon-button (click)="selectedUnit = null">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="panel-body">
+        <div class="input-group">
+          <label>Liczba jednostek</label>
+          <div class="number-input">
+            <button
+              (click)="createAmount = createAmount > 1 ? createAmount - 1 : 1"
+            >
+              -
+            </button>
+            <input type="number" [(ngModel)]="createAmount" min="1" />
+            <button (click)="createAmount = createAmount + 1">+</button>
+          </div>
+        </div>
+
+        <div class="cost-summary">
+          <label>Wymagane surowce</label>
+          <div class="resource-tags">
+            <div
+              class="res-tag wood"
+              *ngIf="getRecruitCost(selectedUnit).wood > 0"
+            >
+              <span class="icon"
+                ><img src="/assets/icons/wood.png" width="24"
+              /></span>
+              <span class="amount">{{
+                getRecruitCost(selectedUnit).wood
+              }}</span>
+            </div>
+            <div
+              class="res-tag stone"
+              *ngIf="getRecruitCost(selectedUnit).clay > 0"
+            >
+              <span class="icon"
+                ><img src="/assets/icons/clay.png" width="24"
+              /></span>
+              <span class="amount">{{
+                getRecruitCost(selectedUnit).clay
+              }}</span>
+            </div>
+            <div
+              class="res-tag iron"
+              *ngIf="getRecruitCost(selectedUnit).iron > 0"
+            >
+              <span class="icon"
+                ><img src="/assets/icons/iron.png" width="24"
+              /></span>
+              <span class="amount">{{
+                getRecruitCost(selectedUnit).iron
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <button
+          mat-flat-button
+          class="recruit-submit-btn"
+          (click)="createUnits()"
+        >
+          <mat-icon>group_add</mat-icon>
+          Rekrutuj
+        </button>
       </div>
     </div>
   </div>

@@ -18,7 +18,7 @@ export const EMPTY_PLOT_OPTIONS: RadialMenuOption[] = [
 export const BUILDING_OPTIONS: RadialMenuOption[] = [
   {
     action: 'details',
-    iconName: 'info',
+    iconUrl: '/assets/icons/info.png',
     tooltip: 'Szczegóły',
   },
   {
