@@ -15,6 +15,7 @@ import { ClansService } from '../services/clans.service';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNoContentResponse,
@@ -30,12 +31,41 @@ import { Public } from '@core/decorators/public.decorator';
 import { UpdateClanDto } from '../dto/update-clan.dto';
 import { Message } from '@core/decorators/message.decorator';
 import { Authenticated } from '@core/decorators/authenticated.decorator';
+import { CurrentUser } from '@core/decorators/current-user.decorator';
 
 @ApiTags('Clans')
 @ApiBearerAuth('access-token')
 @Controller('clans')
 export class ClansController {
   constructor(private readonly clansService: ClansService) {}
+
+  @Post(':clanId/add-members')
+  @Authenticated()
+  @HttpCode(HttpStatus.OK)
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        userIds: {
+          type: 'array',
+          items: { type: 'number' },
+          example: [12, 45, 78],
+        },
+      },
+    },
+  })
+  @ApiNotFoundResponse({ description: 'Klan nie istnieje.' })
+  @ApiForbiddenResponse({
+    description:
+      'Brak uprawnień. Tylko założyciel klanu może dodawać członków.',
+  })
+  async addMembers(
+    @Param('clanId', ParseIntPipe) clanId: number,
+    @Body('userIds') userIds: number[],
+    @CurrentUser() user: any,
+  ): Promise<void> {
+    return this.clansService.addMembersToClan(clanId, userIds, user.sub);
+  }
 
   @Post()
   @Roles(UserRole.ADMIN, UserRole.USER)

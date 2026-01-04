@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -36,6 +37,49 @@ export class ClansService {
     serverId: number,
   ): Promise<Clan | null> {
     return await this.clansRepository.findUserClanWithMembers(userId, serverId);
+  }
+
+  async addMembersToClan(
+    clanId: number,
+    userIds: number[],
+    currentUserId: number,
+  ): Promise<void> {
+    const clan = await this.clansRepository.findOne(
+      {
+        id: clanId,
+      },
+      { relations: ['founder', 'members'] },
+    );
+
+    if (!clan) {
+      throw new NotFoundException('Nie znaleziono klanu.');
+    }
+
+    if (clan.founder.id !== currentUserId) {
+      throw new ForbiddenException(
+        'Tylko założyciel klanu może dodawać nowych członków.',
+      );
+    }
+
+    const usersToAdd = await this.usersRepository.find({
+      where: { id: In(userIds) },
+    });
+
+    if (!usersToAdd || usersToAdd.length === 0) {
+      throw new BadRequestException('Nie znaleziono wskazanych użytkowników.');
+    }
+
+    const currentMemberIds = new Set(clan.members.map((m) => m.id));
+    const newUniqueMembers = usersToAdd.filter(
+      (u) => !currentMemberIds.has(u.id),
+    );
+
+    if (newUniqueMembers.length === 0) {
+      return;
+    }
+
+    clan.members.push(...newUniqueMembers);
+    await this.clansRepository.save(clan);
   }
 
   async kickUserFromClan(clanId: number, userId: number): Promise<void> {
