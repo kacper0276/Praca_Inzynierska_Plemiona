@@ -23,6 +23,12 @@ export class ChatGroupsService {
     );
   }
 
+  getChatByName(chatName: string): Observable<ApiResponse<ChatItem>> {
+    return this.httpService.get<ChatItem>(
+      `/chat-groups/by-chat-name/${chatName}`
+    );
+  }
+
   sendMessage(
     groupId: number,
     content: string
