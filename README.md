@@ -6,7 +6,7 @@ Projekt składa się z backendu (NestJS) oraz klienta (Angular).
 
 - **Node.js**: Zalecana wersja **v22.17.0**
 - **Yarn**: Wymagany do obsługi backendu.
-- **Docker**: Do uruchomienia bazy danych.
+- **Docker**: Do uruchomienia bazy danych (Opcjonalnie).
 
 ## 📂 Struktura Projektu
 
