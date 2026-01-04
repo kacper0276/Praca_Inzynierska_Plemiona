@@ -8,19 +8,19 @@ export const UNIT_CONFIG: Record<
   [UnitType.WARRIOR]: {
     name: 'Wojownik',
     description: 'Podstawowa jednostka piechoty.',
-    icon: '',
+    icon: '/assets/icons/sword_army.png',
     baseCost: { wood: 320, clay: 0, iron: 160 },
   },
   [UnitType.ARCHER]: {
     name: 'Łucznik',
     description: 'Skuteczny przeciwko piechocie.',
-    icon: '',
+    icon: '/assets/icons/bow.png',
     baseCost: { wood: 15, clay: 0, iron: 3 },
   },
   [UnitType.PIKEMAN]: {
     name: 'Pikinier',
     description: 'Zabójca kawalerii.',
-    icon: '',
+    icon: '/assets/icons/pikeman.png',
     baseCost: { wood: 5, clay: 5, iron: 0 },
   },
 };

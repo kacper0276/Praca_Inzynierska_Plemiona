@@ -1,6 +1,5 @@
 <div class="army-container">
   <div class="header-section">
-    <h3 class="title">Koszary</h3>
     <span class="subtitle">Zarządzaj armią i rekrutuj jednostki</span>
   </div>
 
@@ -15,7 +14,7 @@
       >
         <div class="card-content">
           <div class="unit-icon">
-            <span>{{ unit.icon }}</span>
+            <img [src]="unit.icon" alt="Unit Icon" width="56" height="56" />
           </div>
 
           <div class="unit-details">
@@ -63,13 +62,19 @@
     <div class="recruit-panel" *ngIf="selectedUnit">
       <div class="panel-header">
         <div class="panel-title">
-          <span class="big-icon">{{ selectedUnit.icon }}</span>
+          <img
+            class="big-icon"
+            [src]="selectedUnit.icon"
+            alt="Unit Icon"
+            width="56"
+            height="56"
+          />
           <div>
             <h4>{{ selectedUnit.name }}</h4>
             <small>{{ selectedUnit.description }}</small>
           </div>
         </div>
-        <button mat-icon-button (click)="selectedUnit = null">
+        <button class="close-button" (click)="selectedUnit = null">
           <mat-icon>close</mat-icon>
         </button>
       </div>
