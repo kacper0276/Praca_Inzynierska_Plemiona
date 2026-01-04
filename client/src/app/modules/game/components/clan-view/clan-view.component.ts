@@ -39,7 +39,17 @@ export class ClanViewComponent {
     return this.clan.founder.id === this.currentUserId;
   }
 
-  kick(id: number) {}
+  kick(userId: number) {
+    if (this.clan && this.clan.id) {
+      this.clansService.kickUserFromClan(this.clan.id, userId).subscribe({
+        next: () => {
+          this.clan.members = this.clan.members.filter(
+            (member) => member.id !== userId
+          );
+        },
+      });
+    }
+  }
 
   sendMsg() {
     if (!this.msgText.trim()) return;

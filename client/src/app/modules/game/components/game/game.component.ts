@@ -121,9 +121,6 @@ export class GameComponent implements OnInit {
         )
         .subscribe({
           next: () => {
-            console.log(
-              'Połączenie WebSocket nawiązane. Dołączanie do pokoju statusu serwera...'
-            );
             const userEmail = this.usersService.getCurrentUser()?.email;
 
             this.isModalOpen = false;

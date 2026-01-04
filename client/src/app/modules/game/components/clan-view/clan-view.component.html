@@ -20,7 +20,7 @@
       @for (m of clan.members; track m.id) {
       <div class="member-item">
         <span
-          >{{ m.login }} @if(m.id === clan.founder.id){
+          >{{ m.login }} @if(m?.id === clan.founder.id){
           <small>(Lider)</small> }</span
         >
         @if (isFounder && m.id !== currentUserId) {

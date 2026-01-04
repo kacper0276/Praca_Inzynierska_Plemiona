@@ -17,4 +17,13 @@ export class ClansService {
       `/clans/get-user-clan-for-server/${serverId}`
     );
   }
+
+  kickUserFromClan(
+    clanId: number,
+    userId: number
+  ): Observable<ApiResponse<null>> {
+    return this.httpService.delete<null>(
+      `/clans/delete-member/${clanId}/${userId}`
+    );
+  }
 }

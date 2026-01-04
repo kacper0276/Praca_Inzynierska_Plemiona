@@ -1,4 +1,5 @@
 export * from './api-response.model';
+export * from './base.model';
 export * from './user.model';
 export * from './building.model';
 export * from './radial-menu-option.model';
@@ -7,7 +8,6 @@ export * from './resources.model';
 export * from './server-status-log.model';
 export * from './server.model';
 export * from './resources.model';
-export * from './base.model';
 export * from './toast.model';
 export * from './report.model';
 export * from './friend-request.model';
