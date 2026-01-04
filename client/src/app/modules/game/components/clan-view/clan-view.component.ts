@@ -40,7 +40,7 @@ export class ClanViewComponent {
     private readonly serverService: ServerService
   ) {
     this.resForm = this.fb.group({
-      to: ['', Validators.required],
+      to: [null, Validators.required],
       wood: [0],
       clay: [0],
       iron: [0],
@@ -111,9 +111,45 @@ export class ClanViewComponent {
   }
 
   sendRes() {
-    const val = this.resForm.value;
-    const cost = { wood: val.wood, clay: val.clay, iron: val.iron };
-    if (this.resSvc.spendResources(cost)) {
+    if (this.resForm.invalid) {
+      this.toastr.showWarning('Wybierz odbiorcę i poprawne ilości.');
+      return;
     }
+
+    const val = this.resForm.value;
+    const amounts = {
+      wood: val.wood || 0,
+      clay: val.clay || 0,
+      iron: val.iron || 0,
+    };
+
+    if (amounts.wood + amounts.clay + amounts.iron <= 0) {
+      this.toastr.showWarning('Musisz wybrać przynajmniej jeden surowiec.');
+      return;
+    }
+
+    const currentServer = this.serverService.getServer();
+    if (!currentServer || !currentServer.id) {
+      this.toastr.showError('Błąd serwera. Odśwież stronę.');
+      return;
+    }
+
+    this.resSvc
+      .sendResourcesToOtherPlayer(+val.to, currentServer.id, amounts)
+      .subscribe({
+        next: () => {
+          this.toastr.showSuccess('Surowce zostały wysłane!');
+          this.resForm.reset({ to: null, wood: 0, clay: 0, iron: 0 });
+        },
+        error: (err) => {
+          if (err.status === 400) {
+            this.toastr.showError(
+              err.error?.message || 'Nie masz wystarczającej ilości surowców.'
+            );
+          } else {
+            this.toastr.showError('Wystąpił błąd podczas transferu.');
+          }
+        },
+      });
   }
 }

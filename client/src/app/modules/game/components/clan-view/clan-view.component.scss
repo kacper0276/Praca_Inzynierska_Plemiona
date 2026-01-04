@@ -78,6 +78,16 @@
   }
 }
 
+.resources-select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+
+  option {
+    color: #444 !important;
+  }
+}
+
 .res-grid {
   display: flex;
   gap: 10px;
@@ -92,8 +102,10 @@
   width: 100%;
   padding: 10px;
   color: var(--text);
+  background: $green-600;
   border: none;
   cursor: pointer;
+  border-radius: 4px;
 }
 
 .btn-add {

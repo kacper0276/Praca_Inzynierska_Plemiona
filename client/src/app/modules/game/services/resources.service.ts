@@ -51,6 +51,22 @@ export class ResourcesService implements OnDestroy {
     this.resourcesSubject.next(resources);
   }
 
+  public sendResourcesToOtherPlayer(
+    receiverId: number,
+    serverId: number,
+    amounts: { wood: number; clay: number; iron: number }
+  ): Observable<ApiResponse<void>> {
+    const payload = {
+      receiverId,
+      serverId,
+      wood: amounts.wood || 0,
+      clay: amounts.clay || 0,
+      iron: amounts.iron || 0,
+    };
+
+    return this.httpService.post<void>('/resources/transfer', payload);
+  }
+
   public addResource(resource: keyof Resources, amount: number): void {
     const currentResources = this.resourcesSubject.getValue();
 
