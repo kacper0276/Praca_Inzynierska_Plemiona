@@ -5,6 +5,7 @@ import { VillagesModule } from 'src/villages/villages.module';
 import { BuildingsModule } from 'src/buildings/buildings.module';
 import { FriendRequestsModule } from 'src/friend-requests/friend-requests.module';
 import { ChatModule } from 'src/chat/chat.module';
+import { QuestsModule } from 'src/quests/quests.module';
 
 @Global()
 @Module({
@@ -14,6 +15,7 @@ import { ChatModule } from 'src/chat/chat.module';
     forwardRef(() => BuildingsModule),
     forwardRef(() => FriendRequestsModule),
     forwardRef(() => ChatModule),
+    forwardRef(() => QuestsModule),
   ],
   providers: [WsGateway],
   exports: [WsGateway],

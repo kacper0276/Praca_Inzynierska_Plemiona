@@ -30,5 +30,6 @@ import { ResourcesModule } from 'src/resources/resources.module';
     UserObjectiveProgressRepository,
     UserQuestProgressRepository,
   ],
+  exports: [QuestsService],
 })
 export class QuestsModule {}

@@ -211,12 +211,13 @@ export class BuildingsService {
   async upgradeForUser(
     userId: number,
     dto: UpgradeBuildingWsDto,
-  ): Promise<void> {
+  ): Promise<Building> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     let updatedResources: Resources;
+    let savedBuilding: Building;
 
     try {
       const buildingRepository = queryRunner.manager.getRepository(Building);
@@ -262,7 +263,7 @@ export class BuildingsService {
       building.maxHealth += 10;
       building.health = building.maxHealth;
 
-      await buildingRepository.save(building);
+      savedBuilding = await buildingRepository.save(building);
       await queryRunner.commitTransaction();
     } catch (err) {
       await queryRunner.rollbackTransaction();
@@ -278,6 +279,8 @@ export class BuildingsService {
         updatedResources,
       );
     }
+
+    return savedBuilding;
   }
 
   async moveForUser(userId: number, dto: MoveBuildingWsDto): Promise<void> {

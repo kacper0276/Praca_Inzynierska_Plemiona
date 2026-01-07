@@ -1,11 +1,22 @@
 import { BaseEntity } from '@core/entities/base.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { Quest } from './quest.entity';
+import { QuestObjectiveType } from '@core/enums/quest-objective-type.enum';
 
 @Entity({ name: 'quest_objectives' })
 export class QuestObjective extends BaseEntity {
   @Column()
   description: string;
+
+  @Column({
+    type: 'enum',
+    enum: QuestObjectiveType,
+    default: QuestObjectiveType.BUILD,
+  })
+  type: QuestObjectiveType;
+
+  @Column({ nullable: true })
+  target: string;
 
   @Column()
   goalCount: number;
