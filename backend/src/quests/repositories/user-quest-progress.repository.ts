@@ -80,7 +80,11 @@ export class UserQuestProgressRepository extends BaseRepository<UserQuestProgres
   async findUserQuestsOnServer(userId: number, serverId: number) {
     return this.repository.find({
       where: { user: { id: userId }, server: { id: serverId } },
-      relations: ['quest', 'objectivesProgress'],
+      relations: [
+        'quest',
+        'objectivesProgress',
+        'objectivesProgress.objective',
+      ],
     });
   }
 }
