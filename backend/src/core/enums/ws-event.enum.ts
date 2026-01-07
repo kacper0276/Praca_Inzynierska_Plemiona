@@ -43,4 +43,8 @@ export enum WsEvent {
   LEAVE_GROUP_ROOM = 'leave_group_room',
   GROUP_MESSAGE_SEND = 'group_message_send',
   GROUP_MESSAGE_RECEIVED = 'group_message_received',
+
+  // Quest
+  QUEST_UPDATE = 'quest_update',
+  QUEST_COMPLETED = 'quest_completed',
 }

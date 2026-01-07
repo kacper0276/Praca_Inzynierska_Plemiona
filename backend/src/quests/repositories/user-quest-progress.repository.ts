@@ -13,6 +13,21 @@ export class UserQuestProgressRepository extends BaseRepository<UserQuestProgres
     super();
   }
 
+  async findActiveQuests(userId: number, serverId: number) {
+    return this.repository.find({
+      where: {
+        user: { id: userId } as any,
+        server: { id: serverId } as any,
+        isCompleted: false,
+      },
+      relations: [
+        'objectivesProgress',
+        'objectivesProgress.objective',
+        'quest',
+      ],
+    });
+  }
+
   findAll(options?: any): Promise<UserQuestProgress[]> {
     return this.repository.find(options);
   }
@@ -65,7 +80,11 @@ export class UserQuestProgressRepository extends BaseRepository<UserQuestProgres
   async findUserQuestsOnServer(userId: number, serverId: number) {
     return this.repository.find({
       where: { user: { id: userId }, server: { id: serverId } },
-      relations: ['quest', 'objectivesProgress'],
+      relations: [
+        'quest',
+        'objectivesProgress',
+        'objectivesProgress.objective',
+      ],
     });
   }
 }

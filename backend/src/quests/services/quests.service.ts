@@ -1,10 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ResourcesRepository } from 'src/resources/repositories/resources.repository';
 import { UserObjectiveProgress } from '../entities/user-objective-progress.entity';
 import { QuestsRepository } from '../repositories/quests.repository';
 import { UserObjectiveProgressRepository } from '../repositories/user-objective-progress.repository';
 import { UserQuestProgressRepository } from '../repositories/user-quest-progress.repository';
 import { CreateQuestDto } from '../dto/create-quest.dto';
+import { WsGateway } from '@core/gateways/ws.gateway';
+import { WsEvent } from '@core/enums/ws-event.enum';
+import { QuestObjectiveType } from '@core/enums/quest-objective-type.enum';
 
 @Injectable()
 export class QuestsService {
@@ -13,6 +21,8 @@ export class QuestsService {
     private readonly userQuestRepo: UserQuestProgressRepository,
     private readonly objectiveProgressRepo: UserObjectiveProgressRepository,
     private readonly resourcesRepo: ResourcesRepository,
+    @Inject(forwardRef(() => WsGateway))
+    private readonly wsGateway: WsGateway,
   ) {}
 
   async createQuest(data: CreateQuestDto) {
@@ -121,11 +131,67 @@ export class QuestsService {
       res.clay += progress.quest.clayReward;
       res.iron += progress.quest.ironReward;
       res.population += progress.quest.populationReward;
+
       await this.resourcesRepo.save(res);
+      this.wsGateway.sendToUser(userId, WsEvent.QUEST_COMPLETED, {
+        questTitle: progress.quest.title,
+        rewards: {
+          wood: progress.quest.woodReward,
+          clay: progress.quest.clayReward,
+          iron: progress.quest.ironReward,
+        },
+      });
     }
   }
 
   async getUserQuests(userId: number, serverId: number) {
     return this.userQuestRepo.findUserQuestsOnServer(userId, serverId);
+  }
+
+  async checkProgress(
+    userId: number,
+    serverId: number,
+    type: QuestObjectiveType,
+    target: string,
+    amount: number = 1,
+  ) {
+    const activeQuests = await this.userQuestRepo.findActiveQuests(
+      userId,
+      serverId,
+    );
+
+    if (!activeQuests.length) return;
+
+    let anyUpdate = false;
+
+    for (const userQuest of activeQuests) {
+      for (const objProgress of userQuest.objectivesProgress) {
+        const definition = objProgress.objective;
+
+        if (objProgress.isCompleted) continue;
+
+        if (definition.type === type && definition.target === target) {
+          objProgress.currentCount += amount;
+
+          if (objProgress.currentCount >= definition.goalCount) {
+            objProgress.currentCount = definition.goalCount;
+            objProgress.isCompleted = true;
+
+            await this.claimObjectiveReward(userId, serverId, objProgress);
+          }
+
+          await this.objectiveProgressRepo.save(objProgress);
+
+          await this.checkMainQuestCompletion(userQuest.id, userId, serverId);
+
+          anyUpdate = true;
+        }
+      }
+    }
+
+    if (anyUpdate) {
+      const updatedQuests = await this.getUserQuests(userId, serverId);
+      this.wsGateway.sendToUser(userId, WsEvent.QUEST_UPDATE, updatedQuests);
+    }
   }
 }

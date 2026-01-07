@@ -29,6 +29,8 @@ import { GetVillageWsDto } from 'src/villages/dto/get-village-ws.dto';
 import { UpgradeBuildingWsDto } from 'src/buildings/dto/upgrade-building-ws.dto';
 import { ChatGroupsService } from 'src/chat/services/chat-groups.service';
 import { DirectMessagesService } from 'src/chat/services/direct-messages.service';
+import { QuestsService } from 'src/quests/services/quests.service';
+import { QuestObjectiveType } from '@core/enums/quest-objective-type.enum';
 
 export interface AuthenticatedSocket extends Socket {
   user: User;
@@ -55,6 +57,8 @@ export class WsGateway
     private readonly dmService: DirectMessagesService,
     @Inject(forwardRef(() => ChatGroupsService))
     private readonly chatGroupsService: ChatGroupsService,
+    @Inject(forwardRef(() => QuestsService))
+    private readonly questsService: QuestsService,
   ) {}
 
   afterInit(server: Server) {
@@ -169,9 +173,21 @@ export class WsGateway
   }
 
   @SubscribeMessage(WsEvent.ARMY_CREATE)
-  onArmyCreate(@ConnectedSocket() client: Socket, @MessageBody() payload: any) {
+  async onArmyCreate(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: any,
+  ) {
     console.log('Army create received', payload);
     this.server.emit(WsEvent.ARMY_UPDATE, { action: 'create', payload });
+    if (client.user && payload.serverId && payload.unitType) {
+      await this.questsService.checkProgress(
+        client.user.id,
+        payload.serverId,
+        QuestObjectiveType.TRAIN,
+        payload.type,
+        payload.count || 1,
+      );
+    }
     return { status: 'ok' };
   }
 
@@ -223,6 +239,15 @@ export class WsGateway
     );
     try {
       await this.buildingsService.createForUser(client.user.id, payload);
+
+      await this.questsService.checkProgress(
+        client.user.id,
+        payload.serverId,
+        QuestObjectiveType.BUILD,
+        payload.name,
+        1,
+      );
+
       this.handleGetVillageData(client, { serverId: payload.serverId });
     } catch (error) {
       this.logger.error(
@@ -240,8 +265,21 @@ export class WsGateway
       `User ${client.user.email} upgrading building ${payload.buildingId}`,
     );
     try {
-      await this.buildingsService.upgradeForUser(client.user.id, payload);
+      const building = await this.buildingsService.upgradeForUser(
+        client.user.id,
+        payload,
+      );
       this.handleGetVillageData(client, { serverId: payload.serverId });
+
+      if (building) {
+        await this.questsService.checkProgress(
+          client.user.id,
+          payload.serverId,
+          QuestObjectiveType.UPGRADE_BUILDING,
+          building.name,
+          1,
+        );
+      }
     } catch (error) {
       this.logger.error(`Upgrade failed: ${error.message}`);
     }
@@ -296,6 +334,15 @@ export class WsGateway
       this.logger.log(
         `Pomyślnie rozszerzono wioskę dla ${client.user.email}. Wysyłanie aktualizacji.`,
       );
+
+      await this.questsService.checkProgress(
+        client.user.id,
+        payload.serverId,
+        QuestObjectiveType.EXPAND,
+        'village',
+        1,
+      );
+
       await this.handleGetVillageData(client, { serverId: payload.serverId });
     } catch (error) {
       this.logger.error(
