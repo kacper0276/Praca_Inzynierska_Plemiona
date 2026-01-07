@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RewardDisplay } from '@modules/game/interfaces';
+import { QuestsService, ServerService } from '@modules/game/services';
 import {
   UserQuestProgress,
   Quest,
@@ -14,10 +15,26 @@ import {
 export class TasksComponent implements OnInit {
   userQuests: UserQuestProgress[] = [];
 
-  constructor() {}
+  constructor(
+    private readonly serverService: ServerService,
+    private readonly questsService: QuestsService
+  ) {}
 
   ngOnInit(): void {
-    this.mockData();
+    this.fetchTasks();
+  }
+
+  private fetchTasks() {
+    const server = this.serverService.getServer();
+
+    if (server && server.id) {
+      this.questsService.getTasksForServer(server.id).subscribe({
+        next: (res) => {
+          console.log(res.data);
+          this.userQuests = res.data;
+        },
+      });
+    }
   }
 
   getQuestRewards(quest: Quest): RewardDisplay[] {
@@ -58,91 +75,5 @@ export class TasksComponent implements OnInit {
     if (questProg && questProg.isCompleted) {
       questProg.completedAt = new Date().toISOString();
     }
-  }
-
-  private mockData(): void {
-    this.userQuests = [
-      {
-        id: 1,
-        user: {} as any,
-        server: {} as any,
-        isCompleted: false,
-        completedAt: null,
-        quest: {
-          id: 101,
-          title: 'Początki Gospodarki',
-          description:
-            'Rozwiń wydobycie podstawowych surowców w swojej wiosce.',
-          woodReward: 500,
-          clayReward: 300,
-          ironReward: 100,
-          populationReward: 5,
-          objectives: [],
-        },
-        objectivesProgress: [
-          {
-            id: 1,
-            currentCount: 3,
-            isCompleted: false,
-            rewardClaimed: false,
-            objective: {
-              id: 1,
-              description: 'Podnieś Tartak na poziom 5',
-              goalCount: 5,
-              woodReward: 0,
-              clayReward: 0,
-              ironReward: 0,
-            },
-          },
-          {
-            id: 2,
-            currentCount: 100,
-            isCompleted: true,
-            rewardClaimed: true,
-            objective: {
-              id: 2,
-              description: 'Zbierz 100 jednostek drewna',
-              goalCount: 100,
-              woodReward: 50,
-              clayReward: 0,
-              ironReward: 0,
-            },
-          },
-        ],
-      },
-      {
-        id: 2,
-        user: {} as any,
-        server: {} as any,
-        isCompleted: true,
-        completedAt: null,
-        quest: {
-          id: 102,
-          title: 'Rekrutacja Armii',
-          description: 'Twoja wioska potrzebuje obrońców.',
-          woodReward: 0,
-          clayReward: 0,
-          ironReward: 200,
-          populationReward: 0,
-          objectives: [],
-        },
-        objectivesProgress: [
-          {
-            id: 3,
-            currentCount: 10,
-            isCompleted: true,
-            rewardClaimed: true,
-            objective: {
-              id: 3,
-              description: 'Wytrenuj 10 żołnierzy',
-              goalCount: 10,
-              woodReward: 0,
-              clayReward: 0,
-              ironReward: 0,
-            },
-          },
-        ],
-      },
-    ];
   }
 }

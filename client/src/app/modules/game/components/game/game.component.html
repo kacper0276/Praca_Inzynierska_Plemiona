@@ -34,21 +34,25 @@
         <!-- <mat-icon>forest</mat-icon> -->
         <img
           src="/assets/icons/wood.png"
-          alt=""
+          alt="Wood icon"
           style="width: 24px; height: 24px"
         />
         {{ resources.wood | adjustResourceQuantity }}</span
       >
       <span [title]="'Glina: ' + resources.clay">
         <!-- <mat-icon>terrain</mat-icon> -->
-        <img src="/assets/icons/clay.png" alt="" />
+        <img
+          src="/assets/icons/clay.png"
+          alt="Clay icon"
+          style="width: 24px; height: 24px"
+        />
         {{ resources.clay | adjustResourceQuantity }}</span
       >
       <span [title]="'Żelazo: ' + resources.iron">
         <!-- <mat-icon>iron</mat-icon> -->
         <img
           src="/assets/icons/iron.png"
-          alt=""
+          alt="Iron icon"
           style="width: 24px; height: 24px"
         />
         {{ resources.iron | adjustResourceQuantity }}</span
@@ -57,7 +61,7 @@
         <!-- <mat-icon>people</mat-icon> -->
         <img
           src="/assets/icons/villager.png"
-          alt=""
+          alt="Villager icon"
           style="width: 24px; height: 24px"
         />
         {{ resources.population }}/{{ resources.maxPopulation }}</span
