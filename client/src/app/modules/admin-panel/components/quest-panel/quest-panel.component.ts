@@ -18,7 +18,7 @@ export class QuestPanelComponent implements OnInit {
     { key: 'clayReward', header: 'Glina', type: 'number' },
     { key: 'ironReward', header: 'Żelazo', type: 'number' },
     { key: 'populationReward', header: 'Ludność', type: 'number' },
-    { key: 'isAction', header: 'Akcje', isAction: true },
+    // { key: 'isAction', header: 'Akcje', isAction: true },
   ];
 
   isEditModalOpen = false;
