@@ -14,6 +14,7 @@ import { ExpandVillageWsDto } from '../dto/expand-village-ws.dto';
 import { ResourcesService } from 'src/resources/services/resources.service';
 import { Building } from 'src/buildings/entities/building.entity';
 import { Server } from 'src/servers/entities/server.entity';
+import { ArmyUnit } from 'src/army/entities/army-unit.entity';
 
 @Injectable()
 export class VillagesService {
@@ -24,8 +25,85 @@ export class VillagesService {
     @InjectDataSource() private readonly dataSource: DataSource,
   ) {}
 
-  async getByUserId(userId: number): Promise<Village> {
-    const village = await this.villagesRepository.findByUserId(userId);
+  async applyBattleResults(
+    attackerId: number,
+    defenderId: number,
+    results: {
+      attackerUnits: { type: string; count: number }[];
+      defenderUnits: { type: string; count: number }[];
+      buildings: { id: number; health: number }[];
+    },
+  ): Promise<void> {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const armyRepo = queryRunner.manager.getRepository(ArmyUnit);
+      const buildingRepo = queryRunner.manager.getRepository(Building);
+      const villageRepo = queryRunner.manager.getRepository(Village);
+
+      const attackerVillage = await villageRepo.findOne({
+        where: { user: { id: attackerId } },
+        relations: ['armyUnits'],
+      });
+
+      if (attackerVillage && attackerVillage.armyUnits) {
+        for (const resUnit of results.attackerUnits) {
+          const dbUnit = attackerVillage.armyUnits.find(
+            (u) => u.type === resUnit.type,
+          );
+          if (dbUnit) {
+            dbUnit.count = Math.max(0, Math.floor(resUnit.count));
+            await armyRepo.save(dbUnit);
+          }
+        }
+      }
+
+      const defenderVillage = await villageRepo.findOne({
+        where: { user: { id: defenderId } },
+        relations: ['armyUnits'],
+      });
+
+      if (defenderVillage && defenderVillage.armyUnits) {
+        for (const resUnit of results.defenderUnits) {
+          const dbUnit = defenderVillage.armyUnits.find(
+            (u) => u.type === resUnit.type,
+          );
+          if (dbUnit) {
+            dbUnit.count = Math.max(0, Math.floor(resUnit.count));
+            await armyRepo.save(dbUnit);
+          }
+        }
+      }
+
+      for (const bResult of results.buildings) {
+        if (!bResult.id) continue;
+
+        const building = await buildingRepo.findOneBy({ id: bResult.id });
+
+        if (building) {
+          building.health = Math.max(0, Math.floor(bResult.health));
+          await buildingRepo.save(building);
+        }
+      }
+
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      console.error('Error saving battle results:', err);
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async getByUserId(userId: number, serverId: number): Promise<Village> {
+    const village = await this.villagesRepository.findOne({
+      user: { id: userId } as any,
+      server: { id: serverId } as any,
+    });
 
     if (!village) {
       throw new NotFoundException(

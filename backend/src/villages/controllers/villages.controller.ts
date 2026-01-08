@@ -83,7 +83,7 @@ export class VillagesController {
     @CurrentUser() user: any,
   ) {
     if (user.role !== UserRole.ADMIN) {
-      const village = await this.villagesService.getByUserId(user.sub);
+      const village = await this.villagesService.getByUserId(user.sub, -1);
       if (village.id !== id) {
         throw new ForbiddenException('Możesz edytować tylko własną wioskę.');
       }
