@@ -120,7 +120,7 @@ export class BattlesService {
 
     if (totalHp === 0) {
       totalHp = 100;
-      totalDmg = 5;
+      totalDmg = 0;
     }
 
     return {
@@ -293,11 +293,14 @@ export class BattlesService {
   ) {
     clearInterval(battle.interval);
     this.activeBattles.delete(battle.attackerId);
+    let lootedResources: { wood: number; clay: number; iron: number } | null =
+      null;
 
     try {
-      await this.villagesService.applyBattleResults(
+      lootedResources = await this.villagesService.applyBattleResults(
         battle.attackerId,
         battle.defenderId,
+        winner,
         {
           attackerUnits: battle.attackerArmy.units.map((u) => ({
             type: u.type,
@@ -329,6 +332,7 @@ export class BattlesService {
         type: u.type,
         lost: u.initialCount - u.count,
       })),
+      lootedResources: lootedResources,
     };
 
     this.server
