@@ -256,7 +256,9 @@
       "ATTACKER_WINS": "Zwycięstwo atakującego!",
       "DEFENDER_WINS": "Zwycięstwo obrońcy!",
       "ATTACKER": "Atakujący",
-      "DEFENDER": "Obrońca"
+      "DEFENDER": "Obrońca",
+      "LOOT_TITLE": "Zdobycze wojenne",
+      "LOOT_SUCCESS": "Zwycięstwo! Zrabowano surowce."
     },
     "EMPTY_PLOT": "Pusty plac"
   },

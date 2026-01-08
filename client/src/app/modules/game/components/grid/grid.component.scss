@@ -438,3 +438,64 @@
     background: lighten($red-500, 5%);
   }
 }
+
+.loot-container {
+  margin: 15px 0;
+  padding: 10px;
+  background: rgba(255, 215, 0, 0.15);
+  border: 1px solid #ffd700;
+  border-radius: 8px;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in;
+
+  h4 {
+    color: #ffd700;
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  }
+
+  .loot-items {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+
+    .loot-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #fff;
+
+      img {
+        width: 24px;
+        height: 24px;
+        filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.8));
+      }
+
+      &.wood span {
+        color: #deb887;
+      }
+      &.clay span {
+        color: #cd853f;
+      }
+      &.iron span {
+        color: #a9a9a9;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

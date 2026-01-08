@@ -206,59 +206,6 @@
   (repair)="repairBuilding()"
 ></app-building-details-popup>
 
-<!-- <div *ngIf="isAttacking" class="attack-overlay">
-  <div
-    class="army-container"
-    [style.transform]="
-      'translate(' + attackingArmy.x + 'px, ' + attackingArmy.y + 'px)'
-    "
-  >
-    <div class="hp-bar-container">
-      <div class="hp-bar-background">
-        <div
-          class="hp-bar-foreground"
-          [style.width.%]="(attackingArmy.totalHp / attackingArmy.maxHp) * 100"
-        ></div>
-      </div>
-      <span class="hp-bar-text"
-        >{{ Math.ceil(attackingArmy.totalHp) }} /
-        {{ attackingArmy.maxHp }}</span
-      >
-    </div>
-    <img [src]="attackingArmy.gifUrl" class="army-gif" />
-  </div>
-
-  <div
-    class="army-container"
-    *ngIf="defendingArmy.totalHp > 0"
-    [style.transform]="
-      'translate(' + defendingArmy.x + 'px, ' + defendingArmy.y + 'px)'
-    "
-  >
-    <div class="hp-bar-container">
-      <div class="hp-bar-background">
-        <div
-          class="hp-bar-foreground enemy"
-          [style.width.%]="(defendingArmy.totalHp / defendingArmy.maxHp) * 100"
-        ></div>
-      </div>
-      <span class="hp-bar-text"
-        >{{ Math.ceil(defendingArmy.totalHp) }} /
-        {{ defendingArmy.maxHp }}</span
-      >
-    </div>
-    <img [src]="defendingArmy.gifUrl" class="army-gif" />
-  </div>
-
-  <img
-    *ngIf="explosion.show"
-    [src]="explosion.gifUrl"
-    class="explosion-gif"
-    [style.left.px]="explosion.x"
-    [style.top.px]="explosion.y"
-  />
-</div> -->
-
 <div class="battle-result-modal" *ngIf="battleResult">
   <div class="modal-content">
     <h2>{{ "grid.BATTLE.RESULT_TITLE" | translate }}</h2>
@@ -273,6 +220,36 @@
           ? ("grid.BATTLE.ATTACKER_WINS" | translate)
           : ("grid.BATTLE.DEFENDER_WINS" | translate)
       }}
+    </div>
+
+    <div
+      class="loot-container"
+      *ngIf="battleResult.winner === 'attacker' && battleResult.lootedResources"
+    >
+      <h4>{{ "grid.BATTLE.LOOT_TITLE" | translate }}</h4>
+      <div class="loot-items">
+        <div
+          class="loot-item wood"
+          *ngIf="battleResult.lootedResources.wood > 0"
+        >
+          <img src="assets/icons/wood.png" alt="Wood" />
+          <span>+{{ battleResult.lootedResources.wood }}</span>
+        </div>
+        <div
+          class="loot-item clay"
+          *ngIf="battleResult.lootedResources.clay > 0"
+        >
+          <img src="assets/icons/clay.png" alt="Clay" />
+          <span>+{{ battleResult.lootedResources.clay }}</span>
+        </div>
+        <div
+          class="loot-item iron"
+          *ngIf="battleResult.lootedResources.iron > 0"
+        >
+          <img src="assets/icons/iron.png" alt="Iron" />
+          <span>+{{ battleResult.lootedResources.iron }}</span>
+        </div>
+      </div>
     </div>
 
     <div class="losses-container">
