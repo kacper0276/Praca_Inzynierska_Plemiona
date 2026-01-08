@@ -1,13 +1,13 @@
 <div class="wrapper">
   <div class="panel-header">
-    <h2>Zarządzanie użytkownikami</h2>
+    <h2>{{ "admin.users.HEADER" | translate }}</h2>
     <button
       class="add-btn"
       (click)="openCreateModal()"
-      title="Dodaj użytkownika"
+      [title]="'admin.users.BTN_ADD' | translate"
     >
       <mat-icon>add</mat-icon>
-      <span>Dodaj użytkownika</span>
+      <span>{{ "admin.users.BTN_ADD" | translate }}</span>
     </button>
   </div>
 

@@ -1,8 +1,4 @@
-<div
-  class="building-container"
-  (click)="onClick()"
-  [title]="name + ' (Poziom: ' + level + ')'"
->
+<div class="building-container" [title]="name + ' (Poziom: ' + level + ')'">
   <img [src]="imageUrl" [alt]="name" class="building-image" />
   <span *ngIf="level > 0" class="building-level">{{ level }}</span>
 

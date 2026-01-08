@@ -10,7 +10,499 @@
   "CLAN_COST_LABEL": "Koszt",
   "GATHER_TICK_INFO": "Następne surowce za {seconds}s",
 
+  "bugModal": {
+    "HEADER": "Zgłoś błąd",
+    "SUCCESS_MSG": "Twoje zgłoszenie zostało wysłane. Dziękujemy!",
+    "LABEL_TITLE": "Tytuł",
+    "LABEL_DESC": "Opis",
+    "LABEL_EMAIL": "Email (opcjonalnie)",
+    "BTN_CANCEL": "Anuluj",
+    "BTN_SEND": "Wyślij",
+    "TOASTR_SUCCESS": "Wysłano zgłoszenie"
+  },
+
+  "confirmationModal": {
+    "BTN_CANCEL": "Anuluj",
+    "BTN_CONFIRM": "Potwierdź"
+  },
+
+  "questModal": {
+    "HEADER_ADD": "Dodaj nowe zadanie",
+    "OBJECTIVES_HEADER": "Cele zadania (Podzadania)",
+    "BTN_ADD_OBJECTIVE": "Dodaj cel",
+    "NO_OBJECTIVES_MSG": "Brak zdefiniowanych celów. Kliknij \"Dodaj cel\".",
+    "PLACEHOLDER_DESC": "Opis dla gracza",
+    "PLACEHOLDER_TARGET": "Kod celu (np. barracks)",
+    "PLACEHOLDER_AMOUNT": "Ilość",
+    "REWARD_WOOD": "Drewno",
+    "REWARD_CLAY": "Glina",
+    "REWARD_IRON": "Żelazo",
+    "BTN_CANCEL": "Anuluj",
+    "BTN_SAVE": "Zapisz zadanie"
+  },
+
+  "editModal": {
+    "HEADER_EDIT": "Edytuj element",
+    "ARIA_CLOSE": "Zamknij",
+    "BTN_DELETE": "Usuń",
+    "BTN_CANCEL": "Anuluj",
+    "BTN_SAVE": "Zapisz zmiany"
+  },
+
+  "multiSelect": {
+    "NO_RESULTS": "Brak wyników"
+  },
+
+  "dataTable": {
+    "CLICK_TO_EDIT": "Kliknij, aby edytować",
+    "ARIA_EDIT": "Edytuj element",
+    "TITLE_EDIT": "Edytuj",
+    "ARIA_DELETE": "Usuń element",
+    "TITLE_DELETE": "Usuń",
+    "NO_DATA": "Brak danych do wyświetlenia."
+  },
+
+  "pagination": {
+    "INFO": "Pokazano {{rangeStart}} - {{rangeEnd}} z {{totalItems}}",
+    "ROWS_LABEL": "Wierszy:"
+  },
+
+  "army": {
+    "SUBTITLE": "Zarządzaj armią i rekrutuj jednostki",
+    "LEVEL_PREFIX": "Lv.",
+    "AVAILABLE": "Dostępne",
+    "UPGRADE_LABEL": "Ulepszenie",
+    "TOOLTIP_UPGRADE": "Ulepsz poziom",
+    "UNIT_AMOUNT": "Liczba jednostek",
+    "REQUIRED_RESOURCES": "Wymagane surowce",
+    "BTN_RECRUIT": "Rekrutuj",
+    "SUCCESS": {
+      "RECRUITED": "Zrekrutowano: {{unitName}}",
+      "UPGRADED": "Ulepszono: {{unitName}} (Lv. {{level}})"
+    },
+    "ERRORS": {
+      "NO_SERVER": "Nie wybrano serwera.",
+      "GENERIC": "Wystąpił błąd.",
+      "NO_RESOURCES": "Brak surowców lub błąd serwera."
+    }
+  },
+
+  "buildModal": {
+    "HEADER": "Wybierz budynek do budowy",
+    "BTN_BUILD": "Buduj",
+    "BTN_CANCEL": "Anuluj"
+  },
+
+  "chat": {
+    "MESSAGES_HEADER": "Wiadomości",
+    "SEARCH_PLACEHOLDER": "Szukaj użytkownika...",
+    "SELECT_CHAT_PROMPT": "Wybierz czat, aby rozpocząć rozmowę",
+    "INPUT_PLACEHOLDER": "Napisz wiadomość...",
+    "BTN_SEND": "Wyślij",
+    "SENDER_ME": "Ja",
+    "DEFAULT_GROUP_DESC": "Grupa utworzona przez użytkownika",
+    "groupModal": {
+      "HEADER": "Utwórz nową grupę",
+      "LABEL_NAME": "Nazwa grupy",
+      "PLACEHOLDER_NAME": "Np. Projekt Zespół A",
+      "LABEL_PARTICIPANTS": "Dodaj uczestników",
+      "PLACEHOLDER_FRIENDS": "Szukaj znajomych...",
+      "BTN_CANCEL": "Anuluj",
+      "BTN_CREATE": "Utwórz grupę"
+    },
+    "ERRORS": {
+      "SEARCH_FAILED": "Błąd podczas wyszukiwania",
+      "FETCH_CHATS_FAILED": "Błąd pobierania czatów",
+      "SEND_MSG_FAILED": "Błąd wysyłania wiadomości",
+      "SEND_GROUP_MSG_FAILED": "Błąd wysyłania wiadomości do grupy",
+      "CREATE_GROUP_FAILED": "Nie udało się utworzyć grupy"
+    },
+    "SUCCESS": {
+      "GROUP_CREATED": "Grupa została utworzona pomyślnie"
+    }
+  },
+
+  "clan": {
+    "create": {
+      "HEADER": "Utwórz klan",
+      "NAME_LABEL": "Nazwa klanu",
+      "DESC_LABEL": "Opis klanu",
+      "INVITED_PLAYERS_LABEL": "Zaproszeni gracze",
+      "COST_LABEL": "Koszt utworzenia",
+      "BTN_CREATE": "Utwórz klan",
+      "SUCCESS_MSG": "Klan został utworzony pomyślnie!",
+      "ERROR_GENERIC": "Nie udało się utworzyć klanu."
+    },
+    "view": {
+      "TABS": {
+        "MEMBERS": "Członkowie",
+        "CHAT": "Czat",
+        "RESOURCES": "Surowce"
+      },
+      "MEMBERS": {
+        "ADD_BTN": "+ Dodaj członka",
+        "LEADER_LABEL": "(Lider)",
+        "KICK_BTN": "Usuń",
+        "MODAL": {
+          "TITLE": "Dodaj nowych członków",
+          "SELECT_LABEL": "Wybierz graczy z listy:",
+          "NO_PLAYERS": "Brak dostępnych graczy do dodania.",
+          "BTN_CANCEL": "Anuluj",
+          "BTN_ADD": "Dodaj"
+        }
+      },
+      "CHAT": {
+        "SENDER_ME": "Ja",
+        "INPUT_PLACEHOLDER": "Wiadomość...",
+        "BTN_SEND": "Wyślij",
+        "ERROR_SEND": "Błąd wysyłania wiadomości do grupy"
+      },
+      "RESOURCES": {
+        "PLACEHOLDERS": {
+          "WOOD": "Drewno",
+          "CLAY": "Glina",
+          "IRON": "Żelazo"
+        },
+        "BTN_SEND": "Wyślij surowce",
+        "WARNINGS": {
+          "INVALID_FORM": "Wybierz odbiorcę i poprawne ilości.",
+          "ZERO_AMOUNT": "Musisz wybrać przynajmniej jeden surowiec."
+        },
+        "ERRORS": {
+          "SERVER_ERROR": "Błąd serwera. Odśwież stronę.",
+          "NOT_ENOUGH": "Nie masz wystarczającej ilości surowców.",
+          "TRANSFER_FAILED": "Wystąpił błąd podczas transferu."
+        },
+        "SUCCESS": "Surowce zostały wysłane!"
+      }
+    }
+  },
+
+  "resources": {
+    "wood": "Drewno",
+    "clay": "Glina",
+    "iron": "Żelazo",
+    "population": "Ludność"
+  },
+  "game": {
+    "TITLE": "Terra Bellum",
+    "modal": {
+      "HEADER": "Wybierz Świat Gry",
+      "BODY_TEXT": "Aby kontynuować, wybierz serwer, na którym chcesz grać.",
+      "BTN_CANCEL": "Anuluj",
+      "BTN_JOIN": "Dołącz do Gry"
+    },
+    "topbar": {
+      "SERVER_LABEL": "Serwer"
+    },
+    "info": {
+      "SELECT_SERVER": "Musisz wybrać serwer, aby rozpocząć grę. Odśwież stronę, aby spróbować ponownie.",
+      "CANCELLED_MODAL": "Anulowano wybór serwera."
+    },
+    "errors": {
+      "CONNECTION_FAILED": "Połączenie z serwerem nie powiodło się. Spróbuj ponownie później.",
+      "NO_SERVER_SELECTED": "Nie wybrano serwera.",
+      "BUILD_FARM_FAILED": "Nie udało się zbudować farmy - za mało surowców.",
+      "FETCH_RES_FAILED": "Błąd pobierania surowców."
+    },
+    "success": {
+      "JOINED_SERVER": "Dołączono do serwera: {{serverName}}"
+    }
+  },
+
+  "buildingDetails": {
+    "LEVEL": "Poziom",
+    "HEALTH": "Zdrowie",
+    "BTN_DEMOLISH": "Usuń budynek",
+    "BTN_REPAIR": "Napraw budynek",
+    "BTN_CLOSE": "Zamknij"
+  },
+
+  "grid": {
+    "ATTACK": {
+      "BTN_IN_PROGRESS": "Atak w toku...",
+      "BTN_START": "Atakuj",
+      "VICTORY": "Zwycięstwo! Wioska została zniszczona.",
+      "DEFEAT": "Porażka! Twoja armia została pokonana."
+    },
+    "EXPANSION": {
+      "BTN_LEFT": "Rozszerz w lewo",
+      "BTN_RIGHT": "Rozszerz w prawo",
+      "BTN_LABEL": "Rozszerz"
+    },
+    "GATHER": {
+      "NEXT_RESOURCES": "Następne surowce za:"
+    },
+    "CONSTRUCTION": {
+      "TIME_LEFT": "Pozostały czas",
+      "LEVEL_SHORT": "Lvl"
+    },
+    "ERRORS": {
+      "MOVE_UNDER_CONSTRUCTION": "Nie można przenosić budynków w trakcie budowy.",
+      "LOAD_VILLAGE": "Błąd ładowania wioski: {{error}}",
+      "LOAD_PLAYER_VILLAGE": "Błąd ładowania wioski gracza: {{error}}"
+    },
+    "SUCCESS": {
+      "BUILDING_FINISHED": "Budowa budynku {{name}} zakończona!"
+    },
+    "EMPTY_PLOT": "Pusty plac"
+  },
+
+  "invites": {
+    "FIND_FRIENDS": "Znajdź znajomych",
+    "SEARCH_PLACEHOLDER": "Wpisz login użytkownika...",
+    "RECEIVED_INVITES": "Odebrane zaproszenia",
+    "AVATAR_ALT": "Awatar użytkownika",
+    "BTN_ACCEPT": "Akceptuj",
+    "BTN_DECLINE": "Odrzuć",
+    "BTN_ADD": "Dodaj",
+    "STATUS_SENT": "Wysłano",
+    "SUCCESS": {
+      "INVITE_SENT": "Zaproszenie zostało wysłane.",
+      "RESPONDED": "Zaktualizowano status zaproszenia."
+    },
+    "ERRORS": {
+      "SEARCH_FAILED": "Błąd podczas wyszukiwania.",
+      "INVITE_SEND_FAILED": "Błąd podczas wysyłania zaproszenia.",
+      "RESPOND_FAILED": "Wystąpił błąd podczas odpowiedzi na zaproszenie."
+    }
+  },
+
+  "map": {
+    "HEADER": "Mapa Świata",
+    "CENTER_LABEL": "Centrum",
+    "ERRORS": {
+      "FETCH_FAILED": "Nie udało się pobrać danych mapy."
+    }
+  },
+
+  "ranking": {
+    "TITLE": "Ranking",
+    "HEADERS": {
+      "POSITION": "Miejsce",
+      "USERNAME": "Nazwa użytkownika",
+      "SCORE": "Ilość punktów"
+    },
+    "ERRORS": {
+      "FETCH_FAILED": "Błąd pobierania rankingu."
+    }
+  },
+
+  "sideMenu": {
+    "TOGGLE_LABEL": "Zwiń/rozwiń menu",
+    "LANG_PL": "Polski",
+    "LANG_EN": "English",
+    "THEME_LIGHT": "Jasny motyw",
+    "THEME_DARK": "Ciemny motyw",
+    "ITEMS": {
+      "VILLAGE": "Wioska",
+      "MAP": "Mapa",
+      "ARMY": "Armia",
+      "MESSAGES": "Wiadomości",
+      "RANKING": "Ranking",
+      "CLAN": "Klan",
+      "INVITATIONS": "Zaproszenia",
+      "TASKS": "Zadania",
+      "REPORT_BUG": "Zgłoś problem",
+      "REPORT_BUG_TITLE": "Zgłoś błąd",
+      "ADMIN_PANEL": "Panel admina"
+    },
+    "USER_MENU": {
+      "EDIT_ACCOUNT": "Edycja konta",
+      "PROFILE_VIEW": "Widok profilu",
+      "LOGOUT": "Wyloguj"
+    },
+    "SUCCESS": {
+      "LOGOUT": "Wylogowano pomyślnie."
+    }
+  },
+
+  "tasks": {
+    "HEADER": "Dziennik Zadań",
+    "DESCRIPTION_PREFIX": "Opis:",
+    "LOADING_OBJECTIVE": "Ładowanie celu...",
+    "REWARDS_LABEL": "Nagrody:",
+    "BTN_CLAIM": "Odbierz",
+    "STATUS": {
+      "CLAIMED": "Odebrano",
+      "READY": "Do odebrania",
+      "ACTIVE": "W toku"
+    },
+    "SUCCESS": {
+      "REWARD_CLAIMED": "Nagroda została odebrana!"
+    },
+    "ERRORS": {
+      "FETCH_FAILED": "Błąd pobierania zadań.",
+      "CLAIM_FAILED": "Nie udało się odebrać nagrody."
+    }
+  },
+
+  "upgradeModal": {
+    "HEADER": "Rozbuduj budynek",
+    "LEVEL": "Poziom",
+    "BTN_UPGRADE": "Rozbuduj",
+    "BTN_CANCEL": "Anuluj"
+  },
+
+  "home": {
+    "TITLE": "Witaj w grze",
+    "BTN_LOGIN": "Zaloguj się",
+    "BTN_REGISTER": "Zarejestruj się"
+  },
+
+  "profile": {
+    "BACKGROUND_ALT": "Tło profilu",
+    "AVATAR_ALT": "Awatar użytkownika",
+    "ABOUT_ME_HEADER": "O mnie",
+    "NO_BIO": "Brak opisu.",
+    "INFO_HEADER": "Informacje",
+    "EMAIL_LABEL": "Email",
+    "ROLE_LABEL": "Rola",
+    "BTN_SEND_MESSAGE": "Wyślij wiadomość",
+    "BTN_EDIT_PROFILE": "Edytuj profil",
+    "ERRORS": {
+      "FETCH_USER_FAILED": "Nie udało się pobrać danych profilu użytkownika."
+    }
+  },
+
+  "editProfile": {
+    "CHANGE_BACKGROUND": "Zmień tło",
+    "CHANGE_AVATAR_LABEL": "Zmień",
+    "HEADER": "Edytuj profil",
+    "FIRST_NAME": "Imię",
+    "LAST_NAME": "Nazwisko",
+    "LOGIN": "Login",
+    "BIO": "O mnie",
+    "BIO_PLACEHOLDER": "Napisz coś o sobie...",
+    "BTN_CANCEL": "Anuluj",
+    "BTN_SAVE": "Zapisz zmiany",
+    "ALT": {
+      "BACKGROUND": "Tło profilu",
+      "AVATAR": "Awatar użytkownika"
+    },
+    "SUCCESS": {
+      "UPDATE": "Profil został pomyślnie zaktualizowany!"
+    },
+    "ERRORS": {
+      "INVALID_FORM": "Formularz jest niepoprawny lub użytkownik nie został załadowany.",
+      "UPDATE_FAILED": "Wystąpił błąd podczas aktualizacji profilu.",
+      "FETCH_FAILED": "Nie udało się pobrać danych użytkownika."
+    }
+  },
+
   "auth": {
-    "successfully-logged-in": "Zalogowano pomyślnie!"
+    "successfully-logged-in": "Zalogowano pomyślnie!",
+    "login": {
+      "TITLE": "Logowanie",
+      "HEADER": "Logowanie",
+      "EMAIL_LABEL": "Email",
+      "PASSWORD_LABEL": "Hasło",
+      "REMEMBER_ME": "Zapamiętaj mnie",
+      "NO_ACCOUNT": "Nie masz konta?",
+      "REGISTER_LINK": "Załóż je teraz!",
+      "BTN_SUBMIT": "Zaloguj się"
+    },
+    "register": {
+      "TITLE": "Rejestracja",
+      "EMAIL_LABEL": "Email",
+      "LOGIN_LABEL": "Nazwa użytkownika",
+      "FIRST_NAME_LABEL": "Imię",
+      "LAST_NAME_LABEL": "Nazwisko",
+      "PASSWORD_LABEL": "Hasło",
+      "REPEAT_PASSWORD_LABEL": "Powtórz hasło",
+      "SHOW": "Pokaż",
+      "HIDDEN": "Ukryj",
+      "BTN_SUBMIT": "Zarejestruj się",
+      "VALIDATION": {
+        "EMAIL_REQUIRED": "Email jest wymagany",
+        "LOGIN_REQUIRED": "Login jest wymagany",
+        "FIRST_NAME_REQUIRED": "Imię jest wymagane",
+        "LAST_NAME_REQUIRED": "Nazwisko jest wymagane",
+        "PASSWORD_REQUIRED": "Hasło jest wymagane",
+        "REPEAT_PASSWORD_REQUIRED": "Powtórzenie hasła jest wymagane"
+      },
+      "SUCCESS": "Rejestracja przebiegła pomyślnie! Możesz się teraz zalogować.",
+      "ERROR": "Wystąpił błąd podczas rejestracji. Sprawdź dane."
+    },
+    "activate": {
+      "TITLE": "Aktywacja konta",
+      "HEADER": "Aktywuj swoje konto",
+      "INSTRUCTION": "Na Twój adres e-mail został wysłany 6-znakowy kod. Wpisz go poniżej, aby zweryfikować swoje konto.",
+      "BTN_SUBMIT": "Aktywuj",
+      "SUCCESS": "Konto zostało aktywowane pomyślnie!",
+      "ERROR": "Błąd aktywacji konta. Sprawdź kod i spróbuj ponownie.",
+      "VALIDATION_ERROR": "Kod musi składać się z 6 znaków."
+    }
+  },
+
+  "admin": {
+    "HEADER": "Panel Administracyjny",
+    "nav": {
+      "USERS": "Użytkownicy",
+      "BUILDINGS": "Budynki",
+      "RESOURCES": "Surowce",
+      "REPORTS": "Zgłoszenia",
+      "GUILDS": "Gildie",
+      "QUESTS": "Zadania"
+    },
+    "buildings": {
+      "NAME": "Nazwa budynku",
+      "LEVEL": "Poziom budynku",
+      "HEALTH": "Poziom zdrowia",
+      "USER_LOGIN": "Nazwa użytkownika",
+      "VILLAGE_ID": "Id wioski użytkownika",
+      "DELETE_CONFIRM": "Czy na pewno chcesz usunąć ten budynek?"
+    },
+    "quests": {
+      "HEADER": "Zarządzanie Zadaniami",
+      "BTN_ADD": "Nowe Zadanie",
+      "TITLE": "Tytuł",
+      "DESCRIPTION": "Opis",
+      "REWARD_WOOD": "Drewno",
+      "REWARD_CLAY": "Glina",
+      "REWARD_IRON": "Żelazo",
+      "REWARD_POPULATION": "Ludność",
+      "DELETE_CONFIRM": "Czy na pewno chcesz usunąć to zadanie?",
+      "ERRORS": {
+        "LOAD": "Błąd podczas ładowania zadań",
+        "CREATE": "Błąd podczas tworzenia zadania",
+        "EDIT": "Błąd podczas edycji zadania",
+        "DELETE": "Błąd podczas usuwania zadania"
+      }
+    },
+    "reports": {
+      "REPORTER": "Zgłaszający (e-mail)",
+      "TARGET": "Zgłoszony (e-mail)",
+      "CONTENT": "Treść",
+      "STATUS": "Status (Czy rozwiązano)",
+      "STATUS_RESOLVED": "Rozwiązany",
+      "STATUS_PENDING": "Oczekujący",
+      "DELETE_CONFIRM": "Czy na pewno chcesz usunąć zgłoszenie od {{email}}?"
+    },
+    "resources": {
+      "WOOD": "Drewno",
+      "CLAY": "Glina",
+      "IRON": "Żelazo",
+      "POPULATION": "Ilość ludzi",
+      "MAX_POPULATION": "Maksymalna liczba ludzi"
+    },
+    "users": {
+      "HEADER": "Zarządzanie użytkownikami",
+      "BTN_ADD": "Dodaj użytkownika",
+      "EMAIL": "Email",
+      "LOGIN": "Login",
+      "ROLE": "Rola",
+      "ROLE_ADMIN": "Administrator",
+      "ROLE_USER": "Użytkownik",
+      "IS_ACTIVE": "Aktywne",
+      "YES": "Tak",
+      "NO": "Nie",
+      "DELETE_CONFIRM": "Czy na pewno chcesz usunąć użytkownika {{email}}?"
+    }
+  },
+
+  "app": {
+    "DESKTOP_ONLY_TITLE": "Aplikacja dostępna tylko na komputer",
+    "DESKTOP_ONLY_MESSAGE": "Przepraszamy, ta aplikacja nie jest dostępna na urządzenia mobilne i tablety."
   }
 }

@@ -203,7 +203,9 @@ export class GridComponent implements OnInit, OnDestroy {
             if (currentBuilding && currentBuilding.id === finishedBuilding.id) {
               this.buildings[r][c] = finishedBuilding;
               this.toastr.showSuccess(
-                `Budowa budynku ${finishedBuilding.name} zakończona!`
+                this.translate.instant('grid.SUCCESS.BUILDING_FINISHED', {
+                  name: finishedBuilding.name,
+                })
               );
               return;
             }
@@ -228,7 +230,11 @@ export class GridComponent implements OnInit, OnDestroy {
       this.villageErrorSub = this.webSocketService
         .onVillageDataError()
         .subscribe((error) => {
-          this.toastr.showError(`Błąd ładowania wioski: ${error.message}`);
+          this.toastr.showError(
+            this.translate.instant('grid.ERRORS.LOAD_VILLAGE', {
+              error: error.message,
+            })
+          );
         });
 
       this.webSocketService.requestVillageData(
@@ -247,7 +253,9 @@ export class GridComponent implements OnInit, OnDestroy {
         .onVillageByEmailError()
         .subscribe((error) => {
           this.toastr.showError(
-            `Błąd ładowania wioski gracza: ${error.message}`
+            this.translate.instant('grid.ERRORS.LOAD_PLAYER_VILLAGE', {
+              error: error.message,
+            })
           );
         });
 
@@ -285,9 +293,7 @@ export class GridComponent implements OnInit, OnDestroy {
         this.selectedBuildingCol = col;
         break;
       case 'upgrade':
-        this.selectedBuilding = this.buildings[row][col];
-        this.selectedBuildingRow = row;
-        this.selectedBuildingCol = col;
+        console.log('Ulepszam');
         break;
       case 'destroy':
         this.demolishBuilding(row, col);
@@ -345,7 +351,7 @@ export class GridComponent implements OnInit, OnDestroy {
     return (
       this.buildings[row][col] || {
         id: 0,
-        name: 'Pusty plac',
+        name: this.translate.instant('grid.EMPTY_PLOT'),
         level: 0,
         imageUrl: 'assets/img/background_playground.png',
       }
@@ -404,7 +410,9 @@ export class GridComponent implements OnInit, OnDestroy {
       draggedData?.constructionFinishedAt ||
       targetData?.constructionFinishedAt
     ) {
-      this.toastr.showError('Nie można przenosić budynków w trakcie budowy.');
+      this.toastr.showError(
+        this.translate.instant('grid.ERRORS.MOVE_UNDER_CONSTRUCTION')
+      );
       this.cleanupDragState(event);
       return;
     }
@@ -657,9 +665,9 @@ export class GridComponent implements OnInit, OnDestroy {
     }
 
     if (this.attackingArmy.totalHp <= 0) {
-      this.endAttack('Porażka! Twoja armia została pokonana.');
+      this.endAttack(this.translate.instant('grid.ATTACK.DEFEAT'));
     } else if (this.defendingArmy.totalHp <= 0 && !this.findNextTarget(false)) {
-      this.endAttack('Zwycięstwo! Wioska została zniszczona.');
+      this.endAttack(this.translate.instant('grid.ATTACK.VICTORY'));
     }
   }
 

@@ -25,8 +25,45 @@ export class QuestsService {
     private readonly wsGateway: WsGateway,
   ) {}
 
+  async getAll() {
+    return this.questRepo.findAll();
+  }
+
   async createQuest(data: CreateQuestDto) {
-    return this.questRepo.save(this.questRepo.create(data));
+    const savedQuest = await this.questRepo.save(this.questRepo.create(data));
+
+    const allPlayersResources = await this.resourcesRepo.find({
+      relations: ['user', 'server'],
+    });
+
+    if (!allPlayersResources.length) {
+      return savedQuest;
+    }
+
+    const progressEntities = allPlayersResources.map((resource) => {
+      const userQuestProgress = this.userQuestRepo.create({
+        user: resource.user,
+        server: resource.server,
+        quest: savedQuest,
+        isCompleted: false,
+        completedAt: null,
+      });
+
+      userQuestProgress.objectivesProgress = savedQuest.objectives.map((obj) =>
+        this.objectiveProgressRepo.create({
+          objective: obj,
+          currentCount: 0,
+          isCompleted: false,
+          rewardClaimed: false,
+        }),
+      );
+
+      return userQuestProgress;
+    });
+
+    await this.userQuestRepo.saveBulk(progressEntities);
+
+    return savedQuest;
   }
 
   async startQuest(userId: number, serverId: number, questId: number) {
@@ -38,6 +75,7 @@ export class QuestsService {
       serverId,
       questId,
     );
+
     if (progress) return progress;
 
     progress = this.userQuestRepo.create({
@@ -192,6 +230,16 @@ export class QuestsService {
     if (anyUpdate) {
       const updatedQuests = await this.getUserQuests(userId, serverId);
       this.wsGateway.sendToUser(userId, WsEvent.QUEST_UPDATE, updatedQuests);
+    }
+  }
+
+  async deleteQuest(questId: number): Promise<void> {
+    await this.userQuestRepo.deleteNotStartedByQuestId(questId);
+
+    const remainingUsers = await this.userQuestRepo.countByQuestId(questId);
+
+    if (remainingUsers === 0) {
+      await this.questRepo.delete(questId);
     }
   }
 }

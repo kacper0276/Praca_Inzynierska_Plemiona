@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiResponse, UserQuestProgress } from '@shared/models';
+import { ApiResponse, Quest, UserQuestProgress } from '@shared/models';
 import { HttpService } from '@shared/services';
 import { Observable } from 'rxjs';
 
@@ -25,7 +25,21 @@ export class QuestsService {
     );
   }
 
+  getAllQuests(): Observable<ApiResponse<Quest[]>> {
+    return this.httpService.get<Quest[]>('/quests');
+  }
+
   changeObjectiveProgress() {}
 
-  createQuest() {}
+  createQuest(questData: any): Observable<ApiResponse<Quest>> {
+    return this.httpService.post<Quest>('/quests', questData);
+  }
+
+  updateQuest(id: number, questData: any): Observable<ApiResponse<Quest>> {
+    return this.httpService.put<Quest>(`/quests/${id}`, questData);
+  }
+
+  deleteQuest(id: number): Observable<ApiResponse<void>> {
+    return this.httpService.delete<void>(`/quests/${id}`);
+  }
 }

@@ -3,6 +3,7 @@ import { UsersService } from '@modules/game/services';
 import { ColumnDefinition, ActionEvent } from '@shared/interfaces';
 import { User } from '@shared/models';
 import { ConfirmationService } from '@shared/services';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-panel',
@@ -11,40 +12,19 @@ import { ConfirmationService } from '@shared/services';
 })
 export class UserPanelComponent implements OnInit {
   usersList: User[] = [];
-  userColumns: ColumnDefinition[] = [
-    {
-      key: 'email',
-      header: 'Email',
-    },
-    {
-      key: 'login',
-      header: 'Login',
-    },
-    {
-      key: 'role',
-      header: 'Role',
-      type: 'select',
-      options: [
-        { label: 'Administrator', value: 'admin' },
-        { label: 'Użytkownik', value: 'user' },
-      ],
-    },
-    {
-      key: 'isActive',
-      header: 'Aktywne',
-      type: 'checkbox',
-    },
-  ];
+  userColumns: ColumnDefinition[] = [];
   isModalOpen: boolean = false;
   isCreateModalOpen: boolean = false;
   selectedUser: User | null = null;
 
   constructor(
     private readonly usersService: UsersService,
-    private readonly confirmationService: ConfirmationService
+    private readonly confirmationService: ConfirmationService,
+    private readonly translate: TranslateService
   ) {}
 
   ngOnInit(): void {
+    this.initColumns();
     this.usersService.fetchAllUsers().subscribe({
       next: (res) => {
         this.usersList = res.data;
@@ -52,10 +32,45 @@ export class UserPanelComponent implements OnInit {
     });
   }
 
+  private initColumns(): void {
+    this.userColumns = [
+      {
+        key: 'email',
+        header: this.translate.instant('admin.users.EMAIL'),
+      },
+      {
+        key: 'login',
+        header: this.translate.instant('admin.users.LOGIN'),
+      },
+      {
+        key: 'role',
+        header: this.translate.instant('admin.users.ROLE'),
+        type: 'select',
+        options: [
+          {
+            label: this.translate.instant('admin.users.ROLE_ADMIN'),
+            value: 'admin',
+          },
+          {
+            label: this.translate.instant('admin.users.ROLE_USER'),
+            value: 'user',
+          },
+        ],
+      },
+      {
+        key: 'isActive',
+        header: this.translate.instant('admin.users.IS_ACTIVE'),
+        type: 'checkbox',
+      },
+    ];
+  }
+
   formatUserData(item: User, columnKey: string): any {
     switch (columnKey) {
       case 'isActive':
-        return item.isActive ? 'Tak' : 'Nie';
+        return item.isActive
+          ? this.translate.instant('admin.users.YES')
+          : this.translate.instant('admin.users.NO');
       default:
         return (item as any)[columnKey];
     }
@@ -108,7 +123,9 @@ export class UserPanelComponent implements OnInit {
 
   async onDeleteUser(userToDelete: User): Promise<void> {
     const result = await this.confirmationService.confirm(
-      `Czy na pewno chcesz usunąć użytkownika ${userToDelete.email}?`
+      this.translate.instant('admin.users.DELETE_CONFIRM', {
+        email: userToDelete.email,
+      })
     );
 
     if (result) {
@@ -120,8 +137,6 @@ export class UserPanelComponent implements OnInit {
         },
       });
       this.closeEditModal();
-    } else {
-      console.log('Usuwanie anulowane.');
     }
   }
 }

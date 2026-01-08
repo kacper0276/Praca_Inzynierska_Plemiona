@@ -14,18 +14,16 @@
   backdrop-filter: blur(4px);
 }
 
-option {
-  color: $black;
-}
-
 .modal-panel {
   background: var(--panel);
   color: var(--text);
   border-radius: 8px;
-  padding: 24px;
   width: 90%;
-  max-width: 500px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
   border: 1px solid var(--input-border);
   animation: fadeIn 0.3s ease-out;
 }
@@ -35,16 +33,47 @@ option {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--input-border);
-  padding-bottom: 16px;
-  margin-bottom: 20px;
+  padding: 20px 24px;
+  flex-shrink: 0;
 
   h3 {
     margin: 0;
     font-size: 1.25rem;
+    color: var(--white);
   }
 }
 
-.modal-content .form-group {
+.modal-content {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--input-border);
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--muted);
+  }
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid var(--input-border);
+  background: rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.form-group {
   margin-bottom: 16px;
 
   > label {
@@ -59,11 +88,11 @@ option {
 .form-control {
   width: 100%;
   padding: 10px 12px;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.2);
   border: 1px solid var(--input-border);
   border-radius: 4px;
   color: var(--text);
-  font-size: 1rem;
+  font-size: 0.95rem;
   transition: border-color 0.2s, box-shadow 0.2s;
 
   &:focus {
@@ -105,23 +134,73 @@ option {
   }
 }
 
-.checkbox-label {
-  font-weight: 500;
-  cursor: pointer;
+.objectives-section {
+  margin-top: 30px;
+  border-top: 1px dashed var(--input-border);
+  padding-top: 20px;
 }
 
-.modal-footer {
+.section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 16px;
-  margin-top: 20px;
-  border-top: 1px solid var(--input-border);
+  margin-bottom: 15px;
+
+  h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--white);
+  }
 }
 
-.actions-right {
+.objective-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.obj-grid-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.obj-desc-row {
+  margin-bottom: 10px;
+}
+
+.obj-rewards-row {
   display: flex;
   gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.reward-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  input {
+    width: 100%;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    color: var(--white);
+    font-size: 12px;
+  }
 }
 
 .btn {
@@ -133,7 +212,7 @@ option {
   transition: opacity 0.2s;
 
   &:hover {
-    opacity: 0.85;
+    opacity: 0.9;
   }
 }
 
@@ -143,26 +222,48 @@ option {
 }
 
 .btn-secondary {
-  background-color: $gray-600;
-  color: white;
-}
-
-.btn-danger {
-  background-color: $red-500;
-  color: white;
+  background-color: transparent;
+  border: 1px solid var(--input-border);
+  color: var(--muted);
 }
 
 .btn-add-small {
-  background-color: rgba($color: $blue-600, $alpha: 0.7);
+  background-color: rgba($blue-600, 0.2);
+  color: $blue-600;
+  border: 1px solid rgba($blue-600, 0.3);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+
+  &:hover {
+    background-color: rgba($blue-600, 0.3);
+  }
+}
+
+.btn-delete {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
   border: none;
-  outline: none;
+  color: #e74c3c;
+  cursor: pointer;
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .icon-btn {
   background: transparent;
   border: none;
-  cursor: pointer;
   color: var(--muted);
+  cursor: pointer;
   padding: 4px;
   border-radius: 50%;
   display: inline-flex;
@@ -173,6 +274,10 @@ option {
     background-color: rgba(255, 255, 255, 0.07);
     color: var(--text);
   }
+}
+
+option {
+  color: black;
 }
 
 @keyframes fadeIn {

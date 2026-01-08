@@ -10,10 +10,9 @@
 
 <ng-template #mobileContent>
   <div class="mobile-message">
-    <h1>Aplikacja dostępna tylko na komputer</h1>
+    <h1>{{ "app.DESKTOP_ONLY_TITLE" | translate }}</h1>
     <p>
-      Przepraszamy, ta aplikacja nie jest dostępna na urządzenia mobilne i
-      tablety.
+      {{ "app.DESKTOP_ONLY_MESSAGE" | translate }}
     </p>
   </div>
 </ng-template>

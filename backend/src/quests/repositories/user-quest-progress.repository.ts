@@ -62,6 +62,10 @@ export class UserQuestProgressRepository extends BaseRepository<UserQuestProgres
     return this.repository.save(data);
   }
 
+  saveBulk(data: UserQuestProgress[]): Promise<UserQuestProgress[]> {
+    return this.repository.save(data);
+  }
+
   async findProgress(userId: number, serverId: number, questId: number) {
     return this.repository.findOne({
       where: {
@@ -86,5 +90,32 @@ export class UserQuestProgressRepository extends BaseRepository<UserQuestProgres
         'objectivesProgress.objective',
       ],
     });
+  }
+
+  async countByQuestId(questId: number): Promise<number> {
+    return this.repository.count({
+      where: { quest: { id: questId } as any },
+    });
+  }
+
+  async deleteNotStartedByQuestId(questId: number): Promise<void> {
+    const allProgresses = await this.repository.find({
+      where: { quest: { id: questId } as any },
+      relations: ['objectivesProgress'],
+    });
+
+    const entitiesToDelete = allProgresses.filter((progress) => {
+      if (progress.isCompleted) return false;
+
+      const hasStartedAnyObjective = progress.objectivesProgress.some(
+        (obj) => obj.currentCount > 0,
+      );
+
+      return !hasStartedAnyObjective;
+    });
+
+    if (entitiesToDelete.length > 0) {
+      await this.repository.remove(entitiesToDelete);
+    }
   }
 }

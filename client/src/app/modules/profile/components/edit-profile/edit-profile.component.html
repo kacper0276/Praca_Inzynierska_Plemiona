@@ -6,7 +6,7 @@
         backendUrl + user.backgroundImage ||
         'assets/images/default-background.jpg'
       "
-      alt="Tło profilu"
+      [alt]="'editProfile.ALT.BACKGROUND' | translate"
       class="background-image"
     />
     <button
@@ -14,7 +14,8 @@
       class="btn-change-bg"
       (click)="backgroundInput.click()"
     >
-      <i class="icon-camera"></i> Zmień tło
+      <i class="icon-camera"></i>
+      {{ "editProfile.CHANGE_BACKGROUND" | translate }}
     </button>
     <input
       type="file"
@@ -33,7 +34,7 @@
         >
           <img
             [src]="profileImagePreview || backendUrl + user.profileImage"
-            alt="Awatar użytkownika"
+            [alt]="'editProfile.ALT.AVATAR' | translate"
             class="avatar-image"
           />
         </ng-container>
@@ -45,7 +46,7 @@
 
         <div class="upload-overlay">
           <i class="icon-camera"></i>
-          <span>Zmień</span>
+          <span>{{ "editProfile.CHANGE_AVATAR_LABEL" | translate }}</span>
         </div>
 
         <div
@@ -73,10 +74,12 @@
         [formGroup]="profileForm"
         (ngSubmit)="saveChanges()"
       >
-        <h3>Edytuj profil</h3>
+        <h3>{{ "editProfile.HEADER" | translate }}</h3>
         <div class="form-row">
           <div class="form-group">
-            <label for="firstName">Imię</label>
+            <label for="firstName">{{
+              "editProfile.FIRST_NAME" | translate
+            }}</label>
             <input
               id="firstName"
               type="text"
@@ -85,7 +88,9 @@
             />
           </div>
           <div class="form-group">
-            <label for="lastName">Nazwisko</label>
+            <label for="lastName">{{
+              "editProfile.LAST_NAME" | translate
+            }}</label>
             <input
               id="lastName"
               type="text"
@@ -95,7 +100,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="login">Login</label>
+          <label for="login">{{ "editProfile.LOGIN" | translate }}</label>
           <input
             id="login"
             type="text"
@@ -104,17 +109,19 @@
           />
         </div>
         <div class="form-group">
-          <label for="bio">O mnie</label>
+          <label for="bio">{{ "editProfile.BIO" | translate }}</label>
           <textarea
             id="bio"
             formControlName="bio"
             class="form-control"
             rows="5"
-            placeholder="Napisz coś o sobie..."
+            [placeholder]="'editProfile.BIO_PLACEHOLDER' | translate"
           ></textarea>
         </div>
         <div class="footer-buttons">
-          <button type="button" class="btn btn-secondary">Anuluj</button>
+          <button type="button" class="btn btn-secondary">
+            {{ "editProfile.BTN_CANCEL" | translate }}
+          </button>
           <button
             type="submit"
             class="btn btn-primary"
@@ -122,7 +129,7 @@
               !profileForm.valid && !profileImageFile && !backgroundImageFile
             "
           >
-            Zapisz zmiany
+            {{ "editProfile.BTN_SAVE" | translate }}
           </button>
         </div>
       </form>

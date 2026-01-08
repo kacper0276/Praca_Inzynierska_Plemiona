@@ -1,5 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { BuildingData, Resources } from '@shared/models';
+import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from '@shared/services';
 
 @Component({
   selector: 'app-upgrade-modal',
@@ -11,6 +13,11 @@ export class UpgradeModalComponent {
   @Input() resources!: Resources;
   @Output() upgrade = new EventEmitter<{ cost: Partial<Resources> }>();
   @Output() close = new EventEmitter<void>();
+
+  constructor(
+    private readonly translate: TranslateService,
+    private readonly toastr: ToastrService
+  ) {}
 
   getUpgradeCost(): Partial<Resources> {
     if (!this.building) return {};

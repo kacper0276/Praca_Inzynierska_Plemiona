@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CreateReport } from '@modules/game/interfaces';
 import { ReportsService } from '@modules/game/services';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from '@shared/services';
 
 @Component({
@@ -22,7 +23,8 @@ export class BugReportComponent {
 
   constructor(
     private readonly reportsService: ReportsService,
-    private readonly toastrService: ToastrService
+    private readonly toastrService: ToastrService,
+    private readonly translateService: TranslateService
   ) {}
 
   close() {
@@ -40,7 +42,9 @@ export class BugReportComponent {
     this.reportsService.generateReport(reportData).subscribe({
       next: (res) => {
         this.closed.emit();
-        this.toastrService.showSuccess('Wysłano zgłoszenie');
+        this.toastrService.showSuccess(
+          this.translateService.instant('bugModal.TOASTR_SUCCESS')
+        );
       },
       error: (err) => {
         this.toastrService.showError(err.error.message[0]);

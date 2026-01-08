@@ -10,12 +10,18 @@ import {
   ParseIntPipe,
   Patch,
   Query,
+  Delete,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { QuestsService } from '../services/quests.service';
 import { CreateQuestDto } from '../dto/create-quest.dto';
@@ -32,6 +38,15 @@ export class QuestsController {
   @ApiCreatedResponse({ description: 'Quest został utworzony.' })
   async createQuest(@Body() questData: CreateQuestDto) {
     return this.questsService.createQuest(questData);
+  }
+
+  @Get()
+  @Roles(UserRole.ADMIN)
+  @ApiOkResponse({
+    description: 'Zwraca listę wszystkich zadań',
+  })
+  async getAllQuests() {
+    return this.questsService.getAll();
   }
 
   @Get('server/:serverId')
@@ -72,5 +87,17 @@ export class QuestsController {
       objectiveId,
       amount,
     );
+  }
+
+  @Delete(':id')
+  @Roles(UserRole.ADMIN)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Budynek został pomyślnie usunięty.' })
+  @ApiNotFoundResponse({
+    description: 'Budynek o podanym ID nie został znaleziony.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Brak autoryzacji' })
+  async deleteQuest(@Param('id', ParseIntPipe) id: number) {
+    return this.questsService.deleteQuest(id);
   }
 }

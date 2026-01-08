@@ -24,6 +24,7 @@ import {
 } from '@shared/services';
 import { finalize, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-clan-view',
@@ -63,7 +64,8 @@ export class ClanViewComponent implements OnInit {
     private readonly usersService: UsersService,
     private readonly serverService: ServerService,
     private readonly groupService: ChatGroupsService,
-    private readonly wsService: WebSocketService
+    private readonly wsService: WebSocketService,
+    private readonly translate: TranslateService
   ) {
     this.resForm = this.fb.group({
       to: [null, Validators.required],
@@ -160,7 +162,7 @@ export class ClanViewComponent implements OnInit {
       isMe: isMe,
       time: new Date(backendMsg.createdAt).toString(),
       senderName: isMe
-        ? 'Ja'
+        ? this.translate.instant('clan.view.CHAT.SENDER_ME')
         : backendMsg.sender.username || backendMsg.sender.email,
       senderAvatar: backendMsg.sender.avatar || 'assets/default-avatar.png',
     };
@@ -242,7 +244,9 @@ export class ClanViewComponent implements OnInit {
       .subscribe({
         next: (res) => {},
         error: () => {
-          alert('Błąd wysyłania wiadomości do grupy');
+          this.toastr.showError(
+            this.translate.instant('clan.view.CHAT.ERROR_SEND')
+          );
           this.msgText = content;
         },
       });
@@ -257,7 +261,9 @@ export class ClanViewComponent implements OnInit {
 
   sendRes() {
     if (this.resForm.invalid) {
-      this.toastr.showWarning('Wybierz odbiorcę i poprawne ilości.');
+      this.toastr.showWarning(
+        this.translate.instant('clan.view.RESOURCES.WARNINGS.INVALID_FORM')
+      );
       return;
     }
 
@@ -269,13 +275,17 @@ export class ClanViewComponent implements OnInit {
     };
 
     if (amounts.wood + amounts.clay + amounts.iron <= 0) {
-      this.toastr.showWarning('Musisz wybrać przynajmniej jeden surowiec.');
+      this.toastr.showWarning(
+        this.translate.instant('clan.view.RESOURCES.WARNINGS.ZERO_AMOUNT')
+      );
       return;
     }
 
     const currentServer = this.serverService.getServer();
     if (!currentServer || !currentServer.id) {
-      this.toastr.showError('Błąd serwera. Odśwież stronę.');
+      this.toastr.showError(
+        this.translate.instant('clan.view.RESOURCES.ERRORS.SERVER_ERROR')
+      );
       return;
     }
 
@@ -283,16 +293,23 @@ export class ClanViewComponent implements OnInit {
       .sendResourcesToOtherPlayer(+val.to, currentServer.id, amounts)
       .subscribe({
         next: () => {
-          this.toastr.showSuccess('Surowce zostały wysłane!');
+          this.toastr.showSuccess(
+            this.translate.instant('clan.view.RESOURCES.SUCCESS')
+          );
           this.resForm.reset({ to: null, wood: 0, clay: 0, iron: 0 });
         },
         error: (err) => {
           if (err.status === 400) {
             this.toastr.showError(
-              err.error?.message || 'Nie masz wystarczającej ilości surowców.'
+              err.error?.message ||
+                this.translate.instant('clan.view.RESOURCES.ERRORS.NOT_ENOUGH')
             );
           } else {
-            this.toastr.showError('Wystąpił błąd podczas transferu.');
+            this.toastr.showError(
+              this.translate.instant(
+                'clan.view.RESOURCES.ERRORS.TRANSFER_FAILED'
+              )
+            );
           }
         },
       });

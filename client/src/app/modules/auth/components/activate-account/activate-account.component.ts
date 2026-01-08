@@ -21,7 +21,7 @@ export class ActivateAccountComponent {
     private readonly router: Router
   ) {
     this.titleService.setTitle(
-      this.translateService.instant('activate-account')
+      this.translateService.instant('auth.activate.TITLE')
     );
   }
 
@@ -52,19 +52,19 @@ export class ActivateAccountComponent {
       this.authService.activateAccount(code).subscribe({
         next: () => {
           this.toastrService.showSuccess(
-            this.translateService.instant('success-activate-account-message')
+            this.translateService.instant('auth.activate.SUCCESS')
           );
           this.router.navigate(['/login']);
         },
         error: () => {
-          this.toastrService.showSuccess(
-            this.translateService.instant('error-activate-account-message')
+          this.toastrService.showError(
+            this.translateService.instant('auth.activate.ERROR')
           );
         },
       });
     } else {
       this.toastrService.showError(
-        this.translateService.instant('min-length-code-error')
+        this.translateService.instant('auth.activate.VALIDATION_ERROR')
       );
     }
   }

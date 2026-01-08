@@ -3,6 +3,7 @@ import { ReportsService } from '@modules/game/services';
 import { ColumnDefinition, ActionEvent } from '@shared/interfaces';
 import { Report } from '@shared/models';
 import { ConfirmationService } from '@shared/services';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-report-panel',
@@ -11,38 +12,49 @@ import { ConfirmationService } from '@shared/services';
 })
 export class ReportPanelComponent implements OnInit {
   reports: Report[] = [];
-  reportColumns: ColumnDefinition[] = [
-    {
-      key: 'reporter',
-      header: 'Zgłaszający (e-mxail)',
-      editField: 'email',
-      isReadOnly: true,
-    },
-    {
-      key: 'targetUser',
-      header: 'Zgłoszony (e-mail)',
-      editField: 'email',
-      isReadOnly: true,
-    },
-    { key: 'content', header: 'Treść' },
-    { key: 'isResolved', header: 'Status (Czy rozwiązano)' },
-    // { key: 'actions', header: 'Akcje', isAction: true },
-  ];
+  reportColumns: ColumnDefinition[] = [];
 
   isModalOpen = false;
   selectedReport: Report | null = null;
 
   constructor(
     private readonly reportsService: ReportsService,
-    private readonly confirmationService: ConfirmationService
+    private readonly confirmationService: ConfirmationService,
+    private readonly translate: TranslateService
   ) {}
 
   ngOnInit(): void {
+    this.initColumns();
     this.reportsService.getAllReports().subscribe({
       next: (res) => {
         this.reports = res.data;
       },
     });
+  }
+
+  private initColumns(): void {
+    this.reportColumns = [
+      {
+        key: 'reporter',
+        header: this.translate.instant('admin.reports.REPORTER'),
+        editField: 'email',
+        isReadOnly: true,
+      },
+      {
+        key: 'targetUser',
+        header: this.translate.instant('admin.reports.TARGET'),
+        editField: 'email',
+        isReadOnly: true,
+      },
+      {
+        key: 'content',
+        header: this.translate.instant('admin.reports.CONTENT'),
+      },
+      {
+        key: 'isResolved',
+        header: this.translate.instant('admin.reports.STATUS'),
+      },
+    ];
   }
 
   formatReportData(item: Report, columnKey: string): any {
@@ -52,7 +64,9 @@ export class ReportPanelComponent implements OnInit {
       case 'targetUser':
         return item.targetUser ? item.targetUser.email : 'Brak';
       case 'isResolved':
-        return item.isResolved ? 'Rozwiązany' : 'Oczekujący';
+        return item.isResolved
+          ? this.translate.instant('admin.reports.STATUS_RESOLVED')
+          : this.translate.instant('admin.reports.STATUS_PENDING');
       default:
         return (item as any)[columnKey];
     }
@@ -69,7 +83,6 @@ export class ReportPanelComponent implements OnInit {
   }
 
   onSaveReport(updatedReport: Report): void {
-    console.log('Zapisywanie zmian:', updatedReport);
     this.reportsService
       .updateReport(updatedReport.id ?? -1, updatedReport.isResolved)
       .subscribe({
@@ -88,7 +101,9 @@ export class ReportPanelComponent implements OnInit {
 
   async onDeleteReport(reportToDelete: Report): Promise<void> {
     const result = await this.confirmationService.confirm(
-      `Czy na pewno chcesz usunąć zgłoszenie od ${reportToDelete.reporter.email}?`
+      this.translate.instant('admin.reports.DELETE_CONFIRM', {
+        email: reportToDelete.reporter.email,
+      })
     );
 
     if (result) {
@@ -99,8 +114,6 @@ export class ReportPanelComponent implements OnInit {
       });
 
       this.closeEditModal();
-    } else {
-      console.log('Usuwanie anulowane.');
     }
   }
 }

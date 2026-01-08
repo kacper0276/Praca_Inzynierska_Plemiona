@@ -23,8 +23,4 @@ export class BuildingComponent {
       event.dataTransfer?.setData('text/plain', '');
     } catch (e) {}
   }
-
-  onClick() {
-    console.log(`Kliknięto budynek: ${this.name}, poziom: ${this.level}`);
-  }
 }

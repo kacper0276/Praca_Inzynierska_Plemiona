@@ -26,6 +26,7 @@ export class CreateQuestDto {
   description: string;
 
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(0)
   @ApiProperty({
@@ -36,6 +37,7 @@ export class CreateQuestDto {
   woodReward?: number = 0;
 
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(0)
   @ApiProperty({
@@ -46,6 +48,7 @@ export class CreateQuestDto {
   clayReward?: number = 0;
 
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(0)
   @ApiProperty({
@@ -56,6 +59,7 @@ export class CreateQuestDto {
   ironReward?: number = 0;
 
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(0)
   @ApiProperty({

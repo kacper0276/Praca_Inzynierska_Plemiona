@@ -29,9 +29,9 @@ export const BUILDING_OPTIONS: RadialMenuOption[] = [
     iconUrl: '/assets/icons/trash.png',
     tooltip: 'Usuń',
   },
-  {
-    action: 'edit',
-    iconUrl: '/assets/icons/pencil.png',
-    tooltip: 'Edytuj',
-  },
+  // {
+  //   action: 'edit',
+  //   iconUrl: '/assets/icons/pencil.png',
+  //   tooltip: 'Edytuj',
+  // },
 ];

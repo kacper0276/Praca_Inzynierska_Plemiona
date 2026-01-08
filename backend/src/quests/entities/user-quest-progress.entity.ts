@@ -26,7 +26,7 @@ export class UserQuestProgress extends BaseEntity {
   @OneToMany(
     () => UserObjectiveProgress,
     (objProgress) => objProgress.userQuest,
-    { cascade: true },
+    { cascade: true, onDelete: 'CASCADE' },
   )
   objectivesProgress: UserObjectiveProgress[];
 }

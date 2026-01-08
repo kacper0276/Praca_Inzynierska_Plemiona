@@ -1,6 +1,10 @@
 @use "mixins" as *;
 @use "variables" as *;
 
+* {
+  color: var(--text);
+}
+
 .buttons {
   display: flex;
   justify-content: center;
@@ -11,6 +15,21 @@
 
 button {
   @include button($red-500);
+  color: $white;
+
+  &:first-child {
+    background-color: $blue-500;
+  }
+
+  &:nth-child(2) {
+    background-color: $green-500;
+  }
+
+  &:disabled {
+    background-color: $gray-400;
+    cursor: not-allowed;
+    color: $black;
+  }
 }
 
 .health-bar {

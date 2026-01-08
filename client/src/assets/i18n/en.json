@@ -1,5 +1,5 @@
 {
-  "INFO_FIELD": "Field information [{row}, {col}]",
+  "INFO_FIELD": "Field info [{row}, {col}]",
   "MAX_GRID": "Maximum village size reached",
   "NOT_ENOUGH_RES_EXPAND": "Not enough resources to expand!",
   "NOT_ENOUGH_RES": "Not enough resources!",
@@ -10,7 +10,499 @@
   "CLAN_COST_LABEL": "Cost",
   "GATHER_TICK_INFO": "Next resources in {seconds}s",
 
+  "bugModal": {
+    "HEADER": "Report a bug",
+    "SUCCESS_MSG": "Your report has been sent. Thank you!",
+    "LABEL_TITLE": "Title",
+    "LABEL_DESC": "Description",
+    "LABEL_EMAIL": "Email (optional)",
+    "BTN_CANCEL": "Cancel",
+    "BTN_SEND": "Send",
+    "TOASTR_SUCCESS": "Report sent"
+  },
+
+  "confirmationModal": {
+    "BTN_CANCEL": "Cancel",
+    "BTN_CONFIRM": "Confirm"
+  },
+
+  "questModal": {
+    "HEADER_ADD": "Add new quest",
+    "OBJECTIVES_HEADER": "Quest objectives (Subtasks)",
+    "BTN_ADD_OBJECTIVE": "Add objective",
+    "NO_OBJECTIVES_MSG": "No objectives defined. Click \"Add objective\".",
+    "PLACEHOLDER_DESC": "Description for player",
+    "PLACEHOLDER_TARGET": "Objective code (e.g. barracks)",
+    "PLACEHOLDER_AMOUNT": "Amount",
+    "REWARD_WOOD": "Wood",
+    "REWARD_CLAY": "Clay",
+    "REWARD_IRON": "Iron",
+    "BTN_CANCEL": "Cancel",
+    "BTN_SAVE": "Save quest"
+  },
+
+  "editModal": {
+    "HEADER_EDIT": "Edit item",
+    "ARIA_CLOSE": "Close",
+    "BTN_DELETE": "Delete",
+    "BTN_CANCEL": "Cancel",
+    "BTN_SAVE": "Save changes"
+  },
+
+  "multiSelect": {
+    "NO_RESULTS": "No results"
+  },
+
+  "dataTable": {
+    "CLICK_TO_EDIT": "Click to edit",
+    "ARIA_EDIT": "Edit item",
+    "TITLE_EDIT": "Edit",
+    "ARIA_DELETE": "Delete item",
+    "TITLE_DELETE": "Delete",
+    "NO_DATA": "No data to display."
+  },
+
+  "pagination": {
+    "INFO": "Showing {{rangeStart}} - {{rangeEnd}} of {{totalItems}}",
+    "ROWS_LABEL": "Rows:"
+  },
+
+  "army": {
+    "SUBTITLE": "Manage army and recruit units",
+    "LEVEL_PREFIX": "Lvl.",
+    "AVAILABLE": "Available",
+    "UPGRADE_LABEL": "Upgrade",
+    "TOOLTIP_UPGRADE": "Upgrade level",
+    "UNIT_AMOUNT": "Number of units",
+    "REQUIRED_RESOURCES": "Required resources",
+    "BTN_RECRUIT": "Recruit",
+    "SUCCESS": {
+      "RECRUITED": "Recruited: {{unitName}}",
+      "UPGRADED": "Upgraded: {{unitName}} (Lvl. {{level}})"
+    },
+    "ERRORS": {
+      "NO_SERVER": "No server selected.",
+      "GENERIC": "An error occurred.",
+      "NO_RESOURCES": "No resources or server error."
+    }
+  },
+
+  "buildModal": {
+    "HEADER": "Choose building to construct",
+    "BTN_BUILD": "Build",
+    "BTN_CANCEL": "Cancel"
+  },
+
+  "chat": {
+    "MESSAGES_HEADER": "Messages",
+    "SEARCH_PLACEHOLDER": "Search user...",
+    "SELECT_CHAT_PROMPT": "Select a chat to start conversation",
+    "INPUT_PLACEHOLDER": "Write a message...",
+    "BTN_SEND": "Send",
+    "SENDER_ME": "Me",
+    "DEFAULT_GROUP_DESC": "Group created by user",
+    "groupModal": {
+      "HEADER": "Create new group",
+      "LABEL_NAME": "Group name",
+      "PLACEHOLDER_NAME": "E.g. Project Team A",
+      "LABEL_PARTICIPANTS": "Add participants",
+      "PLACEHOLDER_FRIENDS": "Search friends...",
+      "BTN_CANCEL": "Cancel",
+      "BTN_CREATE": "Create group"
+    },
+    "ERRORS": {
+      "SEARCH_FAILED": "Search failed",
+      "FETCH_CHATS_FAILED": "Failed to fetch chats",
+      "SEND_MSG_FAILED": "Failed to send message",
+      "SEND_GROUP_MSG_FAILED": "Failed to send group message",
+      "CREATE_GROUP_FAILED": "Failed to create group"
+    },
+    "SUCCESS": {
+      "GROUP_CREATED": "Group created successfully"
+    }
+  },
+
+  "clan": {
+    "create": {
+      "HEADER": "Create clan",
+      "NAME_LABEL": "Clan name",
+      "DESC_LABEL": "Clan description",
+      "INVITED_PLAYERS_LABEL": "Invited players",
+      "COST_LABEL": "Creation cost",
+      "BTN_CREATE": "Create clan",
+      "SUCCESS_MSG": "Clan created successfully!",
+      "ERROR_GENERIC": "Failed to create clan."
+    },
+    "view": {
+      "TABS": {
+        "MEMBERS": "Members",
+        "CHAT": "Chat",
+        "RESOURCES": "Resources"
+      },
+      "MEMBERS": {
+        "ADD_BTN": "+ Add member",
+        "LEADER_LABEL": "(Leader)",
+        "KICK_BTN": "Kick",
+        "MODAL": {
+          "TITLE": "Add new members",
+          "SELECT_LABEL": "Select players from list:",
+          "NO_PLAYERS": "No available players to add.",
+          "BTN_CANCEL": "Cancel",
+          "BTN_ADD": "Add"
+        }
+      },
+      "CHAT": {
+        "SENDER_ME": "Me",
+        "INPUT_PLACEHOLDER": "Message...",
+        "BTN_SEND": "Send",
+        "ERROR_SEND": "Error sending message to group"
+      },
+      "RESOURCES": {
+        "PLACEHOLDERS": {
+          "WOOD": "Wood",
+          "CLAY": "Clay",
+          "IRON": "Iron"
+        },
+        "BTN_SEND": "Send resources",
+        "WARNINGS": {
+          "INVALID_FORM": "Select recipient and valid amounts.",
+          "ZERO_AMOUNT": "You must select at least one resource."
+        },
+        "ERRORS": {
+          "SERVER_ERROR": "Server error. Refresh the page.",
+          "NOT_ENOUGH": "You do not have enough resources.",
+          "TRANSFER_FAILED": "Error occurred during transfer."
+        },
+        "SUCCESS": "Resources sent!"
+      }
+    }
+  },
+
+  "resources": {
+    "wood": "Wood",
+    "clay": "Clay",
+    "iron": "Iron",
+    "population": "Population"
+  },
+  "game": {
+    "TITLE": "Terra Bellum",
+    "modal": {
+      "HEADER": "Select Game World",
+      "BODY_TEXT": "To continue, select a server you want to play on.",
+      "BTN_CANCEL": "Cancel",
+      "BTN_JOIN": "Join Game"
+    },
+    "topbar": {
+      "SERVER_LABEL": "Server"
+    },
+    "info": {
+      "SELECT_SERVER": "You must select a server to start the game. Refresh the page to try again.",
+      "CANCELLED_MODAL": "Server selection cancelled."
+    },
+    "errors": {
+      "CONNECTION_FAILED": "Connection to server failed. Try again later.",
+      "NO_SERVER_SELECTED": "No server selected.",
+      "BUILD_FARM_FAILED": "Failed to build farm - not enough resources.",
+      "FETCH_RES_FAILED": "Error fetching resources."
+    },
+    "success": {
+      "JOINED_SERVER": "Joined server: {{serverName}}"
+    }
+  },
+
+  "buildingDetails": {
+    "LEVEL": "Level",
+    "HEALTH": "Health",
+    "BTN_DEMOLISH": "Demolish building",
+    "BTN_REPAIR": "Repair building",
+    "BTN_CLOSE": "Close"
+  },
+
+  "grid": {
+    "ATTACK": {
+      "BTN_IN_PROGRESS": "Attack in progress...",
+      "BTN_START": "Attack",
+      "VICTORY": "Victory! Village destroyed.",
+      "DEFEAT": "Defeat! Your army was defeated."
+    },
+    "EXPANSION": {
+      "BTN_LEFT": "Expand left",
+      "BTN_RIGHT": "Expand right",
+      "BTN_LABEL": "Expand"
+    },
+    "GATHER": {
+      "NEXT_RESOURCES": "Next resources in:"
+    },
+    "CONSTRUCTION": {
+      "TIME_LEFT": "Time remaining",
+      "LEVEL_SHORT": "Lvl"
+    },
+    "ERRORS": {
+      "MOVE_UNDER_CONSTRUCTION": "Cannot move buildings during construction.",
+      "LOAD_VILLAGE": "Error loading village: {{error}}",
+      "LOAD_PLAYER_VILLAGE": "Error loading player village: {{error}}"
+    },
+    "SUCCESS": {
+      "BUILDING_FINISHED": "Construction of {{name}} finished!"
+    },
+    "EMPTY_PLOT": "Empty plot"
+  },
+
+  "invites": {
+    "FIND_FRIENDS": "Find friends",
+    "SEARCH_PLACEHOLDER": "Enter user login...",
+    "RECEIVED_INVITES": "Received invites",
+    "AVATAR_ALT": "User avatar",
+    "BTN_ACCEPT": "Accept",
+    "BTN_DECLINE": "Decline",
+    "BTN_ADD": "Add",
+    "STATUS_SENT": "Sent",
+    "SUCCESS": {
+      "INVITE_SENT": "Invitation sent.",
+      "RESPONDED": "Invitation status updated."
+    },
+    "ERRORS": {
+      "SEARCH_FAILED": "Search error.",
+      "INVITE_SEND_FAILED": "Error sending invitation.",
+      "RESPOND_FAILED": "Error occurred while responding to invitation."
+    }
+  },
+
+  "map": {
+    "HEADER": "World Map",
+    "CENTER_LABEL": "Center",
+    "ERRORS": {
+      "FETCH_FAILED": "Failed to fetch map data."
+    }
+  },
+
+  "ranking": {
+    "TITLE": "Ranking",
+    "HEADERS": {
+      "POSITION": "Position",
+      "USERNAME": "Username",
+      "SCORE": "Score"
+    },
+    "ERRORS": {
+      "FETCH_FAILED": "Error fetching ranking."
+    }
+  },
+
+  "sideMenu": {
+    "TOGGLE_LABEL": "Collapse/Expand menu",
+    "LANG_PL": "Polish",
+    "LANG_EN": "English",
+    "THEME_LIGHT": "Light theme",
+    "THEME_DARK": "Dark theme",
+    "ITEMS": {
+      "VILLAGE": "Village",
+      "MAP": "Map",
+      "ARMY": "Army",
+      "MESSAGES": "Messages",
+      "RANKING": "Ranking",
+      "CLAN": "Clan",
+      "INVITATIONS": "Invitations",
+      "TASKS": "Tasks",
+      "REPORT_BUG": "Report a problem",
+      "REPORT_BUG_TITLE": "Report a bug",
+      "ADMIN_PANEL": "Admin panel"
+    },
+    "USER_MENU": {
+      "EDIT_ACCOUNT": "Edit account",
+      "PROFILE_VIEW": "Profile view",
+      "LOGOUT": "Logout"
+    },
+    "SUCCESS": {
+      "LOGOUT": "Logged out successfully."
+    }
+  },
+
+  "tasks": {
+    "HEADER": "Quest Journal",
+    "DESCRIPTION_PREFIX": "Description:",
+    "LOADING_OBJECTIVE": "Loading objective...",
+    "REWARDS_LABEL": "Rewards:",
+    "BTN_CLAIM": "Claim",
+    "STATUS": {
+      "CLAIMED": "Claimed",
+      "READY": "Ready to claim",
+      "ACTIVE": "In progress"
+    },
+    "SUCCESS": {
+      "REWARD_CLAIMED": "Reward claimed!"
+    },
+    "ERRORS": {
+      "FETCH_FAILED": "Error fetching quests.",
+      "CLAIM_FAILED": "Failed to claim reward."
+    }
+  },
+
+  "upgradeModal": {
+    "HEADER": "Upgrade building",
+    "LEVEL": "Level",
+    "BTN_UPGRADE": "Upgrade",
+    "BTN_CANCEL": "Cancel"
+  },
+
+  "home": {
+    "TITLE": "Welcome to the game",
+    "BTN_LOGIN": "Log in",
+    "BTN_REGISTER": "Register"
+  },
+
+  "profile": {
+    "BACKGROUND_ALT": "Profile background",
+    "AVATAR_ALT": "User avatar",
+    "ABOUT_ME_HEADER": "About me",
+    "NO_BIO": "No description.",
+    "INFO_HEADER": "Information",
+    "EMAIL_LABEL": "Email",
+    "ROLE_LABEL": "Role",
+    "BTN_SEND_MESSAGE": "Send message",
+    "BTN_EDIT_PROFILE": "Edit profile",
+    "ERRORS": {
+      "FETCH_USER_FAILED": "Failed to fetch user profile data."
+    }
+  },
+
+  "editProfile": {
+    "CHANGE_BACKGROUND": "Change background",
+    "CHANGE_AVATAR_LABEL": "Change",
+    "HEADER": "Edit profile",
+    "FIRST_NAME": "First Name",
+    "LAST_NAME": "Last Name",
+    "LOGIN": "Login",
+    "BIO": "About me",
+    "BIO_PLACEHOLDER": "Write something about yourself...",
+    "BTN_CANCEL": "Cancel",
+    "BTN_SAVE": "Save changes",
+    "ALT": {
+      "BACKGROUND": "Profile background",
+      "AVATAR": "User avatar"
+    },
+    "SUCCESS": {
+      "UPDATE": "Profile updated successfully!"
+    },
+    "ERRORS": {
+      "INVALID_FORM": "Form is invalid or user not loaded.",
+      "UPDATE_FAILED": "Error occurred while updating profile.",
+      "FETCH_FAILED": "Failed to fetch user data."
+    }
+  },
+
   "auth": {
-    "successfully-logged-in": "Successfully logged in!"
+    "successfully-logged-in": "Logged in successfully!",
+    "login": {
+      "TITLE": "Login",
+      "HEADER": "Login",
+      "EMAIL_LABEL": "Email",
+      "PASSWORD_LABEL": "Password",
+      "REMEMBER_ME": "Remember me",
+      "NO_ACCOUNT": "Don't have an account?",
+      "REGISTER_LINK": "Create one now!",
+      "BTN_SUBMIT": "Log in"
+    },
+    "register": {
+      "TITLE": "Registration",
+      "EMAIL_LABEL": "Email",
+      "LOGIN_LABEL": "Username",
+      "FIRST_NAME_LABEL": "First Name",
+      "LAST_NAME_LABEL": "Last Name",
+      "PASSWORD_LABEL": "Password",
+      "REPEAT_PASSWORD_LABEL": "Repeat password",
+      "SHOW": "Show",
+      "HIDDEN": "Hide",
+      "BTN_SUBMIT": "Register",
+      "VALIDATION": {
+        "EMAIL_REQUIRED": "Email is required",
+        "LOGIN_REQUIRED": "Login is required",
+        "FIRST_NAME_REQUIRED": "First name is required",
+        "LAST_NAME_REQUIRED": "Last name is required",
+        "PASSWORD_REQUIRED": "Password is required",
+        "REPEAT_PASSWORD_REQUIRED": "Password repetition is required"
+      },
+      "SUCCESS": "Registration successful! You can now log in.",
+      "ERROR": "Error occurred during registration. Check your data."
+    },
+    "activate": {
+      "TITLE": "Account activation",
+      "HEADER": "Activate your account",
+      "INSTRUCTION": "A 6-character code has been sent to your email address. Enter it below to verify your account.",
+      "BTN_SUBMIT": "Activate",
+      "SUCCESS": "Account activated successfully!",
+      "ERROR": "Account activation failed. Check the code and try again.",
+      "VALIDATION_ERROR": "Code must consist of 6 characters."
+    }
+  },
+
+  "admin": {
+    "HEADER": "Admin Panel",
+    "nav": {
+      "USERS": "Users",
+      "BUILDINGS": "Buildings",
+      "RESOURCES": "Resources",
+      "REPORTS": "Reports",
+      "GUILDS": "Guilds",
+      "QUESTS": "Quests"
+    },
+    "buildings": {
+      "NAME": "Building Name",
+      "LEVEL": "Building Level",
+      "HEALTH": "Health Level",
+      "USER_LOGIN": "Username",
+      "VILLAGE_ID": "User Village ID",
+      "DELETE_CONFIRM": "Are you sure you want to delete this building?"
+    },
+    "quests": {
+      "HEADER": "Quest Management",
+      "BTN_ADD": "New Quest",
+      "TITLE": "Title",
+      "DESCRIPTION": "Description",
+      "REWARD_WOOD": "Wood",
+      "REWARD_CLAY": "Clay",
+      "REWARD_IRON": "Iron",
+      "REWARD_POPULATION": "Population",
+      "DELETE_CONFIRM": "Are you sure you want to delete this quest?",
+      "ERRORS": {
+        "LOAD": "Error loading quests",
+        "CREATE": "Error creating quest",
+        "EDIT": "Error editing quest",
+        "DELETE": "Error deleting quest"
+      }
+    },
+    "reports": {
+      "REPORTER": "Reporter (email)",
+      "TARGET": "Reported (email)",
+      "CONTENT": "Content",
+      "STATUS": "Status (Resolved?)",
+      "STATUS_RESOLVED": "Resolved",
+      "STATUS_PENDING": "Pending",
+      "DELETE_CONFIRM": "Are you sure you want to delete report from {{email}}?"
+    },
+    "resources": {
+      "WOOD": "Wood",
+      "CLAY": "Clay",
+      "IRON": "Iron",
+      "POPULATION": "Population count",
+      "MAX_POPULATION": "Max population"
+    },
+    "users": {
+      "HEADER": "User Management",
+      "BTN_ADD": "Add user",
+      "EMAIL": "Email",
+      "LOGIN": "Login",
+      "ROLE": "Role",
+      "ROLE_ADMIN": "Administrator",
+      "ROLE_USER": "User",
+      "IS_ACTIVE": "Active",
+      "YES": "Yes",
+      "NO": "No",
+      "DELETE_CONFIRM": "Are you sure you want to delete user {{email}}?"
+    }
+  },
+
+  "app": {
+    "DESKTOP_ONLY_TITLE": "Application available only on desktop",
+    "DESKTOP_ONLY_MESSAGE": "Sorry, this application is not available on mobile devices and tablets."
   }
 }

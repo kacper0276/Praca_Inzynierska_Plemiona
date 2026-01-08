@@ -1,7 +1,11 @@
 <div class="grid-wrapper">
   <div class="top-actions" *ngIf="!isOwnVillage">
     <button class="attack-btn" (click)="startAttack()" [disabled]="isAttacking">
-      {{ isAttacking ? "Atak w toku..." : "Atakuj" }}
+      {{
+        isAttacking
+          ? ("grid.ATTACK.BTN_IN_PROGRESS" | translate)
+          : ("grid.ATTACK.BTN_START" | translate)
+      }}
     </button>
   </div>
 
@@ -12,15 +16,17 @@
       [disabled]="
         gridWidth >= maxGridSize || !canAfford(getCurrentExpansionCost())
       "
-      title="Rozszerz w lewo"
+      [title]="'grid.EXPANSION.BTN_LEFT' | translate"
     >
-      ◀ Rozszerz ({{ getCurrentExpansionCost().wood }}W
-      {{ getCurrentExpansionCost().clay }}C
+      ◀ {{ "grid.EXPANSION.BTN_LABEL" | translate }} ({{
+        getCurrentExpansionCost().wood
+      }}W {{ getCurrentExpansionCost().clay }}C
       {{ getCurrentExpansionCost().iron }}I)
     </button>
     <ng-container *ngIf="timeLeft$ | async as gatherSecondsLeft">
       <div class="gather-countdown" *ngIf="gatherSecondsLeft > 0">
-        Następne surowce za: <strong>{{ gatherSecondsLeft }}s</strong>
+        {{ "grid.GATHER.NEXT_RESOURCES" | translate }}
+        <strong>{{ gatherSecondsLeft }}s</strong>
       </div>
     </ng-container>
     <button
@@ -29,10 +35,11 @@
       [disabled]="
         gridWidth >= maxGridSize || !canAfford(getCurrentExpansionCost())
       "
-      title="Rozszerz w prawo"
+      [title]="'grid.EXPANSION.BTN_RIGHT' | translate"
     >
-      Rozszerz ({{ getCurrentExpansionCost().wood }}W
-      {{ getCurrentExpansionCost().clay }}C
+      {{ "grid.EXPANSION.BTN_LABEL" | translate }} ({{
+        getCurrentExpansionCost().wood
+      }}W {{ getCurrentExpansionCost().clay }}C
       {{ getCurrentExpansionCost().iron }}I) ▶
     </button>
   </div>
@@ -53,11 +60,14 @@
             *ngIf="getConstructionTimeLeft(building) > 0"
           >
             <div class="timer">
-              Pozostały czas
+              {{ "grid.CONSTRUCTION.TIME_LEFT" | translate }}
               {{ getConstructionTimeLeft(building) | secondsToTime }}
             </div>
             <div class="building-preview">
-              {{ building.name }} (Lvl {{ building.level }})
+              {{ building.name }} ({{
+                "grid.CONSTRUCTION.LEVEL_SHORT" | translate
+              }}
+              {{ building.level }})
             </div>
           </div>
 

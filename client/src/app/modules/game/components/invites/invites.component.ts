@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
   Subject,
   Subscription,
@@ -13,14 +13,18 @@ import { FriendRequest } from '@shared/models';
 import { UserService } from '@modules/auth/services';
 import { UserSearchResult } from '@modules/game/interfaces';
 import { UsersService, FriendRequestsService } from '@modules/game/services';
-import { FriendRequestNotificationService } from '@shared/services';
+import {
+  FriendRequestNotificationService,
+  ToastrService,
+} from '@shared/services';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-invites',
   templateUrl: './invites.component.html',
   styleUrl: './invites.component.scss',
 })
-export class InvitesComponent {
+export class InvitesComponent implements OnInit, OnDestroy {
   backendUrl: string = environment.serverBaseUrl;
 
   public searchTerm = new Subject<string>();
@@ -38,7 +42,9 @@ export class InvitesComponent {
     private readonly friendRequestsService: FriendRequestsService,
     private readonly router: Router,
     private readonly userService: UserService,
-    private readonly friendRequestNotificationService: FriendRequestNotificationService
+    private readonly friendRequestNotificationService: FriendRequestNotificationService,
+    private readonly toastr: ToastrService,
+    private readonly translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -50,7 +56,11 @@ export class InvitesComponent {
       )
       .subscribe({
         next: (users) => (this.searchResults = users.data),
-        error: (err) => console.error('Błąd podczas wyszukiwania:', err),
+        error: (err) => {
+          this.toastr.showError(
+            this.translate.instant('invites.ERRORS.SEARCH_FAILED')
+          );
+        },
       });
 
     this.friendRequestsService.getAllFriendRequests().subscribe({
@@ -85,8 +95,15 @@ export class InvitesComponent {
     this.friendRequestsService.sendFriendInviteByEmail(userEmail).subscribe({
       next: () => {
         this.sentInvites.add(userEmail);
+        this.toastr.showSuccess(
+          this.translate.instant('invites.SUCCESS.INVITE_SENT')
+        );
       },
-      error: (err) => console.error('Błąd podczas wysyłania zaproszenia:', err),
+      error: (err) => {
+        this.toastr.showError(
+          this.translate.instant('invites.ERRORS.INVITE_SEND_FAILED')
+        );
+      },
     });
   }
 
@@ -98,6 +115,14 @@ export class InvitesComponent {
           this.friendRequestNotificationService.decrementCount();
           this.invites = this.invites.filter(
             (invite) => invite.id !== inviteId
+          );
+          this.toastr.showSuccess(
+            this.translate.instant('invites.SUCCESS.RESPONDED')
+          );
+        },
+        error: () => {
+          this.toastr.showError(
+            this.translate.instant('invites.ERRORS.RESPOND_FAILED')
           );
         },
       });

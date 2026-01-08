@@ -3,13 +3,13 @@
     <h2>{{ clan.name }}</h2>
     <div class="tabs">
       <button [class.active]="tab === 'members'" (click)="tab = 'members'">
-        Członkowie
+        {{ "clan.view.TABS.MEMBERS" | translate }}
       </button>
       <button [class.active]="tab === 'chat'" (click)="tab = 'chat'">
-        Czat
+        {{ "clan.view.TABS.CHAT" | translate }}
       </button>
       <button [class.active]="tab === 'resources'" (click)="tab = 'resources'">
-        Surowce
+        {{ "clan.view.TABS.RESOURCES" | translate }}
       </button>
     </div>
   </div>
@@ -20,17 +20,20 @@
       @if (isFounder) {
       <div class="add-member-row">
         <button class="btn-add" (click)="openAddMemberModal()">
-          + Dodaj członka
+          {{ "clan.view.MEMBERS.ADD_BTN" | translate }}
         </button>
       </div>
       } @for (m of clan.members; track m.id) {
       <div class="member-item">
-        <span
-          >{{ m.login }} @if(m?.id === clan.founder.id){
-          <small>(Lider)</small> }</span
-        >
+        <span>
+          {{ m.login }} @if(m?.id === clan.founder.id){
+          <small>{{ "clan.view.MEMBERS.LEADER_LABEL" | translate }}</small>
+          }
+        </span>
         @if (isFounder && m.id !== currentUserId) {
-        <button class="btn-kick" (click)="kick(m.id ?? -1)">Usuń</button>
+        <button class="btn-kick" (click)="kick(m.id ?? -1)">
+          {{ "clan.view.MEMBERS.KICK_BTN" | translate }}
+        </button>
         }
       </div>
       }
@@ -38,16 +41,16 @@
 
     @if (isAddModalOpen) {
     <app-modal
-      [modalTitle]="'Dodaj nowych członków'"
+      [modalTitle]="'clan.view.MEMBERS.MODAL.TITLE' | translate"
       (close)="isAddModalOpen = false"
     >
       <div modal-header>
-        <small>Wybierz graczy z listy:</small>
+        <small>{{ "clan.view.MEMBERS.MODAL.SELECT_LABEL" | translate }}</small>
       </div>
 
       <div modal-body class="multi-select-list">
         @if (userFriends.length === 0) {
-        <p>Brak dostępnych graczy do dodania.</p>
+        <p>{{ "clan.view.MEMBERS.MODAL.NO_PLAYERS" | translate }}</p>
         } @else {
         <app-multi-select
           [items]="userFriends"
@@ -58,14 +61,16 @@
 
       <div modal-footer class="modal-footer">
         <button class="btn-cancel" (click)="isAddModalOpen = false">
-          Anuluj
+          {{ "clan.view.MEMBERS.MODAL.BTN_CANCEL" | translate }}
         </button>
         <button
           class="btn-confirm"
           [disabled]="selectedUsers.length === 0"
           (click)="addSelectedMembers()"
         >
-          Dodaj ({{ selectedUsers.length }})
+          {{ "clan.view.MEMBERS.MODAL.BTN_ADD" | translate }} ({{
+            selectedUsers.length
+          }})
         </button>
       </div>
     </app-modal>
@@ -92,10 +97,12 @@
         <input
           [(ngModel)]="msgText"
           (keyup.enter)="sendMsg()"
-          placeholder="Wiadomość..."
+          [placeholder]="'clan.view.CHAT.INPUT_PLACEHOLDER' | translate"
           (keydown.enter)="sendMsg()"
         />
-        <button (click)="sendMsg()" class="send-msg-button">Wyślij</button>
+        <button (click)="sendMsg()" class="send-msg-button">
+          {{ "clan.view.CHAT.BTN_SEND" | translate }}
+        </button>
       </div>
     </div>
     } @if (tab === 'resources') {
@@ -106,11 +113,25 @@
         } }
       </select>
       <div class="res-grid">
-        <input type="number" formControlName="wood" placeholder="Drewno" />
-        <input type="number" formControlName="clay" placeholder="Glina" />
-        <input type="number" formControlName="iron" placeholder="Żelazo" />
+        <input
+          type="number"
+          formControlName="wood"
+          [placeholder]="'clan.view.RESOURCES.PLACEHOLDERS.WOOD' | translate"
+        />
+        <input
+          type="number"
+          formControlName="clay"
+          [placeholder]="'clan.view.RESOURCES.PLACEHOLDERS.CLAY' | translate"
+        />
+        <input
+          type="number"
+          formControlName="iron"
+          [placeholder]="'clan.view.RESOURCES.PLACEHOLDERS.IRON' | translate"
+        />
       </div>
-      <button type="submit" class="btn-send">Wyślij surowce</button>
+      <button type="submit" class="btn-send">
+        {{ "clan.view.RESOURCES.BTN_SEND" | translate }}
+      </button>
     </form>
     }
   </div>

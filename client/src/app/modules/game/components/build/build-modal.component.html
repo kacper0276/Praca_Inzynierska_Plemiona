@@ -1,6 +1,6 @@
 <app-modal (close)="close.emit()">
   <div modal-header>
-    <h2>Wybierz budynek do budowy</h2>
+    <h2>{{ "buildModal.HEADER" | translate }}</h2>
   </div>
 
   <div modal-body class="scrollable-modal-body">
@@ -10,20 +10,22 @@
         <div class="name">{{ b.name }}</div>
         <div class="costs">
           <span *ngFor="let key of getCost(b) | keyvalue">
-            {{ key.key }}: {{ key.value }}
+            {{ "resources." + key.key | translate }}: {{ key.value }}
           </span>
         </div>
         <button
           [disabled]="!canBuild(getCost(b))"
           (click)="build.emit({ building: b, cost: getCost(b) })"
         >
-          Buduj
+          {{ "buildModal.BTN_BUILD" | translate }}
         </button>
       </div>
     </div>
   </div>
 
   <div modal-footer>
-    <button class="btn btn-secondary" (click)="close.emit()">Anuluj</button>
+    <button class="btn btn-secondary" (click)="close.emit()">
+      {{ "buildModal.BTN_CANCEL" | translate }}
+    </button>
   </div>
 </app-modal>

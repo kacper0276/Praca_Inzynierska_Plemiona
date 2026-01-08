@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, take } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
@@ -11,14 +11,15 @@ import {
   ServersService,
   ServerService,
 } from '@modules/game/services';
-import { WebSocketService } from '@shared/services';
+import { WebSocketService, ToastrService } from '@shared/services';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss',
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
   isModalOpen = true;
   joinedServer: Server | null = null;
   activeTab: string = 'village';
@@ -48,7 +49,9 @@ export class GameComponent implements OnInit {
     private readonly webSocket: WebSocketService,
     private readonly usersService: UserService,
     private readonly serversService: ServersService,
-    private readonly serverService: ServerService
+    private readonly serverService: ServerService,
+    private readonly toastr: ToastrService,
+    private readonly translate: TranslateService
   ) {
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
@@ -75,9 +78,10 @@ export class GameComponent implements OnInit {
 
   public buildFarm(): void {
     const cost = { wood: 75, clay: 50, iron: 20, population: 5 };
-    if (this.resourcesService.spendResources(cost)) {
-    } else {
-      console.log('Nie udało się zbudować farmy - za mało surowców.');
+    if (!this.resourcesService.spendResources(cost)) {
+      this.toastr.showError(
+        this.translate.instant('game.errors.BUILD_FARM_FAILED')
+      );
     }
   }
 
@@ -87,17 +91,23 @@ export class GameComponent implements OnInit {
 
   closeModal(): void {
     this.isModalOpen = false;
-    console.log('Modal został zamknięty bez wyboru serwera.');
+    this.toastr.showInfo(this.translate.instant('game.info.CANCELLED_MODAL'));
   }
 
   joinGame(): void {
     if (!this.selectedServerInModal) {
-      console.error('Nie wybrano serwera.');
+      this.toastr.showWarning(
+        this.translate.instant('game.errors.NO_SERVER_SELECTED')
+      );
       return;
     }
 
     this.joinedServer = this.selectedServerInModal;
-    console.log(`Dołączono do serwera: ${this.joinedServer.name}`);
+    this.toastr.showSuccess(
+      this.translate.instant('game.success.JOINED_SERVER', {
+        serverName: this.joinedServer.name,
+      })
+    );
 
     try {
       let wsURL = '';
@@ -145,7 +155,9 @@ export class GameComponent implements OnInit {
                 },
                 error: () => {
                   this.connectionFailed = true;
-                  console.log('AAA');
+                  this.toastr.showError(
+                    this.translate.instant('game.errors.FETCH_RES_FAILED')
+                  );
                 },
               });
 
@@ -153,7 +165,9 @@ export class GameComponent implements OnInit {
           },
           error: () => {
             this.connectionFailed = true;
-            console.log('AAA');
+            this.toastr.showError(
+              this.translate.instant('game.errors.CONNECTION_FAILED')
+            );
           },
         });
 
@@ -162,10 +176,16 @@ export class GameComponent implements OnInit {
         .pipe(take(1))
         .subscribe((err) => {
           this.connectionFailed = true;
+          this.toastr.showError(
+            this.translate.instant('game.errors.CONNECTION_FAILED')
+          );
         });
     } catch (e) {
       console.warn('WS connect failed', e);
       this.connectionFailed = true;
+      this.toastr.showError(
+        this.translate.instant('game.errors.CONNECTION_FAILED')
+      );
     }
   }
 
@@ -181,8 +201,6 @@ export class GameComponent implements OnInit {
         status: string;
         lastChecked: Date;
       }) => {
-        console.log('Otrzymano aktualizację statusu:', update);
-
         const serverToUpdate = this.servers.find(
           (s) => s.hostname === update.hostname && s.port === update.port
         );
@@ -205,6 +223,9 @@ export class GameComponent implements OnInit {
       }
       if (this.resourcesSubscription) {
         this.resourcesSubscription.unsubscribe();
+      }
+      if (this.errorSubscription) {
+        this.errorSubscription.unsubscribe();
       }
     } catch {}
   }

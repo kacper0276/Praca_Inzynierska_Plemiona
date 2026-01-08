@@ -2,7 +2,7 @@
 <div class="modal-overlay" (click)="closeModal()">
   <div class="modal-panel" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>Dodaj nowe zadanie</h3>
+      <h3>{{ "questModal.HEADER_ADD" | translate }}</h3>
       <button class="icon-btn" (click)="closeModal()">
         <mat-icon>close</mat-icon>
       </button>
@@ -12,12 +12,16 @@
       <div class="main-fields">
         @for (col of formColumns; track col.key) {
         <div class="form-group">
-          <label [for]="'create-' + col.key">{{ col.header }}</label>
+          <!-- Dodano pipe translate, aby col.header mógł być kluczem -->
+          <label [for]="'create-' + col.key">{{
+            col.header | translate
+          }}</label>
           @if (col.type === 'checkbox') {
           <input
             type="checkbox"
             [id]="'create-' + col.key"
             [(ngModel)]="newItem[col.key]"
+            class="styled-checkbox"
           />
           } @else if (col.type === 'select') {
           <select
@@ -26,7 +30,8 @@
             class="form-control"
           >
             @for (opt of col.options; track opt.value) {
-            <option [value]="opt.value">{{ opt.label }}</option>
+            <!-- Dodano pipe translate dla opcji -->
+            <option [value]="opt.value">{{ opt.label | translate }}</option>
             }
           </select>
           } @else {
@@ -35,6 +40,7 @@
             [id]="'create-' + col.key"
             [(ngModel)]="newItem[col.key]"
             class="form-control"
+            autocomplete="off"
           />
           }
         </div>
@@ -44,43 +50,66 @@
       @if (objectives) {
       <div class="objectives-section">
         <div class="section-header">
-          <h4>Cele zadania (Podzadania)</h4>
+          <h4>{{ "questModal.OBJECTIVES_HEADER" | translate }}</h4>
           <button class="btn-add-small" (click)="addObjective()">
-            <mat-icon>add</mat-icon> Dodaj cel
+            <mat-icon>add</mat-icon>
+            {{ "questModal.BTN_ADD_OBJECTIVE" | translate }}
           </button>
         </div>
 
-        @for (obj of newItem.objectives; track $index) {
+        @if (newItem.objectives.length === 0) {
+        <p style="color: var(--muted); text-align: center; font-size: 0.9rem">
+          {{ "questModal.NO_OBJECTIVES_MSG" | translate }}
+        </p>
+        } @for (obj of newItem.objectives; track $index) {
         <div class="objective-card">
-          <div class="obj-main-row">
+          <button class="btn-delete" (click)="removeObjective($index)">
+            <mat-icon>delete</mat-icon>
+          </button>
+
+          <div class="obj-desc-row">
             <input
               type="text"
               [(ngModel)]="obj.description"
-              placeholder="Opis podzadania"
+              [placeholder]="'questModal.PLACEHOLDER_DESC' | translate"
               class="form-control"
             />
+          </div>
+
+          <div class="obj-grid-row">
+            <select [(ngModel)]="obj.type" class="form-control">
+              @for(type of objectiveTypes; track type.value) {
+              <option [value]="type.value">{{ type.label | translate }}</option>
+              }
+            </select>
+
+            <input
+              type="text"
+              [(ngModel)]="obj.target"
+              [placeholder]="'questModal.PLACEHOLDER_TARGET' | translate"
+              class="form-control"
+            />
+
             <input
               type="number"
               [(ngModel)]="obj.goalCount"
-              placeholder="Ilość"
-              class="form-control count-input"
+              [placeholder]="'questModal.PLACEHOLDER_AMOUNT' | translate"
+              class="form-control"
             />
-            <button class="btn-delete" (click)="removeObjective($index)">
-              <mat-icon>delete</mat-icon>
-            </button>
           </div>
+
           <div class="obj-rewards-row">
             <div class="reward-field">
-              <label>Drewno</label>
-              <input type="number" [(ngModel)]="obj.woodReward" />
+              <label>{{ "questModal.REWARD_WOOD" | translate }}</label>
+              <input type="number" [(ngModel)]="obj.woodReward" min="0" />
             </div>
             <div class="reward-field">
-              <label>Glina</label>
-              <input type="number" [(ngModel)]="obj.clayReward" />
+              <label>{{ "questModal.REWARD_CLAY" | translate }}</label>
+              <input type="number" [(ngModel)]="obj.clayReward" min="0" />
             </div>
             <div class="reward-field">
-              <label>Żelazo</label>
-              <input type="number" [(ngModel)]="obj.ironReward" />
+              <label>{{ "questModal.REWARD_IRON" | translate }}</label>
+              <input type="number" [(ngModel)]="obj.ironReward" min="0" />
             </div>
           </div>
         </div>
@@ -90,9 +119,11 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="closeModal()">Anuluj</button>
+      <button class="btn btn-secondary" (click)="closeModal()">
+        {{ "questModal.BTN_CANCEL" | translate }}
+      </button>
       <button class="btn btn-primary" (click)="saveChanges()">
-        Zapisz zadanie
+        {{ "questModal.BTN_SAVE" | translate }}
       </button>
     </div>
   </div>

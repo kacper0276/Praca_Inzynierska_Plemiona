@@ -5,3 +5,4 @@ export * from './unit-type.enum';
 export * from './user-role.enum';
 export * from './websocket-event.enum';
 export * from './friend-request-status.enum';
+export * from './quest-objective-type.enum';

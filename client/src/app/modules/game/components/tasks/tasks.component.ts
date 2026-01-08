@@ -6,6 +6,8 @@ import {
   Quest,
   UserObjectiveProgress,
 } from '@shared/models';
+import { ToastrService } from '@shared/services';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-tasks',
@@ -17,7 +19,9 @@ export class TasksComponent implements OnInit {
 
   constructor(
     private readonly serverService: ServerService,
-    private readonly questsService: QuestsService
+    private readonly questsService: QuestsService,
+    private readonly toastr: ToastrService,
+    private readonly translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -30,8 +34,12 @@ export class TasksComponent implements OnInit {
     if (server && server.id) {
       this.questsService.getTasksForServer(server.id).subscribe({
         next: (res) => {
-          console.log(res.data);
           this.userQuests = res.data;
+        },
+        error: (err) => {
+          this.toastr.showError(
+            this.translate.instant('tasks.ERRORS.FETCH_FAILED')
+          );
         },
       });
     }
@@ -67,6 +75,7 @@ export class TasksComponent implements OnInit {
   }
 
   calculateObjectiveProgress(objProg: UserObjectiveProgress): number {
+    if (!objProg.objective.goalCount) return 0;
     return (objProg.currentCount / objProg.objective.goalCount) * 100;
   }
 

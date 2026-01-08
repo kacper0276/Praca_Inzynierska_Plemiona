@@ -1,11 +1,11 @@
 @if (isModalOpen) {
 <app-modal (close)="closeModal()">
   <div modal-header>
-    <h2>Wybierz Świat Gry</h2>
+    <h2>{{ "game.modal.HEADER" | translate }}</h2>
   </div>
 
   <div modal-body>
-    <p>Aby kontynuować, wybierz serwer, na którym chcesz grać.</p>
+    <p>{{ "game.modal.BODY_TEXT" | translate }}</p>
     <select class="server-select" [(ngModel)]="selectedServerInModal">
       <option *ngFor="let server of servers" [ngValue]="server">
         {{ server.name }} - ({{ server.hostname }}:{{ server.port }})
@@ -14,15 +14,19 @@
   </div>
 
   <div modal-footer class="footer-buttons">
-    <button class="btn btn-secondary" (click)="closeModal()">Anuluj</button>
-    <button class="btn btn-primary" (click)="joinGame()">Dołącz do Gry</button>
+    <button class="btn btn-secondary" (click)="closeModal()">
+      {{ "game.modal.BTN_CANCEL" | translate }}
+    </button>
+    <button class="btn btn-primary" (click)="joinGame()">
+      {{ "game.modal.BTN_JOIN" | translate }}
+    </button>
   </div>
 </app-modal>
 } @if (joinedServer && !connectionFailed) {
 <div class="game-container">
   <header class="top-bar">
     <div class="logo">
-      <h2>Terra Bellum</h2>
+      <h2>{{ "game.TITLE" | translate }}</h2>
       <img
         src="/assets/icons/home.png"
         alt=""
@@ -30,8 +34,7 @@
       />
     </div>
     <div class="resources">
-      <span [title]="'Drewno: ' + resources.wood">
-        <!-- <mat-icon>forest</mat-icon> -->
+      <span [title]="('resources.wood' | translate) + ': ' + resources.wood">
         <img
           src="/assets/icons/wood.png"
           alt="Wood icon"
@@ -39,8 +42,7 @@
         />
         {{ resources.wood | adjustResourceQuantity }}</span
       >
-      <span [title]="'Glina: ' + resources.clay">
-        <!-- <mat-icon>terrain</mat-icon> -->
+      <span [title]="('resources.clay' | translate) + ': ' + resources.clay">
         <img
           src="/assets/icons/clay.png"
           alt="Clay icon"
@@ -48,8 +50,7 @@
         />
         {{ resources.clay | adjustResourceQuantity }}</span
       >
-      <span [title]="'Żelazo: ' + resources.iron">
-        <!-- <mat-icon>iron</mat-icon> -->
+      <span [title]="('resources.iron' | translate) + ': ' + resources.iron">
         <img
           src="/assets/icons/iron.png"
           alt="Iron icon"
@@ -57,8 +58,7 @@
         />
         {{ resources.iron | adjustResourceQuantity }}</span
       >
-      <span title="Ludność">
-        <!-- <mat-icon>people</mat-icon> -->
+      <span [title]="'resources.population' | translate">
         <img
           src="/assets/icons/villager.png"
           alt="Villager icon"
@@ -68,7 +68,8 @@
       >
     </div>
     <div class="server-info">
-      Serwer: <strong>{{ joinedServer.name }}</strong>
+      {{ "game.topbar.SERVER_LABEL" | translate }}:
+      <strong>{{ joinedServer.name }}</strong>
     </div>
   </header>
 
@@ -84,13 +85,10 @@
 </div>
 } @if (!isModalOpen && !joinedServer) {
 <div class="info-message">
-  <p>
-    Musisz wybrać serwer, aby rozpocząć grę. Odśwież stronę, aby spróbować
-    ponownie.
-  </p>
+  <p>{{ "game.info.SELECT_SERVER" | translate }}</p>
 </div>
 } @if (connectionFailed) {
 <div class="error-message">
-  <p>Połączenie z serwerem nie powiodło się. Spróbuj ponownie później.</p>
+  <p>{{ "game.errors.CONNECTION_FAILED" | translate }}</p>
 </div>
 }
