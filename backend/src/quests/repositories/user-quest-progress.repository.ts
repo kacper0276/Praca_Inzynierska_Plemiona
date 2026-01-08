@@ -62,6 +62,10 @@ export class UserQuestProgressRepository extends BaseRepository<UserQuestProgres
     return this.repository.save(data);
   }
 
+  saveBulk(data: UserQuestProgress[]): Promise<UserQuestProgress[]> {
+    return this.repository.save(data);
+  }
+
   async findProgress(userId: number, serverId: number, questId: number) {
     return this.repository.findOne({
       where: {

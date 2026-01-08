@@ -34,6 +34,15 @@ export class QuestsController {
     return this.questsService.createQuest(questData);
   }
 
+  @Get()
+  @Roles(UserRole.ADMIN)
+  @ApiOkResponse({
+    description: 'Zwraca listę wszystkich zadań',
+  })
+  async getAllQuests() {
+    return this.questsService.getAll();
+  }
+
   @Get('server/:serverId')
   @Authenticated()
   @ApiOkResponse({
