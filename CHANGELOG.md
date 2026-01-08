@@ -75,6 +75,7 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Dodano pole "Permisje administratora" by móc dodawać dostęp do poszczególnych zakładek
 - Dodano tłumaczenia
 - Dodano odliczanie czasu przy naprawie i ulepszaniu budynku
+- Po wygranym ataku rabujemy 30% surowców atakowanego przeciwnika
 
 ### Changed
 
