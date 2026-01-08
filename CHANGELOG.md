@@ -61,7 +61,7 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 - Usunięto zbędne biblioteki
 
-## [0.0.3] - 04.12.2025 - 04.12.2025
+## [0.0.3] - 04.12.2025 - 09.12.2025
 
 ### Added
 
@@ -73,9 +73,12 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Dodano interfejs dla zadań
 - Stworzono zakładkę w panelu admina dla zadań
 - Dodano pole "Permisje administratora" by móc dodawać dostęp do poszczególnych zakładek
+- Dodano tłumaczenia
+- Dodano odliczanie czasu przy naprawie i ulepszaniu budynku
 
 ### Changed
 
 - Zmieniono działanie surowców (na każdym serwerze osobna ilość surowców)
 - Poprawa wizualna aplikacji
 - Poprawa w importach plików projektu
+- Zmieniono system atakowania
