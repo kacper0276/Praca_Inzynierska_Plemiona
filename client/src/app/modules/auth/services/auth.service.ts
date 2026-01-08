@@ -76,7 +76,6 @@ export class AuthService {
       const isExpired = Date.now() >= decodedToken.exp * 1000;
 
       if (isExpired) {
-        console.log('Access token has expired. Refreshing...');
         await lastValueFrom(this.refreshToken());
         return this.tokenService.getJwtToken();
       } else {

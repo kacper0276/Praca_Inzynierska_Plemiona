@@ -23,6 +23,7 @@ import {
   ServerService,
 } from '@modules/game/services';
 import { ToastrService, WebSocketService } from '@shared/services';
+import { ArmyVisualState } from '@modules/game/interfaces/army-visual-state.interface';
 
 @Component({
   selector: 'app-grid',
@@ -31,7 +32,7 @@ import { ToastrService, WebSocketService } from '@shared/services';
 })
 export class GridComponent implements OnInit, OnDestroy {
   Math = Math;
-  gridWidth: number = 7;
+  gridWidth: number = 5;
   readonly gridHeight: number = 5;
   buildings: (BuildingData | null)[][] = [];
   readonly expansionCost = { wood: 50, clay: 30, iron: 20 };
@@ -43,41 +44,43 @@ export class GridComponent implements OnInit, OnDestroy {
   private timerInterval: any;
 
   isOwnVillage: boolean = true;
-
   isAttacking = false;
-  private battleInterval: any = null;
+
   private villageDataSub: Subscription | undefined;
   private villageErrorSub: Subscription | undefined;
   private buildingFinishedSub: Subscription | undefined;
   private buildingUpdateSub: Subscription | undefined;
+  private battleUpdateSub: Subscription | undefined;
+  private battleEndedSub: Subscription | undefined;
+  private battleErrorSub: Subscription | undefined;
 
-  attackingArmy = {
-    totalHp: 0,
-    maxHp: 0,
-    damage: 0,
-    gifUrl: 'assets/images/attacking-army.gif',
-    x: 50,
-    y: window.innerHeight - 150,
+  attackingArmy: ArmyVisualState = {
+    x: -200,
+    y: -200,
+    totalHp: 100,
+    maxHp: 100,
     state: 'idle',
-    targetX: 0,
-    targetY: 0,
+    gifUrl: 'assets/gif/fight_dust.gif',
   };
 
-  defendingArmy = {
-    totalHp: 0,
-    maxHp: 0,
-    damage: 0,
-    gifUrl: 'assets/images/defending-army.gif',
-    x: window.innerWidth - 150,
-    y: 100,
+  defendingArmy: ArmyVisualState = {
+    x: -200,
+    y: -200,
+    totalHp: 100,
+    maxHp: 100,
     state: 'idle',
-    targetX: 0,
-    targetY: 0,
+    gifUrl: 'assets/gif/fight_dust.gif',
   };
 
-  attackTarget: { row: number; col: number } | null = null;
+  battleResult: {
+    show: boolean;
+    winner: 'attacker' | 'defender';
+    attackerLosses: number;
+    defenderLosses: number;
+  } | null = null;
+
   explosion = {
-    gifUrl: 'assets/images/explosion.gif',
+    gifUrl: 'assets/gif/explosion.gif',
     show: false,
     x: 0,
     y: 0,
@@ -103,7 +106,6 @@ export class GridComponent implements OnInit, OnDestroy {
   activeEmptyRadial: { row: number; col: number } | null = null;
 
   availableBuildings: BuildingData[] = AVAILABLE_BUILDINGS;
-
   emptyPlotOptions: RadialMenuOption[] = EMPTY_PLOT_OPTIONS;
   buildingOptions: RadialMenuOption[] = BUILDING_OPTIONS;
 
@@ -128,11 +130,9 @@ export class GridComponent implements OnInit, OnDestroy {
       population: 0,
       maxPopulation: 0,
     };
-
     this.userEmail = this.activatedRoute.snapshot.params['userEmail'];
     const currentUserEmail = this.usersService.getCurrentUser()?.email;
     this.isOwnVillage = this.userEmail === currentUserEmail;
-
     this.timeLeft$ = this.gatheringService.timeLeft$;
 
     if (!this.isOwnVillage) {
@@ -147,10 +147,7 @@ export class GridComponent implements OnInit, OnDestroy {
 
   canAfford(cost: Partial<Resources>): boolean {
     const svc: any = this.resourcesService as any;
-    if (typeof svc.canAfford === 'function') {
-      return svc.canAfford(cost);
-    }
-
+    if (typeof svc.canAfford === 'function') return svc.canAfford(cost);
     const r = this.resources || { wood: 0, clay: 0, iron: 0 };
     return (
       (cost.wood || 0) <= (r.wood || 0) &&
@@ -161,16 +158,13 @@ export class GridComponent implements OnInit, OnDestroy {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
-    if (!this.activeRadial) {
-      return;
-    }
-
+    if (!this.activeRadial) return;
     const clickedElement = event.target as HTMLElement;
     const activeCellElement = this.elementRef.nativeElement.querySelector(
-      `.grid-row:nth-child(${this.activeRadial.row + 1}) 
-       .grid-cell:nth-child(${this.activeRadial.col + 1})`
+      `.grid-row:nth-child(${this.activeRadial.row + 1}) .grid-cell:nth-child(${
+        this.activeRadial.col + 1
+      })`
     );
-
     if (activeCellElement && !activeCellElement.contains(clickedElement)) {
       this.activeRadial = null;
     }
@@ -180,6 +174,7 @@ export class GridComponent implements OnInit, OnDestroy {
     this.initializeGrid();
     this.setupVillageDataListeners();
     this.setupBuildingFinishedListener();
+    this.setupBattleListeners();
 
     if (this.isOwnVillage) {
       this.resourcesService.resources$.subscribe((res) => {
@@ -192,6 +187,105 @@ export class GridComponent implements OnInit, OnDestroy {
       this.now = Date.now();
       this.cdr.markForCheck();
     }, 1000);
+  }
+
+  private setupBattleListeners(): void {
+    this.battleUpdateSub = this.webSocketService
+      .on<any>(WebSocketEvent.BATTLE_UPDATE)
+      .subscribe((data) => {
+        if (!this.isAttacking) this.isAttacking = true;
+
+        this.updateArmyState(this.attackingArmy, data.attacker);
+        this.updateArmyState(this.defendingArmy, data.defender);
+
+        if (data.buildings) {
+          data.buildings.forEach((bUpdate: any) => {
+            if (
+              this.buildings[bUpdate.row] &&
+              this.buildings[bUpdate.row][bUpdate.col]
+            ) {
+              const building = this.buildings[bUpdate.row][bUpdate.col];
+              if (building) {
+                const prevHealth = building.health ?? building.maxHealth ?? 100;
+                building.health = bUpdate.health;
+
+                if (bUpdate.health < prevHealth) {
+                  this.showExplosion(
+                    this.attackingArmy.x + 50,
+                    this.attackingArmy.y + 50
+                  );
+                }
+              }
+            }
+          });
+        }
+
+        if (
+          this.attackingArmy.state === 'fighting_army' ||
+          this.defendingArmy.state === 'fighting_army'
+        ) {
+          this.showExplosion(
+            (this.attackingArmy.x + this.defendingArmy.x) / 2 + 50,
+            (this.attackingArmy.y + this.defendingArmy.y) / 2 + 50
+          );
+        }
+
+        this.cdr.detectChanges();
+      });
+
+    this.battleEndedSub = this.webSocketService
+      .on<any>(WebSocketEvent.BATTLE_ENDED)
+      .subscribe((result) => {
+        this.isAttacking = false;
+        this.battleResult = {
+          show: true,
+          winner: result.winner,
+          attackerLosses: result.attackerLosses.reduce(
+            (sum: number, u: any) => sum + u.lost,
+            0
+          ),
+          defenderLosses: result.defenderLosses.reduce(
+            (sum: number, u: any) => sum + u.lost,
+            0
+          ),
+        };
+        this.cdr.detectChanges();
+      });
+
+    this.battleErrorSub = this.webSocketService
+      .on<any>(WebSocketEvent.BATTLE_ERROR)
+      .subscribe((err) => {
+        this.toastr.showError(err.message);
+        this.isAttacking = false;
+      });
+  }
+
+  private updateArmyState(localArmy: ArmyVisualState, serverData: any) {
+    localArmy.x = serverData.x;
+    localArmy.y = serverData.y;
+    localArmy.totalHp = serverData.totalHp;
+    localArmy.maxHp = serverData.maxHp;
+    localArmy.state = serverData.state;
+  }
+
+  private showExplosion(x: number, y: number): void {
+    if (this.explosion.show) return;
+    this.explosion.x = x;
+    this.explosion.y = y;
+    this.explosion.show = true;
+    setTimeout(() => {
+      this.explosion.show = false;
+      this.cdr.detectChanges();
+    }, 500);
+  }
+
+  startAttack(): void {
+    if (this.isOwnVillage) return;
+
+    this.webSocketService.send(WebSocketEvent.ATTACK_START, {
+      targetEmail: this.userEmail,
+      serverId: this.serverService.getServer()?.id ?? -1,
+    });
   }
 
   private setupBuildingFinishedListener(): void {
@@ -222,16 +316,12 @@ export class GridComponent implements OnInit, OnDestroy {
 
   private updateBuildingInGrid(building: BuildingData | null): boolean {
     if (!building || !building.id) return false;
-
     for (let r = 0; r < this.buildings.length; r++) {
       for (let c = 0; c < this.buildings[r].length; c++) {
         if (this.buildings[r][c]?.id === building.id) {
           this.buildings[r][c] = building;
-
           this.buildings[r] = [...this.buildings[r]];
-
           this.cdr.detectChanges();
-
           return true;
         }
       }
@@ -251,7 +341,6 @@ export class GridComponent implements OnInit, OnDestroy {
       this.villageDataSub = this.webSocketService
         .onVillageDataUpdate()
         .subscribe(villageDataHandler);
-
       this.villageErrorSub = this.webSocketService
         .onVillageDataError()
         .subscribe((error) => {
@@ -261,7 +350,6 @@ export class GridComponent implements OnInit, OnDestroy {
             })
           );
         });
-
       this.webSocketService.requestVillageData(
         this.serverService.getServer()?.id ?? -1
       );
@@ -273,7 +361,6 @@ export class GridComponent implements OnInit, OnDestroy {
             villageDataHandler(payload.village);
           }
         });
-
       this.villageErrorSub = this.webSocketService
         .onVillageByEmailError()
         .subscribe((error) => {
@@ -283,55 +370,38 @@ export class GridComponent implements OnInit, OnDestroy {
             })
           );
         });
-
       this.webSocketService.requestVillageByEmail(this.userEmail);
     }
   }
 
   handleMenuOption(action: string, row: number, col: number): void {
     if (!this.isOwnVillage && action !== 'inspect') return;
-
-    switch (action) {
-      case 'build':
-        this.buildRow = row;
-        this.buildCol = col;
-        this.buildMode = true;
-        break;
-      case 'inspect':
-        this.toastr.showInfo(
-          this.translate.instant('INFO_FIELD', { row, col })
-        );
-        break;
-      default:
-        console.warn('Nieznana akcja:', action);
+    if (action === 'build') {
+      this.buildRow = row;
+      this.buildCol = col;
+      this.buildMode = true;
+    } else if (action === 'inspect') {
+      this.toastr.showInfo(this.translate.instant('INFO_FIELD', { row, col }));
     }
   }
 
   handleBuildingMenuOption(action: string, row: number, col: number): void {
     if (!this.isOwnVillage && action !== 'details') return;
     this.activeRadial = null;
-
-    switch (action) {
-      case 'details':
-        this.selectedBuilding = this.buildings[row][col];
-        this.selectedBuildingRow = row;
-        this.selectedBuildingCol = col;
-        break;
-      case 'upgrade':
-        this.upgradeBuildingDirectly(row, col);
-        break;
-      case 'destroy':
-        this.demolishBuilding(row, col);
-        break;
-      case 'edit':
-        break;
+    if (action === 'details') {
+      this.selectedBuilding = this.buildings[row][col];
+      this.selectedBuildingRow = row;
+      this.selectedBuildingCol = col;
+    } else if (action === 'upgrade') {
+      this.upgradeBuildingDirectly(row, col);
+    } else if (action === 'destroy') {
+      this.demolishBuilding(row, col);
     }
   }
 
   upgradeBuildingDirectly(row: number, col: number): void {
     const building = this.buildings[row][col];
     if (!building || !building.id) return;
-
     this.webSocketService.send(WebSocketEvent.BUILDING_UPGRADE, {
       buildingId: building.id,
       serverId: this.serverService.getServer()?.id ?? -1,
@@ -355,31 +425,11 @@ export class GridComponent implements OnInit, OnDestroy {
       this.toastr.showError(this.translate.instant('NOT_ENOUGH_RES_EXPAND'));
       return;
     }
-
     this.webSocketService.send(WebSocketEvent.VILLAGE_EXPAND, {
       side,
       cost,
       serverId: this.serverService.getServer()?.id ?? -1,
     });
-  }
-
-  private findNextTarget(move: boolean = true): boolean {
-    for (let i = 0; i < this.gridHeight; i++) {
-      for (let j = 0; j < this.gridWidth; j++) {
-        if (this.buildings[i][j]) {
-          this.attackTarget = { row: i, col: j };
-          if (move) {
-            const targetCoords = this.getTargetBuildingCoords(i, j);
-            this.attackingArmy.targetX = targetCoords.x;
-            this.attackingArmy.targetY = targetCoords.y;
-            this.attackingArmy.state = 'marching';
-          }
-          return true;
-        }
-      }
-    }
-    this.attackTarget = null;
-    return false;
   }
 
   getBuildingData(row: number, col: number): BuildingData {
@@ -393,23 +443,20 @@ export class GridComponent implements OnInit, OnDestroy {
     );
   }
 
+  // --- DRAG AND DROP ---
   onDragEnter(event: DragEvent, row: number, col: number): void {
     if (!this.isOwnVillage) return;
     if (this.draggedBuilding) {
       const targetElement = event.target as HTMLElement;
       const cell = targetElement.closest('.grid-cell');
-      if (cell) {
-        cell.classList.add('drag-over-active');
-      }
+      if (cell) cell.classList.add('drag-over-active');
     }
   }
 
   onDragLeave(event: DragEvent): void {
     const targetElement = event.target as HTMLElement;
     const cell = targetElement.closest('.grid-cell');
-    if (cell) {
-      cell.classList.remove('drag-over-active');
-    }
+    if (cell) cell.classList.remove('drag-over-active');
   }
 
   onDragOver(event: DragEvent): void {
@@ -419,9 +466,7 @@ export class GridComponent implements OnInit, OnDestroy {
 
   onDrop(event: DragEvent, row: number, col: number): void {
     event.preventDefault();
-    if (!this.isOwnVillage || !this.draggedBuilding) {
-      return;
-    }
+    if (!this.isOwnVillage || !this.draggedBuilding) return;
 
     const fromRow = this.draggedBuilding.row;
     const fromCol = this.draggedBuilding.col;
@@ -462,7 +507,6 @@ export class GridComponent implements OnInit, OnDestroy {
         col: fromCol,
       });
     }
-
     this.cleanupDragState(event);
   }
 
@@ -472,11 +516,24 @@ export class GridComponent implements OnInit, OnDestroy {
 
   private cleanupDragState(event: DragEvent | null): void {
     this.draggedBuilding = null;
-    document.querySelectorAll('.drag-over-active').forEach((el) => {
-      el.classList.remove('drag-over-active');
-    });
+    document
+      .querySelectorAll('.drag-over-active')
+      .forEach((el) => el.classList.remove('drag-over-active'));
   }
 
+  onDragStart(row: number, col: number): void {
+    if (!this.isOwnVillage) return;
+    const building = this.buildings[row][col];
+    if (building && this.getActionState(building) !== 'idle') {
+      this.toastr.showWarning(this.translate.instant('grid.ERRORS.BUSY'));
+      return;
+    }
+    if (building) {
+      this.draggedBuilding = { row, col };
+    }
+  }
+
+  // --- UI INTERACTIONS ---
   onBuildingClick(row: number, col: number): void {
     const building = this.buildings[row][col];
     if (building) {
@@ -524,6 +581,7 @@ export class GridComponent implements OnInit, OnDestroy {
     this.selectedBuildingRow = null;
     this.selectedBuildingCol = null;
     this.activeRadial = null;
+    this.battleResult = null;
   }
 
   demolishSelected(): void {
@@ -589,11 +647,9 @@ export class GridComponent implements OnInit, OnDestroy {
     if (!this.isOwnVillage) return;
     const buildingToDemolish = this.buildings[row][col];
     if (!buildingToDemolish || !buildingToDemolish.id) return;
-
     this.webSocketService.send(WebSocketEvent.BUILDING_DELETE, {
       buildingId: buildingToDemolish.id,
     });
-
     this.buildings[row][col] = null;
     this.closePopup();
   }
@@ -604,149 +660,12 @@ export class GridComponent implements OnInit, OnDestroy {
       return;
     const building =
       this.buildings[this.selectedBuildingRow][this.selectedBuildingCol];
-
     if (building && building.id) {
       this.webSocketService.send(WebSocketEvent.BUILDING_UPGRADE, {
         buildingId: building.id,
         serverId: this.serverService.getServer()?.id ?? -1,
       });
     }
-  }
-
-  startAttack(): void {
-    if (this.isAttacking || this.isOwnVillage) return;
-    this.isAttacking = true;
-
-    this.attackingArmy.maxHp = 1000;
-    this.attackingArmy.totalHp = 1000;
-    this.attackingArmy.damage = 50;
-    this.attackingArmy.state = 'idle';
-    this.attackingArmy.x = 50;
-    this.attackingArmy.y = window.innerHeight - 150;
-
-    this.defendingArmy.maxHp = 800;
-    this.defendingArmy.totalHp = 800;
-    this.defendingArmy.damage = 40;
-    this.defendingArmy.state = 'marching';
-    this.defendingArmy.x = window.innerWidth - 150;
-    this.defendingArmy.y = 100;
-
-    this.findNextTarget();
-
-    this.battleInterval = setInterval(() => this.battleTick(), 100);
-  }
-
-  private battleTick(): void {
-    this.moveArmy(this.attackingArmy, 5);
-    this.moveArmy(this.defendingArmy, 4);
-
-    const distance = this.calculateDistance(
-      this.attackingArmy,
-      this.defendingArmy
-    );
-
-    if (
-      distance < 100 &&
-      this.attackingArmy.totalHp > 0 &&
-      this.defendingArmy.totalHp > 0
-    ) {
-      this.attackingArmy.state = 'fighting_army';
-      this.defendingArmy.state = 'fighting_army';
-
-      this.attackingArmy.totalHp -= this.defendingArmy.damage / 10;
-      this.defendingArmy.totalHp -= this.attackingArmy.damage / 10;
-    } else {
-      if (this.defendingArmy.totalHp > 0) {
-        this.defendingArmy.state = 'marching';
-        this.defendingArmy.targetX = this.attackingArmy.x;
-        this.defendingArmy.targetY = this.attackingArmy.y;
-      }
-
-      if (this.attackingArmy.state !== 'attacking_building') {
-        this.attackingArmy.state = 'marching';
-      }
-    }
-
-    if (
-      this.attackingArmy.state === 'attacking_building' &&
-      this.attackTarget
-    ) {
-      const building =
-        this.buildings[this.attackTarget.row][this.attackTarget.col];
-      if (building && building.health) {
-        building.health -= this.attackingArmy.damage / 10;
-        this.showExplosion(
-          this.attackingArmy.targetX,
-          this.attackingArmy.targetY
-        );
-
-        if (building.health <= 0) {
-          this.buildings[this.attackTarget.row][this.attackTarget.col] = null;
-          this.findNextTarget();
-        }
-      }
-    }
-
-    if (this.attackingArmy.totalHp <= 0) {
-      this.endAttack(this.translate.instant('grid.ATTACK.DEFEAT'));
-    } else if (this.defendingArmy.totalHp <= 0 && !this.findNextTarget(false)) {
-      this.endAttack(this.translate.instant('grid.ATTACK.VICTORY'));
-    }
-  }
-
-  private moveArmy(army: any, speed: number): void {
-    if (army.state !== 'marching') return;
-
-    const dx = army.targetX - army.x;
-    const dy = army.targetY - army.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-
-    if (distance < speed) {
-      army.x = army.targetX;
-      army.y = army.targetY;
-      if (army === this.attackingArmy && this.defendingArmy.totalHp <= 0) {
-        army.state = 'attacking_building';
-      }
-    } else {
-      army.x += (dx / distance) * speed;
-      army.y += (dy / distance) * speed;
-    }
-  }
-
-  private getTargetBuildingCoords(
-    row: number,
-    col: number
-  ): { x: number; y: number } {
-    const cellElement = this.elementRef.nativeElement.querySelector(
-      `.grid-row:nth-child(${row + 1}) .grid-cell:nth-child(${col + 1})`
-    );
-    if (cellElement) {
-      const rect = cellElement.getBoundingClientRect();
-      return {
-        x: rect.left + window.scrollX + rect.width / 2 - 50,
-        y: rect.top + window.scrollY + rect.height / 2 - 50,
-      };
-    }
-    return { x: 0, y: 0 };
-  }
-
-  private showExplosion(x: number, y: number): void {
-    this.explosion.x = x;
-    this.explosion.y = y;
-    this.explosion.show = true;
-    setTimeout(() => (this.explosion.show = false), 500);
-  }
-
-  private calculateDistance(entity1: any, entity2: any): number {
-    const dx = entity1.x - entity2.x;
-    const dy = entity1.y - entity2.y;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  private endAttack(message: string): void {
-    clearInterval(this.battleInterval);
-    this.isAttacking = false;
-    this.toastr.showInfo(message);
   }
 
   getConstructionTimeLeft(building: BuildingData): number {
@@ -759,36 +678,27 @@ export class GridComponent implements OnInit, OnDestroy {
     building: BuildingData
   ): 'construction' | 'upgrade' | 'repair' | 'idle' {
     const now = this.now;
-
     if (
       building.upgradeFinishedAt &&
       new Date(building.upgradeFinishedAt).getTime() > now
-    ) {
+    )
       return 'upgrade';
-    }
-
     if (
       building.constructionFinishedAt &&
       new Date(building.constructionFinishedAt).getTime() > now
-    ) {
+    )
       return 'construction';
-    }
-
     if (
       building.repairFinishedAt &&
       new Date(building.repairFinishedAt).getTime() > now
-    ) {
+    )
       return 'repair';
-    }
-
     return 'idle';
   }
 
   getActionTimeLeft(building: BuildingData): number {
     if (!building) return 0;
-
     let targetDate: Date | string | undefined | null;
-
     const state = this.getActionState(building);
     switch (state) {
       case 'construction':
@@ -803,7 +713,6 @@ export class GridComponent implements OnInit, OnDestroy {
       default:
         return 0;
     }
-
     if (!targetDate) return 0;
     const end = new Date(targetDate).getTime();
     return Math.max(0, Math.ceil((end - this.now) / 1000));
@@ -813,46 +722,25 @@ export class GridComponent implements OnInit, OnDestroy {
     if (!this.isOwnVillage) return;
     if (this.selectedBuildingRow === null || this.selectedBuildingCol === null)
       return;
-
     const building =
       this.buildings[this.selectedBuildingRow][this.selectedBuildingCol];
     if (!building || !building.id) return;
-
     this.webSocketService.send(WebSocketEvent.BUILDING_REPAIR, {
       buildingId: building.id,
       serverId: this.serverService.getServer()?.id ?? -1,
     });
-
     this.closePopup();
-  }
-
-  onDragStart(row: number, col: number): void {
-    if (!this.isOwnVillage) return;
-    const building = this.buildings[row][col];
-
-    if (building && this.getActionState(building) !== 'idle') {
-      this.toastr.showWarning(this.translate.instant('grid.ERRORS.BUSY'));
-      return;
-    }
-
-    if (building) {
-      this.draggedBuilding = { row, col };
-    }
   }
 
   ngOnDestroy(): void {
     if (this.isOwnVillage) this.gatheringService.stop();
-
     if (this.villageDataSub) this.villageDataSub.unsubscribe();
-
     if (this.villageErrorSub) this.villageErrorSub.unsubscribe();
-
-    if (this.battleInterval) clearInterval(this.battleInterval);
-
     if (this.buildingFinishedSub) this.buildingFinishedSub.unsubscribe();
-
     if (this.buildingUpdateSub) this.buildingUpdateSub.unsubscribe();
-
+    if (this.battleUpdateSub) this.battleUpdateSub.unsubscribe();
+    if (this.battleEndedSub) this.battleEndedSub.unsubscribe();
+    if (this.battleErrorSub) this.battleErrorSub.unsubscribe();
     if (this.timerInterval) clearInterval(this.timerInterval);
   }
 }
