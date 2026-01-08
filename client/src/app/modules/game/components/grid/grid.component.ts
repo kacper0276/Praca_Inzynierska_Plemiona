@@ -77,6 +77,7 @@ export class GridComponent implements OnInit, OnDestroy {
     winner: 'attacker' | 'defender';
     attackerLosses: number;
     defenderLosses: number;
+    lootedResources: { wood: number; clay: number; iron: number } | null;
   } | null = null;
 
   explosion = {
@@ -248,6 +249,7 @@ export class GridComponent implements OnInit, OnDestroy {
             (sum: number, u: any) => sum + u.lost,
             0
           ),
+          lootedResources: result.lootedResources,
         };
         this.cdr.detectChanges();
       });

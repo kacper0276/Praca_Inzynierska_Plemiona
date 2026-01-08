@@ -256,7 +256,9 @@
       "ATTACKER_WINS": "Attacker Victory!",
       "DEFENDER_WINS": "Defender Victory!",
       "ATTACKER": "Attacker",
-      "DEFENDER": "Defender"
+      "DEFENDER": "Defender",
+      "LOOT_TITLE": "War Spoils",
+      "LOOT_SUCCESS": "Victory! Resources have been looted."
     },
     "EMPTY_PLOT": "Empty plot"
   },
