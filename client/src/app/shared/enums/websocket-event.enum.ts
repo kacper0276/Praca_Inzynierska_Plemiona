@@ -28,6 +28,8 @@ export enum WebSocketEvent {
   BUILDING_DELETE = 'building_delete',
   BUILDING_UPGRADE = 'building_upgrade',
   BUILDING_FINISHED = 'building_finished',
+  BUILDING_REPAIR = 'building_repair',
+  BUILDING_UPDATE = 'building_update',
 
   // Friend
   FRIEND_REQUEST_RECEIVED = 'friend_request_received',
@@ -43,4 +45,8 @@ export enum WebSocketEvent {
   LEAVE_GROUP_ROOM = 'leave_group_room',
   GROUP_MESSAGE_SEND = 'group_message_send',
   GROUP_MESSAGE_RECEIVED = 'group_message_received',
+
+  // Quest
+  QUEST_UPDATE = 'quest_update',
+  QUEST_COMPLETED = 'quest_completed',
 }

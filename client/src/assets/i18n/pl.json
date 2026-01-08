@@ -219,6 +219,11 @@
   },
 
   "grid": {
+    "STATUS": {
+      "CONSTRUCTING": "Budowa",
+      "UPGRADING": "Ulepszanie",
+      "REPAIRING": "Naprawa"
+    },
     "ATTACK": {
       "BTN_IN_PROGRESS": "Atak w toku...",
       "BTN_START": "Atakuj",

@@ -57,47 +57,62 @@
         <ng-container *ngIf="building">
           <div
             class="construction-overlay"
-            *ngIf="getConstructionTimeLeft(building) > 0"
+            *ngIf="getActionState(building) !== 'idle'"
           >
             <div class="timer">
-              {{ "grid.CONSTRUCTION.TIME_LEFT" | translate }}
-              {{ getConstructionTimeLeft(building) | secondsToTime }}
+              <ng-container [ngSwitch]="getActionState(building)">
+                <span *ngSwitchCase="'construction'">{{
+                  "grid.STATUS.CONSTRUCTING" | translate
+                }}</span>
+                <span *ngSwitchCase="'upgrade'">{{
+                  "grid.STATUS.UPGRADING" | translate
+                }}</span>
+                <span *ngSwitchCase="'repair'">{{
+                  "grid.STATUS.REPAIRING" | translate
+                }}</span>
+              </ng-container>
+              {{ getActionTimeLeft(building) | secondsToTime }}
             </div>
             <div class="building-preview">
-              {{ building.name }} ({{
-                "grid.CONSTRUCTION.LEVEL_SHORT" | translate
-              }}
-              {{ building.level }})
+              {{ building.name }}
+              <span *ngIf="getActionState(building) === 'upgrade'">
+                Lv {{ building.level }} &rarr; {{ building.level + 1 }}
+              </span>
+              <span *ngIf="getActionState(building) !== 'upgrade'">
+                (Lv {{ building.level }})
+              </span>
             </div>
           </div>
 
-          <ng-container *ngIf="getConstructionTimeLeft(building) === 0">
-            <app-building
-              [draggable]="true"
-              (dragstart)="onDragStart(i, j)"
-              (dragend)="onDragEnd($event)"
-              [class.is-dragging]="
-                draggedBuilding?.row === i && draggedBuilding?.col === j
-              "
-              [name]="building.name"
-              [level]="building.level"
-              [imageUrl]="building.imageUrl"
-              [health]="building.health"
-              [maxHealth]="building.maxHealth"
-              (click)="onBuildingClick(i, j)"
-            ></app-building>
+          <app-building
+            [draggable]="getActionState(building) === 'idle'"
+            (dragstart)="onDragStart(i, j)"
+            (dragend)="onDragEnd($event)"
+            [class.is-dragging]="
+              draggedBuilding?.row === i && draggedBuilding?.col === j
+            "
+            [name]="building.name"
+            [level]="building.level"
+            [imageUrl]="building.imageUrl"
+            [health]="building.health"
+            [maxHealth]="building.maxHealth"
+            (click)="onBuildingClick(i, j)"
+          ></app-building>
 
-            <app-radial-menu
-              *ngIf="
-                activeRadial && activeRadial.row === i && activeRadial.col === j
-              "
-              [menuOptions]="buildingOptions"
-              [forceOpen]="true"
-              [showToggle]="false"
-              (optionSelected)="handleBuildingMenuOption($event, i, j)"
-            ></app-radial-menu>
-          </ng-container>
+          <app-radial-menu
+            *ngIf="
+              getActionState(building) === 'idle' &&
+              activeRadial &&
+              activeRadial.row === i &&
+              activeRadial.col === j
+            "
+            [menuOptions]="buildingOptions"
+            [forceOpen]="true"
+            [showToggle]="false"
+            (optionSelected)="handleBuildingMenuOption($event, i, j)"
+          ></app-radial-menu>
         </ng-container>
+
         <ng-container *ngIf="!building">
           <button
             *ngIf="
@@ -137,7 +152,8 @@
   [buildCol]="buildCol"
   (build)="buildBuilding($event.building, $event.cost)"
   (close)="buildMode = false"
-/>
+>
+</app-build-modal>
 
 <app-building-details-popup
   *ngIf="selectedBuilding"
@@ -145,9 +161,10 @@
   [resources]="resources"
   [availableBuildings]="availableBuildings"
   (close)="closePopup()"
-  (demolish)="demolishBuilding(selectedBuildingRow!, selectedBuildingCol!)"
+  (demolish)="demolishSelected()"
   (build)="buildBuilding($event.building, $event.cost)"
   (upgrade)="upgradeBuilding($event)"
+  (repair)="repairBuilding()"
 ></app-building-details-popup>
 
 <div *ngIf="isAttacking" class="attack-overlay">

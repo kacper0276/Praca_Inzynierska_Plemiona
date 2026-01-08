@@ -4,6 +4,7 @@ import {
   HostListener,
   OnInit,
   OnDestroy,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -48,6 +49,7 @@ export class GridComponent implements OnInit, OnDestroy {
   private villageDataSub: Subscription | undefined;
   private villageErrorSub: Subscription | undefined;
   private buildingFinishedSub: Subscription | undefined;
+  private buildingUpdateSub: Subscription | undefined;
 
   attackingArmy = {
     totalHp: 0,
@@ -116,7 +118,8 @@ export class GridComponent implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly webSocketService: WebSocketService,
     private readonly usersService: UserService,
-    private readonly serverService: ServerService
+    private readonly serverService: ServerService,
+    private readonly cdr: ChangeDetectorRef
   ) {
     this.resources = {
       wood: 0,
@@ -187,31 +190,53 @@ export class GridComponent implements OnInit, OnDestroy {
 
     this.timerInterval = setInterval(() => {
       this.now = Date.now();
+      this.cdr.markForCheck();
     }, 1000);
   }
 
   private setupBuildingFinishedListener(): void {
+    this.buildingUpdateSub = this.webSocketService
+      .on<BuildingData>(WebSocketEvent.BUILDING_UPDATE)
+      .subscribe((updatedBuilding) => {
+        this.updateBuildingInGrid(updatedBuilding);
+      });
+
     this.buildingFinishedSub = this.webSocketService
       .on<BuildingData>(WebSocketEvent.BUILDING_FINISHED)
       .subscribe((finishedBuilding) => {
-        if (!finishedBuilding || !finishedBuilding.id) return;
-
-        for (let r = 0; r < this.buildings.length; r++) {
-          for (let c = 0; c < this.buildings[r].length; c++) {
-            const currentBuilding = this.buildings[r][c];
-
-            if (currentBuilding && currentBuilding.id === finishedBuilding.id) {
-              this.buildings[r][c] = finishedBuilding;
-              this.toastr.showSuccess(
-                this.translate.instant('grid.SUCCESS.BUILDING_FINISHED', {
-                  name: finishedBuilding.name,
-                })
-              );
-              return;
-            }
+        if (this.updateBuildingInGrid(finishedBuilding)) {
+          if (
+            !finishedBuilding.constructionFinishedAt &&
+            !finishedBuilding.upgradeFinishedAt &&
+            !finishedBuilding.repairFinishedAt
+          ) {
+            this.toastr.showSuccess(
+              this.translate.instant('grid.SUCCESS.BUILDING_FINISHED', {
+                name: finishedBuilding.name,
+              })
+            );
           }
         }
       });
+  }
+
+  private updateBuildingInGrid(building: BuildingData | null): boolean {
+    if (!building || !building.id) return false;
+
+    for (let r = 0; r < this.buildings.length; r++) {
+      for (let c = 0; c < this.buildings[r].length; c++) {
+        if (this.buildings[r][c]?.id === building.id) {
+          this.buildings[r][c] = building;
+
+          this.buildings[r] = [...this.buildings[r]];
+
+          this.cdr.detectChanges();
+
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   private setupVillageDataListeners(): void {
@@ -293,7 +318,7 @@ export class GridComponent implements OnInit, OnDestroy {
         this.selectedBuildingCol = col;
         break;
       case 'upgrade':
-        console.log('Ulepszam');
+        this.upgradeBuildingDirectly(row, col);
         break;
       case 'destroy':
         this.demolishBuilding(row, col);
@@ -301,6 +326,16 @@ export class GridComponent implements OnInit, OnDestroy {
       case 'edit':
         break;
     }
+  }
+
+  upgradeBuildingDirectly(row: number, col: number): void {
+    const building = this.buildings[row][col];
+    if (!building || !building.id) return;
+
+    this.webSocketService.send(WebSocketEvent.BUILDING_UPGRADE, {
+      buildingId: building.id,
+      serverId: this.serverService.getServer()?.id ?? -1,
+    });
   }
 
   initializeGrid(): void {
@@ -358,13 +393,6 @@ export class GridComponent implements OnInit, OnDestroy {
     );
   }
 
-  onDragStart(row: number, col: number): void {
-    if (!this.isOwnVillage) return;
-    if (this.buildings[row][col]) {
-      this.draggedBuilding = { row, col };
-    }
-  }
-
   onDragEnter(event: DragEvent, row: number, col: number): void {
     if (!this.isOwnVillage) return;
     if (this.draggedBuilding) {
@@ -407,8 +435,8 @@ export class GridComponent implements OnInit, OnDestroy {
     const targetData = this.buildings[row][col];
 
     if (
-      draggedData?.constructionFinishedAt ||
-      targetData?.constructionFinishedAt
+      (draggedData && this.getActionState(draggedData) !== 'idle') ||
+      (targetData && this.getActionState(targetData) !== 'idle')
     ) {
       this.toastr.showError(
         this.translate.instant('grid.ERRORS.MOVE_UNDER_CONSTRUCTION')
@@ -574,19 +602,14 @@ export class GridComponent implements OnInit, OnDestroy {
     if (!this.isOwnVillage) return;
     if (this.selectedBuildingRow === null || this.selectedBuildingCol === null)
       return;
-    if (this.resourcesService.spendResources(event.cost)) {
-      const building =
-        this.buildings[this.selectedBuildingRow][this.selectedBuildingCol];
-      if (building) {
-        building.level = (building.level || 1) + 1;
-        building.maxHealth = (building.maxHealth || 100) + 10;
-        building.health = Math.min(
-          building.health ? building.health + 10 : building.maxHealth,
-          building.maxHealth
-        );
-      }
-    } else {
-      this.toastr.showError(this.translate.instant('NOT_ENOUGH_RES_UPGRADE'));
+    const building =
+      this.buildings[this.selectedBuildingRow][this.selectedBuildingCol];
+
+    if (building && building.id) {
+      this.webSocketService.send(WebSocketEvent.BUILDING_UPGRADE, {
+        buildingId: building.id,
+        serverId: this.serverService.getServer()?.id ?? -1,
+      });
     }
   }
 
@@ -732,6 +755,91 @@ export class GridComponent implements OnInit, OnDestroy {
     return Math.max(0, Math.ceil((end - this.now) / 1000));
   }
 
+  getActionState(
+    building: BuildingData
+  ): 'construction' | 'upgrade' | 'repair' | 'idle' {
+    const now = this.now;
+
+    if (
+      building.upgradeFinishedAt &&
+      new Date(building.upgradeFinishedAt).getTime() > now
+    ) {
+      return 'upgrade';
+    }
+
+    if (
+      building.constructionFinishedAt &&
+      new Date(building.constructionFinishedAt).getTime() > now
+    ) {
+      return 'construction';
+    }
+
+    if (
+      building.repairFinishedAt &&
+      new Date(building.repairFinishedAt).getTime() > now
+    ) {
+      return 'repair';
+    }
+
+    return 'idle';
+  }
+
+  getActionTimeLeft(building: BuildingData): number {
+    if (!building) return 0;
+
+    let targetDate: Date | string | undefined | null;
+
+    const state = this.getActionState(building);
+    switch (state) {
+      case 'construction':
+        targetDate = building.constructionFinishedAt;
+        break;
+      case 'upgrade':
+        targetDate = building.upgradeFinishedAt;
+        break;
+      case 'repair':
+        targetDate = building.repairFinishedAt;
+        break;
+      default:
+        return 0;
+    }
+
+    if (!targetDate) return 0;
+    const end = new Date(targetDate).getTime();
+    return Math.max(0, Math.ceil((end - this.now) / 1000));
+  }
+
+  repairBuilding(): void {
+    if (!this.isOwnVillage) return;
+    if (this.selectedBuildingRow === null || this.selectedBuildingCol === null)
+      return;
+
+    const building =
+      this.buildings[this.selectedBuildingRow][this.selectedBuildingCol];
+    if (!building || !building.id) return;
+
+    this.webSocketService.send(WebSocketEvent.BUILDING_REPAIR, {
+      buildingId: building.id,
+      serverId: this.serverService.getServer()?.id ?? -1,
+    });
+
+    this.closePopup();
+  }
+
+  onDragStart(row: number, col: number): void {
+    if (!this.isOwnVillage) return;
+    const building = this.buildings[row][col];
+
+    if (building && this.getActionState(building) !== 'idle') {
+      this.toastr.showWarning(this.translate.instant('grid.ERRORS.BUSY'));
+      return;
+    }
+
+    if (building) {
+      this.draggedBuilding = { row, col };
+    }
+  }
+
   ngOnDestroy(): void {
     if (this.isOwnVillage) this.gatheringService.stop();
 
@@ -742,6 +850,8 @@ export class GridComponent implements OnInit, OnDestroy {
     if (this.battleInterval) clearInterval(this.battleInterval);
 
     if (this.buildingFinishedSub) this.buildingFinishedSub.unsubscribe();
+
+    if (this.buildingUpdateSub) this.buildingUpdateSub.unsubscribe();
 
     if (this.timerInterval) clearInterval(this.timerInterval);
   }
