@@ -1,0 +1,8 @@
+export enum QuestObjectiveType {
+  BUILD = 'BUILD',
+  UPGRADE_BUILDING = 'UPGRADE_BUILDING',
+  TRAIN = 'TRAIN',
+  GATHER = 'GATHER',
+  HAVE_RESOURCES = 'RESOURCES',
+  EXPAND = 'EXPAND',
+}

@@ -34,7 +34,14 @@ export class QuestPanelComponent implements OnInit {
     this.loadQuests();
   }
 
-  loadQuests(): void {}
+  loadQuests(): void {
+    this.questsService.getAllQuests().subscribe({
+      next: (response) => {
+        this.questsList = response.data || [];
+      },
+      error: (err) => console.error('Błąd podczas ładowania zadań:', err),
+    });
+  }
 
   handleQuestAction(event: ActionEvent): void {
     if (event.action === 'edit') {
@@ -57,15 +64,42 @@ export class QuestPanelComponent implements OnInit {
 
   onCreateQuest(newQuest: Quest): void {
     console.log(newQuest);
+    this.questsService.createQuest(newQuest).subscribe({
+      next: () => {
+        this.loadQuests();
+        this.closeModals();
+      },
+      error: (err) => console.error('Błąd podczas tworzenia zadania:', err),
+    });
   }
 
   onSaveQuest(updatedQuest: Quest): void {
     if (this.selectedQuest?.id) {
       console.log(updatedQuest);
+      this.questsService
+        .updateQuest(this.selectedQuest.id, updatedQuest)
+        .subscribe({
+          next: () => {
+            this.loadQuests();
+            this.closeModals();
+          },
+          error: (err) => console.error('Błąd podczas edycji zadania:', err),
+        });
     }
   }
 
   async onDeleteQuest(quest: Quest): Promise<void> {
-    console.log(quest);
+    const confirmed = await this.confirmationService.confirm(
+      'Czy na pewno chcesz usunąć to zadanie?'
+    );
+
+    if (confirmed && quest.id) {
+      this.questsService.deleteQuest(quest.id).subscribe({
+        next: () => {
+          this.loadQuests();
+        },
+        error: (err) => console.error('Błąd podczas usuwania zadania:', err),
+      });
+    }
   }
 }
