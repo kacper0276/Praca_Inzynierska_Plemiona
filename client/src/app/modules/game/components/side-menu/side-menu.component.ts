@@ -10,6 +10,7 @@ import {
   ThemeService,
   FriendRequestNotificationService,
   LocalStorageService,
+  ToastrService,
 } from '@shared/services';
 
 @Component({
@@ -39,7 +40,8 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly friendRequestNotificationService: FriendRequestNotificationService,
-    private readonly localStorageService: LocalStorageService
+    private readonly localStorageService: LocalStorageService,
+    private readonly toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -109,6 +111,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
 
   logout() {
     this.authService.logout();
+    this.toastr.showSuccess(this.translate.instant('sideMenu.SUCCESS.LOGOUT'));
     this.router.navigate(['/']);
   }
 

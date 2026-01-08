@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { QuestsService } from '@modules/game/services';
 import { ActionEvent, ColumnDefinition } from '@shared/interfaces';
 import { Quest } from '@shared/models';
-import { ConfirmationService } from '@shared/services';
+import { ConfirmationService, ToastrService } from '@shared/services';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-quest-panel',
@@ -11,15 +12,7 @@ import { ConfirmationService } from '@shared/services';
 })
 export class QuestPanelComponent implements OnInit {
   questsList: Quest[] = [];
-  questColumns: ColumnDefinition[] = [
-    { key: 'title', header: 'Tytuł', type: 'text' },
-    { key: 'description', header: 'Opis', type: 'text' },
-    { key: 'woodReward', header: 'Drewno', type: 'number' },
-    { key: 'clayReward', header: 'Glina', type: 'number' },
-    { key: 'ironReward', header: 'Żelazo', type: 'number' },
-    { key: 'populationReward', header: 'Ludność', type: 'number' },
-    // { key: 'isAction', header: 'Akcje', isAction: true },
-  ];
+  questColumns: ColumnDefinition[] = [];
 
   isEditModalOpen = false;
   isCreateModalOpen = false;
@@ -27,11 +20,49 @@ export class QuestPanelComponent implements OnInit {
 
   constructor(
     private readonly questsService: QuestsService,
-    private readonly confirmationService: ConfirmationService
+    private readonly confirmationService: ConfirmationService,
+    private readonly translate: TranslateService,
+    private readonly toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
+    this.initColumns();
     this.loadQuests();
+  }
+
+  private initColumns(): void {
+    this.questColumns = [
+      {
+        key: 'title',
+        header: this.translate.instant('admin.quests.TITLE'),
+        type: 'text',
+      },
+      {
+        key: 'description',
+        header: this.translate.instant('admin.quests.DESCRIPTION'),
+        type: 'text',
+      },
+      {
+        key: 'woodReward',
+        header: this.translate.instant('admin.quests.REWARD_WOOD'),
+        type: 'number',
+      },
+      {
+        key: 'clayReward',
+        header: this.translate.instant('admin.quests.REWARD_CLAY'),
+        type: 'number',
+      },
+      {
+        key: 'ironReward',
+        header: this.translate.instant('admin.quests.REWARD_IRON'),
+        type: 'number',
+      },
+      {
+        key: 'populationReward',
+        header: this.translate.instant('admin.quests.REWARD_POPULATION'),
+        type: 'number',
+      },
+    ];
   }
 
   loadQuests(): void {
@@ -39,7 +70,10 @@ export class QuestPanelComponent implements OnInit {
       next: (response) => {
         this.questsList = response.data || [];
       },
-      error: (err) => console.error('Błąd podczas ładowania zadań:', err),
+      error: (err) =>
+        this.toastr.showError(
+          this.translate.instant('admin.quests.ERRORS.LOAD')
+        ),
     });
   }
 
@@ -63,19 +97,20 @@ export class QuestPanelComponent implements OnInit {
   }
 
   onCreateQuest(newQuest: Quest): void {
-    console.log(newQuest);
     this.questsService.createQuest(newQuest).subscribe({
       next: () => {
         this.loadQuests();
         this.closeModals();
       },
-      error: (err) => console.error('Błąd podczas tworzenia zadania:', err),
+      error: (err) =>
+        this.toastr.showError(
+          this.translate.instant('admin.quests.ERRORS.CREATE')
+        ),
     });
   }
 
   onSaveQuest(updatedQuest: Quest): void {
     if (this.selectedQuest?.id) {
-      console.log(updatedQuest);
       this.questsService
         .updateQuest(this.selectedQuest.id, updatedQuest)
         .subscribe({
@@ -83,14 +118,17 @@ export class QuestPanelComponent implements OnInit {
             this.loadQuests();
             this.closeModals();
           },
-          error: (err) => console.error('Błąd podczas edycji zadania:', err),
+          error: (err) =>
+            this.toastr.showError(
+              this.translate.instant('admin.quests.ERRORS.EDIT')
+            ),
         });
     }
   }
 
   async onDeleteQuest(quest: Quest): Promise<void> {
     const confirmed = await this.confirmationService.confirm(
-      'Czy na pewno chcesz usunąć to zadanie?'
+      this.translate.instant('admin.quests.DELETE_CONFIRM')
     );
 
     if (confirmed && quest.id) {
@@ -98,7 +136,10 @@ export class QuestPanelComponent implements OnInit {
         next: () => {
           this.loadQuests();
         },
-        error: (err) => console.error('Błąd podczas usuwania zadania:', err),
+        error: (err) =>
+          this.toastr.showError(
+            this.translate.instant('admin.quests.ERRORS.DELETE')
+          ),
       });
     }
   }

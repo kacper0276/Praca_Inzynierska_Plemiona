@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ServerService, RankingService } from '@modules/game/services';
 import { ColumnDefinition, PaginationEvent } from '@shared/interfaces';
 import { Ranking } from '@shared/models';
+import { ToastrService } from '@shared/services';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-ranking',
@@ -13,13 +15,16 @@ export class RankingComponent implements OnInit {
   rankingColumns: ColumnDefinition[] = [
     {
       key: 'position',
-      header: 'Miejsce',
+      header: 'ranking.HEADERS.POSITION',
     },
     {
       key: 'username',
-      header: 'Nazwa użytkownika',
+      header: 'ranking.HEADERS.USERNAME',
     },
-    { key: 'score', header: 'Ilość punktów' },
+    {
+      key: 'score',
+      header: 'ranking.HEADERS.SCORE',
+    },
   ];
 
   totalItems: number = 0;
@@ -28,7 +33,9 @@ export class RankingComponent implements OnInit {
 
   constructor(
     private readonly serverService: ServerService,
-    private readonly rankingService: RankingService
+    private readonly rankingService: RankingService,
+    private readonly toastr: ToastrService,
+    private readonly translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -47,7 +54,9 @@ export class RankingComponent implements OnInit {
           this.totalItems = res.data.total;
         },
         error: () => {
-          console.error('Błąd pobierania rankingu');
+          this.toastr.showError(
+            this.translate.instant('ranking.ERRORS.FETCH_FAILED')
+          );
         },
       });
   }

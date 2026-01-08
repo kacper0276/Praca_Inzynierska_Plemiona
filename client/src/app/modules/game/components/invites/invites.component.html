@@ -1,9 +1,9 @@
 <div class="invites-container">
-  <h2>Znajdź znajomych</h2>
+  <h2>{{ "invites.FIND_FRIENDS" | translate }}</h2>
   <div class="search-box">
     <input
       type="text"
-      placeholder="Wpisz login użytkownika..."
+      [placeholder]="'invites.SEARCH_PLACEHOLDER' | translate"
       class="search-input"
       (keyup)="onSearch($event)"
     />
@@ -11,22 +11,23 @@
 
   @if (invites.length > 0) {
   <div class="received-invites">
-    <h3>Odebrane zaproszenia</h3>
+    <h3>{{ "invites.RECEIVED_INVITES" | translate }}</h3>
     <div class="invites-scroll-container">
       @for (invite of invites; track invite.id) {
       <div class="invite-card">
-        <ng-container
-          *ngIf="invite.sender.profileImage; else initialsAvatar"
-          (click)="navigateToUserProfile(invite.sender.email)"
-        >
+        <ng-container *ngIf="invite.sender.profileImage; else initialsAvatar">
           <img
             [src]="backendUrl + invite.sender.profileImage"
-            alt="Awatar użytkownika"
+            [alt]="'invites.AVATAR_ALT' | translate"
             class="user-avatar"
+            (click)="navigateToUserProfile(invite.sender.email)"
           />
         </ng-container>
         <ng-template #initialsAvatar>
-          <div class="initials-avatar">
+          <div
+            class="initials-avatar"
+            (click)="navigateToUserProfile(invite.sender.email)"
+          >
             <span>{{
               userInitials(
                 invite.sender.firstName,
@@ -48,7 +49,7 @@
               respondToFriendRequest(invite.id, FriendRequestStatus.ACCEPTED)
             "
           >
-            Akceptuj
+            {{ "invites.BTN_ACCEPT" | translate }}
           </button>
           <button
             class="action-btn decline-btn"
@@ -56,7 +57,7 @@
               respondToFriendRequest(invite.id, FriendRequestStatus.DECLINED)
             "
           >
-            Odrzuć
+            {{ "invites.BTN_DECLINE" | translate }}
           </button>
         </div>
       </div>
@@ -71,7 +72,7 @@
         <ng-container *ngIf="user.profileImage; else initialsAvatar">
           <img
             [src]="backendUrl + user.profileImage"
-            alt="Awatar użytkownika"
+            [alt]="'invites.AVATAR_ALT' | translate"
             class="avatar-image"
           />
         </ng-container>
@@ -89,7 +90,11 @@
         [disabled]="sentInvites.has(user.email)"
         (click)="sendInvite(user.email)"
       >
-        {{ sentInvites.has(user.email) ? "Wysłano" : "Dodaj" }}
+        {{
+          sentInvites.has(user.email)
+            ? ("invites.STATUS_SENT" | translate)
+            : ("invites.BTN_ADD" | translate)
+        }}
       </button>
     </li>
     }

@@ -1,45 +1,59 @@
 <div class="register-form-wrapper">
   <div class="register-card">
-    <h2>{{ "register" | translate }}</h2>
+    <h2>{{ "auth.register.TITLE" | translate }}</h2>
     <form (ngSubmit)="onSubmit()" [formGroup]="registerForm">
       <div class="form-group">
-        <label for="email">{{ "email" | translate }}</label>
+        <label for="email">{{ "auth.register.EMAIL_LABEL" | translate }}</label>
         <input id="email" type="email" formControlName="email" />
         @if (registerForm.get('email')?.invalid &&
         registerForm.get('email')?.touched) {
-        <div class="error">{{ "user-email-is-required" | translate }}</div>
+        <div class="error">
+          {{ "auth.register.VALIDATION.EMAIL_REQUIRED" | translate }}
+        </div>
         }
       </div>
 
       <div class="form-group">
-        <label for="login">{{ "username" | translate }}</label>
+        <label for="login">{{ "auth.register.LOGIN_LABEL" | translate }}</label>
         <input id="login" type="text" formControlName="login" />
         @if (registerForm.get('login')?.invalid &&
         registerForm.get('login')?.touched) {
-        <div class="error">{{ "login-is-required" | translate }}</div>
+        <div class="error">
+          {{ "auth.register.VALIDATION.LOGIN_REQUIRED" | translate }}
+        </div>
         }
       </div>
 
       <div class="form-group">
-        <label for="firstName">{{ "first-name" | translate }}</label>
+        <label for="firstName">{{
+          "auth.register.FIRST_NAME_LABEL" | translate
+        }}</label>
         <input id="firstName" type="text" formControlName="firstName" />
         @if (registerForm.get('firstName')?.invalid &&
         registerForm.get('firstName')?.touched) {
-        <div class="error">{{ "first-name-is-required" | translate }}</div>
+        <div class="error">
+          {{ "auth.register.VALIDATION.FIRST_NAME_REQUIRED" | translate }}
+        </div>
         }
       </div>
 
       <div class="form-group">
-        <label for="lastName">{{ "last-name" | translate }}</label>
+        <label for="lastName">{{
+          "auth.register.LAST_NAME_LABEL" | translate
+        }}</label>
         <input id="lastName" type="text" formControlName="lastName" />
         @if (registerForm.get('lastName')?.invalid &&
         registerForm.get('lastName')?.touched) {
-        <div class="error">{{ "last-name-is-required" | translate }}</div>
+        <div class="error">
+          {{ "auth.register.VALIDATION.LAST_NAME_REQUIRED" | translate }}
+        </div>
         }
       </div>
 
       <div class="form-group">
-        <label for="password">{{ "password" | translate }}</label>
+        <label for="password">{{
+          "auth.register.PASSWORD_LABEL" | translate
+        }}</label>
         <div class="password-wrapper">
           <input
             id="password"
@@ -51,18 +65,24 @@
             class="toggle-password"
             (click)="togglePasswordVisibility()"
           >
-            {{ showPassword ? ("hidden" | translate) : ("show" | translate) }}
+            {{
+              showPassword
+                ? ("auth.register.HIDDEN" | translate)
+                : ("auth.register.SHOW" | translate)
+            }}
           </button>
         </div>
         @if (registerForm.get('password')?.invalid &&
         registerForm.get('password')?.touched) {
-        <div class="error">{{ "password-is-required" | translate }}</div>
+        <div class="error">
+          {{ "auth.register.VALIDATION.PASSWORD_REQUIRED" | translate }}
+        </div>
         }
       </div>
 
       <div class="form-group">
         <label for="repeated_password">{{
-          "repeat-password" | translate
+          "auth.register.REPEAT_PASSWORD_LABEL" | translate
         }}</label>
         <div class="password-wrapper">
           <input
@@ -77,14 +97,16 @@
           >
             {{
               showRepeatedPassword
-                ? ("hidden" | translate)
-                : ("show" | translate)
+                ? ("auth.register.HIDDEN" | translate)
+                : ("auth.register.SHOW" | translate)
             }}
           </button>
         </div>
         @if (registerForm.get('repeatedPassword')?.invalid &&
         registerForm.get('repeatedPassword')?.touched) {
-        <div class="error">{{ "repeat-password-is-required" | translate }}</div>
+        <div class="error">
+          {{ "auth.register.VALIDATION.REPEAT_PASSWORD_REQUIRED" | translate }}
+        </div>
         }
       </div>
 
@@ -93,7 +115,7 @@
         [disabled]="registerForm.invalid"
         class="register-button"
       >
-        {{ "register" | translate }}
+        {{ "auth.register.BTN_SUBMIT" | translate }}
       </button>
     </form>
   </div>

@@ -1,5 +1,5 @@
 <div class="main-container">
-  <h3>Dziennik Zadań</h3>
+  <h3>{{ "tasks.HEADER" | translate }}</h3>
 
   <div class="quests-grid">
     <div
@@ -31,10 +31,10 @@
         >
           {{
             prog.completedAt
-              ? "Odebrano"
+              ? ("tasks.STATUS.CLAIMED" | translate)
               : prog.isCompleted
-              ? "Do odebrania"
-              : "W toku"
+              ? ("tasks.STATUS.READY" | translate)
+              : ("tasks.STATUS.ACTIVE" | translate)
           }}
         </div>
       </div>
@@ -43,7 +43,10 @@
         <div class="requirements-list">
           <div *ngFor="let objProg of prog.objectivesProgress" class="req-item">
             <span class="req-label">
-              {{ objProg.objective.description || "Ładowanie celu..." }}
+              {{
+                objProg.objective.description ||
+                  ("tasks.LOADING_OBJECTIVE" | translate)
+              }}
             </span>
 
             <span class="req-values">
@@ -68,7 +71,7 @@
 
       <div class="quest-footer">
         <div class="rewards-container">
-          <span class="label">Nagrody:</span>
+          <span class="label">{{ "tasks.REWARDS_LABEL" | translate }}</span>
           <div class="rewards-row">
             <div *ngIf="prog.quest.woodReward > 0" class="reward-pill">
               <img
@@ -110,7 +113,7 @@
           (click)="claimReward(prog.id ?? -1)"
           class="claim-btn"
         >
-          Odbierz
+          {{ "tasks.BTN_CLAIM" | translate }}
         </button>
 
         <div *ngIf="prog.completedAt" class="claimed-icon">

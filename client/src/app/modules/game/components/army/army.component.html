@@ -1,6 +1,6 @@
 <div class="army-container">
   <div class="header-section">
-    <span class="subtitle">Zarządzaj armią i rekrutuj jednostki</span>
+    <span class="subtitle">{{ "army.SUBTITLE" | translate }}</span>
   </div>
 
   <div class="content-wrapper">
@@ -20,12 +20,14 @@
           <div class="unit-details">
             <div class="unit-header">
               <h4>{{ unit.name }}</h4>
-              <span class="level-badge">Lv. {{ unit.level }}</span>
+              <span class="level-badge"
+                >{{ "army.LEVEL_PREFIX" | translate }} {{ unit.level }}</span
+              >
             </div>
 
             <div class="unit-stats">
               <div class="stat-row">
-                <span class="label">Dostępne:</span>
+                <span class="label">{{ "army.AVAILABLE" | translate }}:</span>
                 <span class="value">{{ unit.count }}</span>
               </div>
             </div>
@@ -34,25 +36,21 @@
 
         <div class="card-footer">
           <div class="upgrade-cost-preview">
-            <small>Ulepszenie:</small>
+            <small>{{ "army.UPGRADE_LABEL" | translate }}:</small>
             <div class="resources-mini">
-              <span *ngIf="getUpgradeCost(unit).wood > 0"
-                ><i class="wood"></i> {{ getUpgradeCost(unit).wood }}</span
-              >
-              <span *ngIf="getUpgradeCost(unit).clay > 0"
-                ><i class="stone"></i> {{ getUpgradeCost(unit).clay }}</span
-              >
-              <span *ngIf="getUpgradeCost(unit).iron > 0"
-                ><i class="iron"></i> {{ getUpgradeCost(unit).iron }}</span
-              >
+              <span *ngIf="getUpgradeCost(unit).wood > 0">
+                <i class="wood"></i> {{ getUpgradeCost(unit).wood }}
+              </span>
+              <span *ngIf="getUpgradeCost(unit).clay > 0">
+                <i class="stone"></i> {{ getUpgradeCost(unit).clay }}
+              </span>
+              <span *ngIf="getUpgradeCost(unit).iron > 0">
+                <i class="iron"></i> {{ getUpgradeCost(unit).iron }}
+              </span>
             </div>
           </div>
 
-          <button
-            class="upgrade-btn"
-            (click)="upgradeUnit(unit, $event)"
-            matTooltip="Ulepsz poziom"
-          >
+          <button class="upgrade-btn" (click)="upgradeUnit(unit, $event)">
             <mat-icon>arrow_upward</mat-icon>
           </button>
         </div>
@@ -81,7 +79,7 @@
 
       <div class="panel-body">
         <div class="input-group">
-          <label>Liczba jednostek</label>
+          <label>{{ "army.UNIT_AMOUNT" | translate }}</label>
           <div class="number-input">
             <button
               (click)="createAmount = createAmount > 1 ? createAmount - 1 : 1"
@@ -94,7 +92,7 @@
         </div>
 
         <div class="cost-summary">
-          <label>Wymagane surowce</label>
+          <label>{{ "army.REQUIRED_RESOURCES" | translate }}</label>
           <div class="resource-tags">
             <div
               class="res-tag wood"
@@ -138,7 +136,7 @@
           (click)="createUnits()"
         >
           <mat-icon>group_add</mat-icon>
-          Rekrutuj
+          {{ "army.BTN_RECRUIT" | translate }}
         </button>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { BuildingsService } from '@modules/game/services';
 import { ColumnDefinition, ActionEvent } from '@shared/interfaces';
 import { BuildingData } from '@shared/models';
 import { ConfirmationService } from '@shared/services';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-building-panel',
@@ -11,46 +12,51 @@ import { ConfirmationService } from '@shared/services';
 })
 export class BuildingPanelComponent implements OnInit {
   buildingsList: BuildingData[] = [];
-  buildingColumns: ColumnDefinition[] = [
-    {
-      key: 'name',
-      header: 'Nazwa budynku',
-    },
-    {
-      key: 'level',
-      header: 'Poziom budynku',
-    },
-    {
-      key: 'health',
-      header: 'Poziom zdrowia',
-    },
-    {
-      key: 'userLogin',
-      header: 'Nazwa użytkownika',
-      isReadOnly: true,
-    },
-    {
-      key: 'userVillageId',
-      header: 'Id wioski użytkownika',
-      isReadOnly: true,
-    },
-  ];
+  buildingColumns: ColumnDefinition[] = [];
   isModalOpen: boolean = false;
   selectedBuilding: BuildingData | null = null;
 
   constructor(
     private readonly buildingsService: BuildingsService,
-    private readonly confirmationService: ConfirmationService
+    private readonly confirmationService: ConfirmationService,
+    private readonly translate: TranslateService
   ) {}
 
   ngOnInit(): void {
+    this.initColumns();
     this.fetchAllBuildings();
+  }
+
+  private initColumns(): void {
+    this.buildingColumns = [
+      {
+        key: 'name',
+        header: this.translate.instant('admin.buildings.NAME'),
+      },
+      {
+        key: 'level',
+        header: this.translate.instant('admin.buildings.LEVEL'),
+      },
+      {
+        key: 'health',
+        header: this.translate.instant('admin.buildings.HEALTH'),
+      },
+      {
+        key: 'userLogin',
+        header: this.translate.instant('admin.buildings.USER_LOGIN'),
+        isReadOnly: true,
+      },
+      {
+        key: 'userVillageId',
+        header: this.translate.instant('admin.buildings.VILLAGE_ID'),
+        isReadOnly: true,
+      },
+    ];
   }
 
   private fetchAllBuildings() {
     this.buildingsService.getAllBuildings().subscribe({
       next: (res) => {
-        console.log(res);
         this.buildingsList = res.data;
       },
     });
@@ -79,7 +85,7 @@ export class BuildingPanelComponent implements OnInit {
 
   async onDeleteBuilding(buildingToDelete: BuildingData): Promise<void> {
     const result = await this.confirmationService.confirm(
-      `Czy na pewno chcesz usunąć ten budynek?`
+      this.translate.instant('admin.buildings.DELETE_CONFIRM')
     );
 
     if (result) {
@@ -87,8 +93,6 @@ export class BuildingPanelComponent implements OnInit {
         (b) => b.id !== buildingToDelete.id
       );
       this.closeEditModal();
-    } else {
-      console.log('anulowano');
     }
   }
 }

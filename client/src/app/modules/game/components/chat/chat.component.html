@@ -1,7 +1,7 @@
 <div class="chat-container">
   <aside class="chat-sidebar">
     <div class="sidebar-header">
-      <h3>Wiadomości</h3>
+      <h3>{{ "chat.MESSAGES_HEADER" | translate }}</h3>
       <button class="create-group-btn" (click)="openGroupModal()">+</button>
     </div>
 
@@ -9,7 +9,7 @@
       <input
         type="text"
         class="search-input"
-        placeholder="Szukaj użytkownika..."
+        [placeholder]="'chat.SEARCH_PLACEHOLDER' | translate"
         (keyup)="onSearch($event)"
       />
     </div>
@@ -80,7 +80,6 @@
         </div>
         <div class="header-info">
           <h4>{{ selectedChat.name }}</h4>
-          <!-- <span>Dostępny</span> -->
         </div>
       </div>
 
@@ -103,11 +102,13 @@
       <div class="input-area">
         <input
           type="text"
-          placeholder="Napisz wiadomość..."
+          [placeholder]="'chat.INPUT_PLACEHOLDER' | translate"
           [(ngModel)]="newMessage"
           (keydown.enter)="sendMessage()"
         />
-        <button (click)="sendMessage()">Wyślij</button>
+        <button (click)="sendMessage()">
+          {{ "chat.BTN_SEND" | translate }}
+        </button>
       </div>
     </ng-container>
 
@@ -121,7 +122,7 @@
           color: var(--text);
         "
       >
-        <h3>Wybierz czat, aby rozpocząć rozmowę</h3>
+        <h3>{{ "chat.SELECT_CHAT_PROMPT" | translate }}</h3>
       </div>
     </ng-template>
   </main>
@@ -129,37 +130,39 @@
 
 <div class="modal-backdrop" *ngIf="isModalOpen">
   <div class="modal-content">
-    <h2>Utwórz nową grupę</h2>
+    <h2>{{ "chat.groupModal.HEADER" | translate }}</h2>
 
     <div class="form-group">
-      <label>Nazwa grupy</label>
+      <label>{{ "chat.groupModal.LABEL_NAME" | translate }}</label>
       <input
         type="text"
         class="text-input"
         [(ngModel)]="newGroupName"
-        placeholder="Np. Projekt Zespół A"
+        [placeholder]="'chat.groupModal.PLACEHOLDER_NAME' | translate"
       />
     </div>
 
     <div class="form-group">
-      <label>Dodaj uczestników</label>
+      <label>{{ "chat.groupModal.LABEL_PARTICIPANTS" | translate }}</label>
 
       <app-multi-select
         [items]="allFriends"
-        placeholder="Szukaj znajomych..."
+        [placeholder]="'chat.groupModal.PLACEHOLDER_FRIENDS' | translate"
         (selectionChange)="onFriendsSelectionChange($event)"
       >
       </app-multi-select>
     </div>
 
     <div class="modal-actions">
-      <button class="cancel" (click)="closeGroupModal()">Anuluj</button>
+      <button class="cancel" (click)="closeGroupModal()">
+        {{ "chat.groupModal.BTN_CANCEL" | translate }}
+      </button>
       <button
         class="confirm"
         (click)="createGroup()"
         [disabled]="!newGroupName || selectedFriends.length === 0"
       >
-        Utwórz grupę
+        {{ "chat.groupModal.BTN_CREATE" | translate }}
       </button>
     </div>
   </div>

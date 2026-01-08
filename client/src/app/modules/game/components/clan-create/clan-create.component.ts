@@ -75,8 +75,19 @@ export class ClanCreateComponent implements OnInit {
       serverId: this.serverService.getServer()?.id,
     };
 
-    this.clansService.createClan(payload).subscribe(() => {
-      this.created.emit();
+    this.clansService.createClan(payload).subscribe({
+      next: () => {
+        this.toastr.showSuccess(
+          this.translate.instant('clan.create.SUCCESS_MSG')
+        );
+        this.created.emit();
+      },
+      error: (err) => {
+        this.toastr.showError(
+          err.error?.message ||
+            this.translate.instant('clan.create.ERROR_GENERIC')
+        );
+      },
     });
   }
 }

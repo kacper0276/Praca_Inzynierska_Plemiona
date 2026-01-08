@@ -1,25 +1,30 @@
 <app-modal (close)="close.emit()">
   <div modal-header>
-    <h2>Rozbuduj budynek</h2>
+    <h2>{{ "upgradeModal.HEADER" | translate }}</h2>
   </div>
   <div modal-body>
     <div *ngIf="building">
       <img [src]="building.imageUrl" [alt]="building.name" />
-      <div>{{ building.name }} (Poziom: {{ building.level }})</div>
+      <div>
+        {{ building.name }} ({{ "upgradeModal.LEVEL" | translate }}:
+        {{ building.level }})
+      </div>
       <div class="costs">
         <span *ngFor="let key of getUpgradeCost() | keyvalue">
-          {{ key.key }}: {{ key.value }}
+          {{ "resources." + key.key | translate }}: {{ key.value }}
         </span>
       </div>
       <button
         [disabled]="!canUpgrade(getUpgradeCost())"
         (click)="upgrade.emit({ cost: getUpgradeCost() })"
       >
-        Rozbuduj
+        {{ "upgradeModal.BTN_UPGRADE" | translate }}
       </button>
     </div>
   </div>
   <div modal-footer>
-    <button class="btn btn-secondary" (click)="close.emit()">Anuluj</button>
+    <button class="btn btn-secondary" (click)="close.emit()">
+      {{ "upgradeModal.BTN_CANCEL" | translate }}
+    </button>
   </div>
 </app-modal>

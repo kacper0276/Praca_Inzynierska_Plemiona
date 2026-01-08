@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ServerService } from '@modules/game/services';
 import { ArmyService } from '@modules/game/services/army.service';
 import { UNIT_CONFIG } from '@shared/consts/unit-config';
@@ -22,7 +23,8 @@ export class ArmyComponent implements OnInit {
   constructor(
     private readonly armyService: ArmyService,
     private readonly serverService: ServerService,
-    private readonly toastr: ToastrService
+    private readonly toastr: ToastrService,
+    private readonly translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -31,7 +33,7 @@ export class ArmyComponent implements OnInit {
       this.currentServerId = server.id;
       this.loadArmy();
     } else {
-      this.toastr.showError('Nie wybrano serwera.');
+      this.toastr.showError(this.translate.instant('army.ERRORS.NO_SERVER'));
     }
   }
 
@@ -65,10 +67,16 @@ export class ArmyComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.updateUnitInList(res.data);
-          this.toastr.showSuccess(`Zrekrutowano: ${this.selectedUnit?.name}`);
+          this.toastr.showSuccess(
+            this.translate.instant('army.SUCCESS.RECRUITED', {
+              unitName: this.selectedUnit?.name,
+            })
+          );
         },
         error: (err) => {
-          this.toastr.showError(err.error?.message || 'Wystąpił błąd.');
+          this.toastr.showError(
+            err.error?.message || this.translate.instant('army.ERRORS.GENERIC')
+          );
         },
       });
   }
@@ -81,11 +89,17 @@ export class ArmyComponent implements OnInit {
       next: (res) => {
         this.updateUnitInList(res.data);
         this.toastr.showSuccess(
-          `Ulepszono: ${unit.name} (Lv. ${res.data.level})`
+          this.translate.instant('army.SUCCESS.UPGRADED', {
+            unitName: unit.name,
+            level: res.data.level,
+          })
         );
       },
       error: (err) => {
-        this.toastr.showError(err.error?.message || 'Brak surowców.');
+        this.toastr.showError(
+          err.error?.message ||
+            this.translate.instant('army.ERRORS.NO_RESOURCES')
+        );
       },
     });
   }

@@ -33,7 +33,9 @@ export class RegisterComponent {
       lastName: ['', Validators.required],
     });
 
-    this.titleService.setTitle(this.translateService.instant('register'));
+    this.titleService.setTitle(
+      this.translateService.instant('auth.register.TITLE')
+    );
   }
 
   togglePasswordVisibility(): void {
@@ -48,12 +50,16 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       this.authService.registerUser(this.registerForm.value).subscribe({
         next: (res) => {
-          this.toastr.showSuccess(this.translateService.instant(res.message));
+          this.toastr.showSuccess(
+            this.translateService.instant('auth.register.SUCCESS')
+          );
           this.router.navigate(['/login']);
         },
         error: (err) => {
-          console.log(err);
-          this.toastr.showError('auth.invalid-form');
+          const errorMsg =
+            err.error?.message ||
+            this.translateService.instant('auth.register.ERROR');
+          this.toastr.showError(errorMsg);
         },
       });
     }

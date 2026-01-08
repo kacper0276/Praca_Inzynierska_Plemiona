@@ -5,6 +5,7 @@ import { User } from '@shared/models';
 import { ToastrService } from '@shared/services/toastr.service';
 import { UpdateUser } from '@modules/auth/interfaces';
 import { UserService } from '@modules/auth/services';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-edit-profile',
@@ -27,7 +28,8 @@ export class EditProfileComponent implements OnInit {
   constructor(
     private readonly fb: FormBuilder,
     private readonly userService: UserService,
-    private readonly toastrService: ToastrService
+    private readonly toastrService: ToastrService,
+    private readonly translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -39,7 +41,9 @@ export class EditProfileComponent implements OnInit {
         this.initializeForm();
       },
       error: (err) => {
-        console.error('Nie udało się pobrać danych użytkownika', err);
+        this.toastrService.showError(
+          this.translate.instant('editProfile.ERRORS.FETCH_FAILED')
+        );
       },
     });
   }
@@ -93,7 +97,7 @@ export class EditProfileComponent implements OnInit {
   saveChanges(): void {
     if (this.profileForm.invalid || !this.user) {
       this.toastrService.showError(
-        'Formularz jest niepoprawny lub użytkownik nie został załadowany.'
+        this.translate.instant('editProfile.ERRORS.INVALID_FORM')
       );
       return;
     }
@@ -110,7 +114,7 @@ export class EditProfileComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.toastrService.showSuccess(
-            'Profil został pomyślnie zaktualizowany!'
+            this.translate.instant('editProfile.SUCCESS.UPDATE')
           );
 
           this.user = res.data.user;
@@ -119,7 +123,7 @@ export class EditProfileComponent implements OnInit {
         },
         error: (err) => {
           this.toastrService.showError(
-            'Wystąpił błąd podczas aktualizacji profilu'
+            this.translate.instant('editProfile.ERRORS.UPDATE_FAILED')
           );
         },
       });

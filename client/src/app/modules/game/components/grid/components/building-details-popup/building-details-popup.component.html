@@ -4,9 +4,10 @@
   </div>
   <div modal-body>
     <img [src]="building?.imageUrl" alt="{{ building?.name }}" />
-    <p>Poziom: {{ building?.level }}</p>
+    <p>{{ "buildingDetails.LEVEL" | translate }}: {{ building?.level }}</p>
     <p *ngIf="building">
-      Zdrowie: {{ building.health }} / {{ building.maxHealth }}
+      {{ "buildingDetails.HEALTH" | translate }}: {{ building.health }} /
+      {{ building.maxHealth }}
     </p>
     <div *ngIf="building" class="health-bar">
       <div
@@ -33,13 +34,17 @@
     ></app-build-modal>
   </div>
   <div modal-footer class="buttons">
-    <button (click)="demolish.emit()">Usuń budynek</button>
+    <button (click)="demolish.emit()">
+      {{ "buildingDetails.BTN_DEMOLISH" | translate }}
+    </button>
     <button
       (click)="repair.emit()"
       [disabled]="building?.health === building?.maxHealth"
     >
-      Napraw budynek
+      {{ "buildingDetails.BTN_REPAIR" | translate }}
     </button>
-    <button (click)="close.emit()">Zamknij</button>
+    <button (click)="close.emit()">
+      {{ "buildingDetails.BTN_CLOSE" | translate }}
+    </button>
   </div>
 </app-modal>

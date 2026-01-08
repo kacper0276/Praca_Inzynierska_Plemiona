@@ -1,11 +1,7 @@
 <nav class="side-menu" [class.collapsed]="isCollapsed">
   <div class="menu-content">
     <div class="toggle-button-container">
-      <button
-        class="toggle-btn"
-        (click)="toggleCollapse()"
-        aria-label="Zwiń/rozwiń menu"
-      >
+      <button class="toggle-btn" (click)="toggleCollapse()">
         <mat-icon>{{ isCollapsed ? "menu" : "chevron_left" }}</mat-icon>
       </button>
     </div>
@@ -16,7 +12,7 @@
           class="flag-btn"
           [class.active]="currentLang === 'pl'"
           (click)="setLanguage('pl')"
-          title="Polski"
+          [title]="'sideMenu.LANG_PL' | translate"
         >
           <img src="/assets/icons/pl-flag.png" alt="PL" />
         </button>
@@ -24,7 +20,7 @@
           class="flag-btn"
           [class.active]="currentLang === 'en'"
           (click)="setLanguage('en')"
-          title="English"
+          [title]="'sideMenu.LANG_EN' | translate"
         >
           <img src="/assets/icons/en-flag.png" alt="EN" />
         </button>
@@ -34,11 +30,13 @@
         <button
           class="theme-btn"
           (click)="toggleTheme()"
-          [title]="currentTheme === 'dark' ? 'Jasny motyw' : 'Ciemny motyw'"
+          [title]="
+            (currentTheme === 'dark'
+              ? 'sideMenu.THEME_LIGHT'
+              : 'sideMenu.THEME_DARK'
+            ) | translate
+          "
         >
-          <!-- <mat-icon [ngClass]="{ 'dark-icon': currentTheme === 'dark' }">{{
-            currentTheme === "dark" ? "dark_mode" : "light_mode"
-          }}</mat-icon> -->
           <img
             [src]="
               '/assets/icons/' +
@@ -53,78 +51,85 @@
     <ul>
       <li
         [class.active]="activeTab === 'village'"
-        [title]="isCollapsed ? 'Wioska' : ''"
+        [title]="isCollapsed ? ('sideMenu.ITEMS.VILLAGE' | translate) : ''"
       >
         <a routerLink="village/kacper0276@op.pl">
-          <!-- <mat-icon>cottage</mat-icon> -->
           <img src="/assets/icons/village.png" alt="Village" />
-          <span *ngIf="!isCollapsed">Wioska</span>
+          <span *ngIf="!isCollapsed">{{
+            "sideMenu.ITEMS.VILLAGE" | translate
+          }}</span>
         </a>
       </li>
 
       <li
         [class.active]="activeTab === 'map'"
-        [title]="isCollapsed ? 'Mapa' : ''"
+        [title]="isCollapsed ? ('sideMenu.ITEMS.MAP' | translate) : ''"
       >
         <a routerLink="map">
-          <!-- <mat-icon>map</mat-icon> -->
           <img src="/assets/icons/map.png" alt="Map" />
-          <span *ngIf="!isCollapsed">Mapa</span>
+          <span *ngIf="!isCollapsed">{{
+            "sideMenu.ITEMS.MAP" | translate
+          }}</span>
         </a>
       </li>
 
       <li
         [class.active]="activeTab === 'army'"
-        [title]="isCollapsed ? 'Armia' : ''"
+        [title]="isCollapsed ? ('sideMenu.ITEMS.ARMY' | translate) : ''"
       >
         <a routerLink="army">
-          <!-- <mat-icon>shield</mat-icon> -->
-          <img src="/assets/icons/sword.png" alt="Map" />
-          <span *ngIf="!isCollapsed">Armia</span>
+          <img src="/assets/icons/sword.png" alt="Army" />
+          <span *ngIf="!isCollapsed">{{
+            "sideMenu.ITEMS.ARMY" | translate
+          }}</span>
         </a>
       </li>
 
       <li
         [class.active]="activeTab === 'chat'"
-        [title]="isCollapsed ? 'Wiadomości' : ''"
+        [title]="isCollapsed ? ('sideMenu.ITEMS.MESSAGES' | translate) : ''"
       >
         <a routerLink="chat">
-          <!-- <mat-icon>chat</mat-icon> -->
           <img src="/assets/icons/messages.png" alt="Chat" />
-          <span *ngIf="!isCollapsed">Wiadomości</span>
+          <span *ngIf="!isCollapsed">{{
+            "sideMenu.ITEMS.MESSAGES" | translate
+          }}</span>
         </a>
       </li>
 
       <li
         [class.active]="activeTab === 'ranking'"
-        [title]="isCollapsed ? 'Ranking' : ''"
+        [title]="isCollapsed ? ('sideMenu.ITEMS.RANKING' | translate) : ''"
       >
         <a routerLink="ranking">
-          <!-- <mat-icon>leaderboard</mat-icon> -->
           <img src="/assets/icons/ranking.png" alt="Ranking" />
-          <span *ngIf="!isCollapsed">Ranking</span>
+          <span *ngIf="!isCollapsed">{{
+            "sideMenu.ITEMS.RANKING" | translate
+          }}</span>
         </a>
       </li>
 
       <li
         [class.active]="activeTab === 'clan'"
-        [title]="isCollapsed ? 'Klan' : ''"
+        [title]="isCollapsed ? ('sideMenu.ITEMS.CLAN' | translate) : ''"
       >
         <a routerLink="clan">
-          <!-- <mat-icon>groups</mat-icon> -->
           <img src="/assets/icons/shield.png" alt="Clan" />
-          <span *ngIf="!isCollapsed">Klan</span>
+          <span *ngIf="!isCollapsed">{{
+            "sideMenu.ITEMS.CLAN" | translate
+          }}</span>
         </a>
       </li>
 
       <li
         [class.active]="activeTab === 'invitations'"
-        [title]="isCollapsed ? 'Zaproszenia' : ''"
+        [title]="isCollapsed ? ('sideMenu.ITEMS.INVITATIONS' | translate) : ''"
       >
         <a routerLink="invitations">
-          <!-- <mat-icon>person_add</mat-icon> -->
           <img src="/assets/icons/invite.png" alt="Invitations" />
-          <span *ngIf="!isCollapsed">Zaproszenia</span>
+          <span *ngIf="!isCollapsed">{{
+            "sideMenu.ITEMS.INVITATIONS" | translate
+          }}</span>
 
           <ng-container *ngIf="pendingRequestsCount$ | async as count">
             <span *ngIf="count > 0" class="notification-badge">{{
@@ -136,33 +141,38 @@
 
       <li
         [class.active]="activeTab === 'tasks'"
-        [title]="isCollapsed ? 'Zadania' : ''"
+        [title]="isCollapsed ? ('sideMenu.ITEMS.TASKS' | translate) : ''"
       >
         <a routerLink="tasks">
-          <!-- <mat-icon>groups</mat-icon> -->
-          <!-- TODO: Stworzyć ikonę dla Zadań -->
           <img src="/assets/icons/quest.png" alt="Tasks" />
-          <span *ngIf="!isCollapsed">Zadania</span>
+          <span *ngIf="!isCollapsed">{{
+            "sideMenu.ITEMS.TASKS" | translate
+          }}</span>
         </a>
       </li>
 
       <li class="report-bug">
-        <a (click)="openBugReport()" title="Zgłoś błąd">
-          <!-- <mat-icon>bug_report</mat-icon> -->
+        <a
+          (click)="openBugReport()"
+          [title]="'sideMenu.ITEMS.REPORT_BUG_TITLE' | translate"
+        >
           <img src="/assets/icons/report_bug.png" alt="Report bug" />
-          <span *ngIf="!isCollapsed">Zgłoś problem</span>
+          <span *ngIf="!isCollapsed">{{
+            "sideMenu.ITEMS.REPORT_BUG" | translate
+          }}</span>
         </a>
       </li>
 
       @if (currentUser?.role === 'admin') {
       <li
         [class.active]="activeTab === 'admin'"
-        [title]="isCollapsed ? 'Panel admina' : ''"
+        [title]="isCollapsed ? ('sideMenu.ITEMS.ADMIN_PANEL' | translate) : ''"
       >
         <a routerLink="admin-panel">
-          <!-- <mat-icon>admin_panel_settings</mat-icon> -->
           <img src="/assets/icons/admin_panel.png" alt="Admin Panel" />
-          <span *ngIf="!isCollapsed">Panel admina</span>
+          <span *ngIf="!isCollapsed">{{
+            "sideMenu.ITEMS.ADMIN_PANEL" | translate
+          }}</span>
         </a>
       </li>
       }
@@ -192,9 +202,8 @@
       <ul>
         <li>
           <a routerLink="profile/edit" (click)="toggleUserMenu()">
-            <!-- <mat-icon>edit</mat-icon> -->
             <img src="/assets/icons/pencil.png" alt="Edit" />
-            <span>Edycja konta</span>
+            <span>{{ "sideMenu.USER_MENU.EDIT_ACCOUNT" | translate }}</span>
           </a>
         </li>
         <li>
@@ -202,16 +211,14 @@
             [routerLink]="['profile', currentUser?.email]"
             (click)="toggleUserMenu()"
           >
-            <!-- <mat-icon>visibility</mat-icon> -->
             <img src="/assets/icons/user_profile.png" alt="Profile View" />
-            <span>Widok profilu</span>
+            <span>{{ "sideMenu.USER_MENU.PROFILE_VIEW" | translate }}</span>
           </a>
         </li>
         <li>
           <a (click)="logout()" style="cursor: pointer">
-            <!-- <mat-icon>logout</mat-icon> -->
             <img src="/assets/icons/exit.png" alt="Logout" />
-            <span>Wyloguj</span>
+            <span>{{ "sideMenu.USER_MENU.LOGOUT" | translate }}</span>
           </a>
         </li>
       </ul>

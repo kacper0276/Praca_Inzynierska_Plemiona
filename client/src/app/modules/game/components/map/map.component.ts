@@ -1,23 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MapTile, MapVillage } from '@modules/game/interfaces';
-import { VillagesService } from '@modules/game/services';
+import { ServerService, VillagesService } from '@modules/game/services';
+import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from '@shared/services';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
-export class MapComponent {
+export class MapComponent implements OnInit {
   tiles: MapTile[][] = [];
   viewX = 0;
   viewY = 0;
   gridSize = 7;
-  serverId = 1;
 
   constructor(
-    private villagesService: VillagesService,
-    private router: Router
+    private readonly villagesService: VillagesService,
+    private readonly router: Router,
+    private readonly toastr: ToastrService,
+    private readonly translate: TranslateService,
+    private readonly serverService: ServerService
   ) {}
 
   ngOnInit() {
@@ -25,11 +29,22 @@ export class MapComponent {
   }
 
   fetchMapData() {
-    this.villagesService
-      .getMapData(this.serverId, this.viewX, this.viewY, this.gridSize)
-      .subscribe((villages) => {
-        this.generateGrid(villages.data);
-      });
+    const server = this.serverService.getServer();
+
+    if (server && server.id) {
+      this.villagesService
+        .getMapData(server.id, this.viewX, this.viewY, this.gridSize)
+        .subscribe({
+          next: (villages) => {
+            this.generateGrid(villages.data);
+          },
+          error: () => {
+            this.toastr.showError(
+              this.translate.instant('map.ERRORS.FETCH_FAILED')
+            );
+          },
+        });
+    }
   }
 
   generateGrid(foundVillages: MapVillage[]) {

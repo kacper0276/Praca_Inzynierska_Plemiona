@@ -4,13 +4,16 @@
       <thead>
         <tr>
           @for (col of columns; track col.key) {
-          <th>{{ col.header }}</th>
+          <th>{{ col.header | translate }}</th>
           }
         </tr>
       </thead>
       <tbody>
         @for (item of data; track item) {
-        <tr (click)="onEdit(item)" title="Kliknij, aby edytować">
+        <tr
+          (click)="onEdit(item)"
+          [attr.title]="'dataTable.CLICK_TO_EDIT' | translate"
+        >
           @for (col of columns; track col.key) {
           <td>
             @if (col.isAction) {
@@ -19,8 +22,8 @@
                 class="action-btn"
                 mat-icon-button
                 (click)="$event.stopPropagation(); onEdit(item)"
-                aria-label="Edytuj element"
-                title="Edytuj"
+                [attr.aria-label]="'dataTable.ARIA_EDIT' | translate"
+                [attr.title]="'dataTable.TITLE_EDIT' | translate"
               >
                 <mat-icon>edit</mat-icon>
               </button>
@@ -28,8 +31,8 @@
                 class="action-btn"
                 mat-icon-button
                 (click)="$event.stopPropagation(); onDelete(item)"
-                aria-label="Usuń element"
-                title="Usuń"
+                [attr.aria-label]="'dataTable.ARIA_DELETE' | translate"
+                [attr.title]="'dataTable.TITLE_DELETE' | translate"
               >
                 <mat-icon>delete</mat-icon>
               </button>
@@ -46,7 +49,7 @@
             [attr.colspan]="columns.length"
             style="text-align: center; padding: 20px"
           >
-            Brak danych do wyświetlenia.
+            {{ "dataTable.NO_DATA" | translate }}
           </td>
         </tr>
         }

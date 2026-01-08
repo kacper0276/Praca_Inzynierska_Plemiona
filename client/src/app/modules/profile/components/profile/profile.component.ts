@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { User } from '@shared/models';
 import { UserService } from '@modules/auth/services';
+import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from '@shared/services';
 
 @Component({
   selector: 'app-profile',
@@ -17,7 +19,9 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly translate: TranslateService,
+    private readonly toastr: ToastrService
   ) {
     this.userEmail = this.activatedRoute.snapshot.params['userEmail'];
   }
@@ -27,19 +31,27 @@ export class ProfileComponent implements OnInit {
       next: (res) => {
         this.user = res.data;
       },
+      error: (err) => {
+        this.toastr.showError(
+          this.translate.instant('profile.ERRORS.FETCH_USER_FAILED')
+        );
+      },
     });
   }
 
   get userInitials(): string {
+    if (!this.user) {
+      return '?';
+    }
     const { firstName, lastName, login } = this.user;
     if (firstName && lastName) {
-      return `${firstName.charAt(0)}${lastName.charAt(0)}`;
+      return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
     }
     if (firstName) {
-      return firstName.substring(0, 2);
+      return firstName.substring(0, 2).toUpperCase();
     }
     if (login) {
-      return login.substring(0, 2);
+      return login.substring(0, 2).toUpperCase();
     }
     return '?';
   }

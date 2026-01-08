@@ -2,10 +2,14 @@
   <div class="overlay">
     <div class="title-content">
       <div class="title-screen">
-        <h1>Witaj w grze <span class="highlight">!</span></h1>
+        <h1>{{ "home.TITLE" | translate }} <span class="highlight">!</span></h1>
         <div class="button-group">
-          <a routerLink="/login" class="btn">Zaloguj się</a>
-          <a routerLink="/register" class="btn">Zarejestruj się</a>
+          <a routerLink="/login" class="btn">
+            {{ "home.BTN_LOGIN" | translate }}
+          </a>
+          <a routerLink="/register" class="btn">
+            {{ "home.BTN_REGISTER" | translate }}
+          </a>
         </div>
       </div>
     </div>

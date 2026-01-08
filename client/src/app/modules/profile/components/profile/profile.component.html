@@ -5,7 +5,7 @@
         backendUrl + user.backgroundImage ||
         'assets/images/default-background.jpg'
       "
-      alt="Tło profilu"
+      [alt]="'profile.BACKGROUND_ALT' | translate"
       class="background-image"
     />
   </div>
@@ -16,7 +16,7 @@
         <ng-container *ngIf="user.profileImage; else initialsAvatar">
           <img
             [src]="backendUrl + user.profileImage"
-            alt="Awatar użytkownika"
+            [alt]="'profile.AVATAR_ALT' | translate"
             class="avatar-image"
           />
         </ng-container>
@@ -37,27 +37,27 @@
 
     <div class="profile-details">
       <div class="details-section">
-        <h3>O mnie</h3>
-        <p>{{ user.bio || "Brak opisu." }}</p>
+        <h3>{{ "profile.ABOUT_ME_HEADER" | translate }}</h3>
+        <p>{{ user.bio || ("profile.NO_BIO" | translate) }}</p>
       </div>
 
       <div class="details-section">
-        <h3>Informacje</h3>
+        <h3>{{ "profile.INFO_HEADER" | translate }}</h3>
         <ul>
           <li>
-            <span class="label">Email:</span>
+            <span class="label">{{ "profile.EMAIL_LABEL" | translate }}:</span>
             <span class="value">{{ user.email }}</span>
           </li>
           <li>
-            <span class="label">Rola:</span>
+            <span class="label">{{ "profile.ROLE_LABEL" | translate }}:</span>
             <span class="value">{{ user.role }}</span>
           </li>
         </ul>
       </div>
 
       <div class="footer-buttons">
-        <button>Wyślij wiadomość</button>
-        <button>Edytuj profil</button>
+        <button>{{ "profile.BTN_SEND_MESSAGE" | translate }}</button>
+        <button>{{ "profile.BTN_EDIT_PROFILE" | translate }}</button>
       </div>
     </div>
   </div>

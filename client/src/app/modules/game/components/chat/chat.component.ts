@@ -20,9 +20,11 @@ import {
   WebSocketService,
   ChatGroupsService,
   DirectMessagesService,
+  ToastrService,
 } from '@shared/services';
 import { UserSearchResult } from '@modules/game/interfaces';
 import { MultiSelectItem, MessageUi } from '@shared/interfaces';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-chat',
@@ -63,7 +65,9 @@ export class ChatComponent implements OnInit, OnDestroy {
     private readonly groupService: ChatGroupsService,
     private readonly dmService: DirectMessagesService,
     private readonly userService: UserService,
-    private readonly usersService: UsersService
+    private readonly usersService: UsersService,
+    private readonly toastr: ToastrService,
+    private readonly translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -85,7 +89,10 @@ export class ChatComponent implements OnInit, OnDestroy {
           next: (users) => {
             this.searchResults = users.data;
           },
-          error: (err) => console.error('Błąd podczas wyszukiwania:', err),
+          error: (err) =>
+            this.toastr.showError(
+              this.translate.instant('chat.ERRORS.SEARCH_FAILED')
+            ),
         })
     );
   }
@@ -98,7 +105,10 @@ export class ChatComponent implements OnInit, OnDestroy {
           lastMessageDate: new Date(c.lastMessageDate),
         }));
       },
-      error: (err) => console.error('Błąd pobierania czatów', err),
+      error: (err) =>
+        this.toastr.showError(
+          this.translate.instant('chat.ERRORS.FETCH_CHATS_FAILED')
+        ),
     });
   }
 
@@ -196,7 +206,9 @@ export class ChatComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (res) => {},
           error: () => {
-            alert('Błąd wysyłania wiadomości');
+            this.toastr.showError(
+              this.translate.instant('chat.ERRORS.SEND_MSG_FAILED')
+            );
             this.newMessage = content;
           },
         });
@@ -204,7 +216,9 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.groupService.sendMessage(this.selectedChat.id, content).subscribe({
         next: (res) => {},
         error: () => {
-          alert('Błąd wysyłania wiadomości do grupy');
+          this.toastr.showError(
+            this.translate.instant('chat.ERRORS.SEND_GROUP_MSG_FAILED')
+          );
           this.newMessage = content;
         },
       });
@@ -300,7 +314,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       isMe: isMe,
       time: new Date(backendMsg.createdAt).toString(),
       senderName: isMe
-        ? 'Ja'
+        ? this.translate.instant('chat.SENDER_ME')
         : backendMsg.sender.username || backendMsg.sender.email,
       senderAvatar: backendMsg.sender.avatar || 'assets/default-avatar.png',
     };
@@ -353,14 +367,20 @@ export class ChatComponent implements OnInit, OnDestroy {
       .createGroup({
         name: this.newGroupName,
         memberIds: memberIds,
-        description: 'Grupa utworzona przez użytkownika',
+        description: this.translate.instant('chat.DEFAULT_GROUP_DESC'),
       })
       .subscribe({
         next: (res) => {
+          this.toastr.showSuccess(
+            this.translate.instant('chat.SUCCESS.GROUP_CREATED')
+          );
           this.closeGroupModal();
           this.fetchChatList();
         },
-        error: (err) => alert('Nie udało się utworzyć grupy'),
+        error: (err) =>
+          this.toastr.showError(
+            this.translate.instant('chat.ERRORS.CREATE_GROUP_FAILED')
+          ),
       });
   }
 

@@ -4,7 +4,8 @@
       <thead>
         <tr>
           @for (col of columns; track col.key) {
-          <th>{{ col.header }}</th>
+          <!-- Tłumaczenie nagłówków kolumn -->
+          <th>{{ col.header | translate }}</th>
           }
         </tr>
       </thead>
@@ -13,7 +14,9 @@
         <tr
           [ngClass]="getRowClass(item)"
           (click)="rowClickable ? onEdit(item) : null"
-          [attr.title]="rowClickable ? 'Kliknij, aby edytować' : ''"
+          [attr.title]="
+            rowClickable ? ('dataTable.CLICK_TO_EDIT' | translate) : ''
+          "
         >
           @for (col of columns; track col.key) {
           <td>
@@ -23,8 +26,8 @@
                 class="action-btn"
                 mat-icon-button
                 (click)="$event.stopPropagation(); onActionEdit(item)"
-                aria-label="Edytuj element"
-                title="Edytuj"
+                [attr.aria-label]="'dataTable.ARIA_EDIT' | translate"
+                [attr.title]="'dataTable.TITLE_EDIT' | translate"
               >
                 <mat-icon>edit</mat-icon>
               </button>
@@ -32,8 +35,8 @@
                 class="action-btn"
                 mat-icon-button
                 (click)="$event.stopPropagation(); onDelete(item)"
-                aria-label="Usuń element"
-                title="Usuń"
+                [attr.aria-label]="'dataTable.ARIA_DELETE' | translate"
+                [attr.title]="'dataTable.TITLE_DELETE' | translate"
               >
                 <mat-icon>delete</mat-icon>
               </button>
@@ -50,7 +53,7 @@
             [attr.colspan]="columns.length"
             style="text-align: center; padding: 20px"
           >
-            Brak danych do wyświetlenia.
+            {{ "dataTable.NO_DATA" | translate }}
           </td>
         </tr>
         }

@@ -5,8 +5,12 @@
       <p>{{ message }}</p>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="onCancel()">Anuluj</button>
-      <button class="btn btn-danger" (click)="onConfirm()">Potwierdź</button>
+      <button class="btn btn-secondary" (click)="onCancel()">
+        {{ "confirmationModal.BTN_CANCEL" | translate }}
+      </button>
+      <button class="btn btn-danger" (click)="onConfirm()">
+        {{ "confirmationModal.BTN_CONFIRM" | translate }}
+      </button>
     </div>
   </div>
 </div>

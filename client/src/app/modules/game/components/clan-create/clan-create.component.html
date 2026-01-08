@@ -1,17 +1,17 @@
-<h3>Utwórz klan</h3>
+<h3>{{ "clan.create.HEADER" | translate }}</h3>
 <form [formGroup]="form" (ngSubmit)="submit()" class="main-container">
   <div class="form-row">
-    <label>Nazwa klanu</label>
+    <label>{{ "clan.create.NAME_LABEL" | translate }}</label>
     <input formControlName="name" type="text" />
   </div>
 
   <div class="form-row">
-    <label>Opis klanu</label>
+    <label>{{ "clan.create.DESC_LABEL" | translate }}</label>
     <input formControlName="description" type="text" />
   </div>
 
   <div class="form-row">
-    <label>Zaproszeni gracze</label>
+    <label>{{ "clan.create.INVITED_PLAYERS_LABEL" | translate }}</label>
     <app-multi-select
       [items]="userFriends"
       (selectionChange)="onFriendsChange($event)"
@@ -19,24 +19,26 @@
   </div>
 
   <div class="form-row">
-    <label>Koszt utworzenia</label>
+    <label>{{ "clan.create.COST_LABEL" | translate }}</label>
     <div class="clan-cost-item">
-      <span
-        ><img src="/assets/icons/wood.png" width="24" />
-        {{ clanCost.wood }}</span
-      >
-      <span
-        ><img src="/assets/icons/clay.png" width="24" />
-        {{ clanCost.clay }}</span
-      >
-      <span
-        ><img src="/assets/icons/iron.png" width="24" />
-        {{ clanCost.iron }}</span
-      >
+      <span>
+        <img src="/assets/icons/wood.png" width="24" />
+        {{ clanCost.wood }}
+      </span>
+      <span>
+        <img src="/assets/icons/clay.png" width="24" />
+        {{ clanCost.clay }}
+      </span>
+      <span>
+        <img src="/assets/icons/iron.png" width="24" />
+        {{ clanCost.iron }}
+      </span>
     </div>
   </div>
 
   <div class="actions">
-    <button type="submit" [disabled]="form.invalid">Utwórz klan</button>
+    <button type="submit" [disabled]="form.invalid">
+      {{ "clan.create.BTN_CREATE" | translate }}
+    </button>
   </div>
 </form>

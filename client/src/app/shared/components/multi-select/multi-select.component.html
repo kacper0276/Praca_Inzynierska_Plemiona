@@ -9,7 +9,7 @@
       type="text"
       [(ngModel)]="searchQuery"
       (input)="filterItems()"
-      [placeholder]="selectedItems.length > 0 ? '' : placeholder"
+      [placeholder]="selectedItems.length > 0 ? '' : (placeholder | translate)"
     />
   </div>
 
@@ -30,7 +30,7 @@
     </div>
 
     <div class="no-results" *ngIf="filteredItems.length === 0">
-      Brak wyników
+      {{ "multiSelect.NO_RESULTS" | translate }}
     </div>
   </div>
 </div>

@@ -1,6 +1,6 @@
 <div class="admin-panel-container">
   <header class="admin-panel-header">
-    <h1>Panel Administracyjny</h1>
+    <h1>{{ "admin.HEADER" | translate }}</h1>
   </header>
 
   <nav class="admin-tabs">
@@ -8,38 +8,56 @@
       <li routerLinkActive="active">
         <a routerLink="users">
           <!-- <mat-icon>people</mat-icon> -->
-          <img src="/assets/icons/users.png" alt="Users" />
-          <span>Użytkownicy</span>
+          <img
+            src="/assets/icons/users.png"
+            [alt]="'admin.nav.USERS' | translate"
+          />
+          <span>{{ "admin.nav.USERS" | translate }}</span>
         </a>
       </li>
       <li routerLinkActive="active">
         <a routerLink="buildings">
-          <img src="/assets/icons/village.png" alt="Buildings" />
-          <span>Budynki</span>
+          <img
+            src="/assets/icons/village.png"
+            [alt]="'admin.nav.BUILDINGS' | translate"
+          />
+          <span>{{ "admin.nav.BUILDINGS" | translate }}</span>
         </a>
       </li>
       <li routerLinkActive="active">
         <a routerLink="resources">
-          <img src="/assets/icons/pickaxe.png" alt="Resources" />
-          <span>Surowce</span>
+          <img
+            src="/assets/icons/pickaxe.png"
+            [alt]="'admin.nav.RESOURCES' | translate"
+          />
+          <span>{{ "admin.nav.RESOURCES" | translate }}</span>
         </a>
       </li>
       <li routerLinkActive="active">
         <a routerLink="reports">
-          <img src="/assets/icons/report_admin.png" alt="Reports" />
-          <span>Zgłoszenia</span>
+          <img
+            src="/assets/icons/report_admin.png"
+            [alt]="'admin.nav.REPORTS' | translate"
+          />
+          <span>{{ "admin.nav.REPORTS" | translate }}</span>
         </a>
       </li>
       <li routerLinkActive="active">
         <a routerLink="guilds">
-          <img src="/assets/icons/shield.png" alt="Guilds" />
-          <span>Gildie</span>
+          <img
+            src="/assets/icons/shield.png"
+            [alt]="'admin.nav.GUILDS' | translate"
+          />
+          <span>{{ "admin.nav.GUILDS" | translate }}</span>
         </a>
       </li>
       <li routerLinkActive="active">
         <a routerLink="quests">
-          <img src="/assets/icons/quest.png" alt="Quests" />
-          <span>Zadania</span>
+          <img
+            src="/assets/icons/quest.png"
+            [alt]="'admin.nav.QUESTS' | translate"
+          />
+          <span>{{ "admin.nav.QUESTS" | translate }}</span>
         </a>
       </li>
     </ul>
