@@ -34,6 +34,12 @@
   </div>
   <div modal-footer class="buttons">
     <button (click)="demolish.emit()">Usuń budynek</button>
+    <button
+      (click)="repair.emit()"
+      [disabled]="building?.health === building?.maxHealth"
+    >
+      Napraw budynek
+    </button>
     <button (click)="close.emit()">Zamknij</button>
   </div>
 </app-modal>

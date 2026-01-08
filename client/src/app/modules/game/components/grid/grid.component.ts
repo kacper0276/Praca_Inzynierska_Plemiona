@@ -285,9 +285,10 @@ export class GridComponent implements OnInit, OnDestroy {
         this.selectedBuildingCol = col;
         break;
       case 'upgrade':
-        this.selectedBuilding = this.buildings[row][col];
-        this.selectedBuildingRow = row;
-        this.selectedBuildingCol = col;
+        // this.selectedBuilding = this.buildings[row][col];
+        // this.selectedBuildingRow = row;
+        // this.selectedBuildingCol = col;
+        console.log('Ulepszam');
         break;
       case 'destroy':
         this.demolishBuilding(row, col);
