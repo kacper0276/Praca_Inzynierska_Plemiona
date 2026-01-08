@@ -49,4 +49,10 @@ export enum WebSocketEvent {
   // Quest
   QUEST_UPDATE = 'quest_update',
   QUEST_COMPLETED = 'quest_completed',
+
+  // Battle
+  ATTACK_START = 'attack_start',
+  BATTLE_UPDATE = 'battle_update',
+  BATTLE_ENDED = 'battle_ended',
+  BATTLE_ERROR = 'battle_error',
 }

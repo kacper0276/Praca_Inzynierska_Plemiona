@@ -69,9 +69,6 @@ export class ReportsService {
       );
     }
 
-    console.log(resolveStatus);
-    console.log(id);
-
     existing.isResolved = resolveStatus;
     existing.resolvedAt = new Date();
     existing.resolver = { id: resolverId } as User;

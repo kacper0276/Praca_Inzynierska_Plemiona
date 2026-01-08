@@ -31,6 +31,7 @@ import { ChatGroupsService } from 'src/chat/services/chat-groups.service';
 import { DirectMessagesService } from 'src/chat/services/direct-messages.service';
 import { QuestsService } from 'src/quests/services/quests.service';
 import { QuestObjectiveType } from '@core/enums/quest-objective-type.enum';
+import { BattlesService } from 'src/battle/services/battles.service';
 
 export interface AuthenticatedSocket extends Socket {
   user: User;
@@ -59,9 +60,12 @@ export class WsGateway
     private readonly chatGroupsService: ChatGroupsService,
     @Inject(forwardRef(() => QuestsService))
     private readonly questsService: QuestsService,
+    @Inject(forwardRef(() => BattlesService))
+    private readonly battlesService: BattlesService,
   ) {}
 
   afterInit(server: Server) {
+    this.battlesService.setServer(server);
     this.logger.log('WebSocket Gateway Initialized and ready.');
   }
 
@@ -116,6 +120,22 @@ export class WsGateway
         userId: user.id,
         email: user.email,
       });
+
+      const activeBattle = this.battlesService.getActiveBattleForUser(
+        client.user.id,
+      );
+      if (activeBattle) {
+        client.emit(WsEvent.BATTLE_UPDATE, {
+          attacker: activeBattle.attackerArmy,
+          defender: activeBattle.defenderArmy,
+          buildings: activeBattle.buildings.map((b) => ({
+            id: b.id,
+            health: b.health,
+            row: b.row,
+            col: b.col,
+          })),
+        });
+      }
     } catch (error) {
       console.log(error.message);
       this.logger.error(
@@ -177,7 +197,6 @@ export class WsGateway
     @ConnectedSocket() client: AuthenticatedSocket,
     @MessageBody() payload: any,
   ) {
-    console.log('Army create received', payload);
     this.server.emit(WsEvent.ARMY_UPDATE, { action: 'create', payload });
     if (client.user && payload.serverId && payload.unitType) {
       await this.questsService.checkProgress(
@@ -196,7 +215,6 @@ export class WsGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: any,
   ) {
-    console.log('Army upgrade received', payload);
     this.server.emit(WsEvent.ARMY_UPDATE, { action: 'upgrade', payload });
     return { status: 'ok' };
   }
@@ -541,6 +559,22 @@ export class WsGateway
   public sendGroupMessageToRoom(groupId: number, payload: any) {
     const roomName = this.getGroupRoomName(groupId);
     this.server.to(roomName).emit(WsEvent.GROUP_MESSAGE_RECEIVED, payload);
+  }
+
+  @SubscribeMessage(WsEvent.ATTACK_START)
+  async handleAttackStart(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: { targetEmail: string; serverId: number },
+  ) {
+    try {
+      await this.battlesService.startBattle(
+        client.user.id,
+        payload.targetEmail,
+        payload.serverId,
+      );
+    } catch (error) {
+      client.emit(WsEvent.BATTLE_ERROR, { message: error.message });
+    }
   }
 
   private getDmRoomName(userId1: number, userId2: number): string {

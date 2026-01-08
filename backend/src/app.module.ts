@@ -36,6 +36,7 @@ import { ChatModule } from './chat/chat.module';
 import { RankingModule } from './ranking/ranking.module';
 import { QuestsModule } from './quests/quests.module';
 import { ArmyModule } from './army/army.module';
+import { BattleModule } from './battle/battle.module';
 
 @Module({
   imports: [
@@ -123,6 +124,7 @@ import { ArmyModule } from './army/army.module';
     RankingModule,
     QuestsModule,
     ArmyModule,
+    BattleModule,
   ],
   controllers: [],
   providers: [

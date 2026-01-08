@@ -45,6 +45,45 @@
   </div>
 
   <div class="grid-layout">
+    <div
+      class="army attacking-army"
+      *ngIf="isAttacking"
+      [style.left.px]="attackingArmy.x"
+      [style.top.px]="attackingArmy.y"
+    >
+      <div class="hp-bar">
+        <div
+          class="hp-fill"
+          [style.width.%]="(attackingArmy.totalHp / attackingArmy.maxHp) * 100"
+        ></div>
+      </div>
+      <img [src]="attackingArmy.gifUrl" alt="Attacker" />
+    </div>
+
+    <div
+      class="army defending-army"
+      *ngIf="isAttacking"
+      [style.left.px]="defendingArmy.x"
+      [style.top.px]="defendingArmy.y"
+    >
+      <div class="hp-bar">
+        <div
+          class="hp-fill"
+          [style.width.%]="(defendingArmy.totalHp / defendingArmy.maxHp) * 100"
+        ></div>
+      </div>
+      <img [src]="defendingArmy.gifUrl" alt="Defender" />
+    </div>
+
+    <div
+      class="explosion"
+      *ngIf="explosion.show"
+      [style.left.px]="explosion.x"
+      [style.top.px]="explosion.y"
+    >
+      <img [src]="explosion.gifUrl" alt="Boom" />
+    </div>
+
     <div *ngFor="let row of buildings; let i = index" class="grid-row">
       <div
         *ngFor="let building of row; let j = index"
@@ -167,7 +206,7 @@
   (repair)="repairBuilding()"
 ></app-building-details-popup>
 
-<div *ngIf="isAttacking" class="attack-overlay">
+<!-- <div *ngIf="isAttacking" class="attack-overlay">
   <div
     class="army-container"
     [style.transform]="
@@ -218,4 +257,38 @@
     [style.left.px]="explosion.x"
     [style.top.px]="explosion.y"
   />
+</div> -->
+
+<div class="battle-result-modal" *ngIf="battleResult">
+  <div class="modal-content">
+    <h2>{{ "grid.BATTLE.RESULT_TITLE" | translate }}</h2>
+
+    <div
+      class="winner-announcement"
+      [class.victory]="battleResult.winner === 'attacker'"
+      [class.defeat]="battleResult.winner === 'defender'"
+    >
+      {{
+        battleResult.winner === "attacker"
+          ? ("grid.BATTLE.ATTACKER_WINS" | translate)
+          : ("grid.BATTLE.DEFENDER_WINS" | translate)
+      }}
+    </div>
+
+    <div class="losses-container">
+      <div class="losses-column attacker">
+        <h4>{{ "grid.BATTLE.ATTACKER" | translate }}</h4>
+        <p class="loss-count">-{{ battleResult.attackerLosses }}</p>
+      </div>
+      <div class="vs-divider">VS</div>
+      <div class="losses-column defender">
+        <h4>{{ "grid.BATTLE.DEFENDER" | translate }}</h4>
+        <p class="loss-count">-{{ battleResult.defenderLosses }}</p>
+      </div>
+    </div>
+
+    <button class="btn-close" (click)="closePopup()">
+      {{ "CLOSE" | translate }}
+    </button>
+  </div>
 </div>
