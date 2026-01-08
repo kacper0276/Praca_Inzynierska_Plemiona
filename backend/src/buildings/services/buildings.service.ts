@@ -208,10 +208,10 @@ export class BuildingsService {
     return savedBuilding;
   }
 
-  async upgradeForUser(
+  async startUpgradeForUser(
     userId: number,
     dto: UpgradeBuildingWsDto,
-  ): Promise<Building> {
+  ): Promise<any> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -229,7 +229,9 @@ export class BuildingsService {
 
       if (!building) throw new NotFoundException('Budynek nie istnieje.');
       if (building.constructionFinishedAt)
-        throw new ConflictException('Budynek jest w trakcie budowy.');
+        throw new ConflictException(
+          'Budynek jest w trakcie budowy lub ulepszania.',
+        );
 
       const baseCost = BUILDING_COSTS[building.name as BuildingName];
       const multiplier = Math.pow(1.2, building.level);
@@ -259,10 +261,6 @@ export class BuildingsService {
       const upgradeTime = 60 * 1000 * building.level;
       building.constructionFinishedAt = new Date(Date.now() + upgradeTime);
 
-      building.level += 1;
-      building.maxHealth += 10;
-      building.health = building.maxHealth;
-
       savedBuilding = await buildingRepository.save(building);
       await queryRunner.commitTransaction();
     } catch (err) {
@@ -280,7 +278,69 @@ export class BuildingsService {
       );
     }
 
-    return savedBuilding;
+    return {
+      ...savedBuilding,
+      upgradeFinishedAt: savedBuilding.constructionFinishedAt,
+      constructionFinishedAt: null,
+    };
+  }
+
+  async finalizeUpgrade(buildingId: number): Promise<Building> {
+    const building = await this.buildingsRepository.findOneById(buildingId);
+    if (!building) {
+      throw new NotFoundException('Budynek nie istnieje.');
+    }
+
+    building.level += 1;
+    building.maxHealth += 10;
+    building.health = building.maxHealth;
+    building.constructionFinishedAt = null;
+
+    return this.buildingsRepository.save(building);
+  }
+
+  async startRepairForUser(userId: number, buildingId: number): Promise<any> {
+    const building = await this.buildingsRepository.findOne({
+      id: buildingId,
+      village: { user: { id: userId } as any } as any,
+    });
+
+    if (!building) {
+      throw new NotFoundException('Budynek nie został znaleziony.');
+    }
+
+    if (building.health >= building.maxHealth) {
+      throw new ConflictException('Budynek nie wymaga naprawy.');
+    }
+
+    if (building.constructionFinishedAt) {
+      throw new ConflictException('Budynek jest zajęty (budowa/ulepszanie).');
+    }
+
+    const missingHealth = building.maxHealth - building.health;
+    const repairTime = Math.max(5000, missingHealth * 500);
+
+    building.constructionFinishedAt = new Date(Date.now() + repairTime);
+
+    const savedBuilding = await this.buildingsRepository.save(building);
+
+    return {
+      ...savedBuilding,
+      repairFinishedAt: savedBuilding.constructionFinishedAt,
+      constructionFinishedAt: null,
+    };
+  }
+
+  async finalizeRepair(buildingId: number): Promise<Building> {
+    const building = await this.buildingsRepository.findOneById(buildingId);
+    if (!building) {
+      throw new NotFoundException('Budynek nie istnieje.');
+    }
+
+    building.health = building.maxHealth;
+    building.constructionFinishedAt = null;
+
+    return this.buildingsRepository.save(building);
   }
 
   async moveForUser(userId: number, dto: MoveBuildingWsDto): Promise<void> {
@@ -344,6 +404,7 @@ export class BuildingsService {
     });
     for (const building of finishedBuildings) {
       building.constructionFinishedAt = null;
+
       const savedBuilding = await this.buildingsRepository.save(building);
 
       const userId = building.village.user.id;

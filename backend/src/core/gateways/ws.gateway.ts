@@ -265,23 +265,76 @@ export class WsGateway
       `User ${client.user.email} upgrading building ${payload.buildingId}`,
     );
     try {
-      const building = await this.buildingsService.upgradeForUser(
+      const building = await this.buildingsService.startUpgradeForUser(
         client.user.id,
         payload,
       );
-      this.handleGetVillageData(client, { serverId: payload.serverId });
 
-      if (building) {
-        await this.questsService.checkProgress(
-          client.user.id,
-          payload.serverId,
-          QuestObjectiveType.UPGRADE_BUILDING,
-          building.name,
-          1,
-        );
+      this.sendToUser(client.user.id, WsEvent.BUILDING_UPDATE, building);
+
+      if (building && building.upgradeFinishedAt) {
+        const finishTime =
+          new Date(building.upgradeFinishedAt).getTime() - Date.now();
+
+        setTimeout(async () => {
+          const finishedBuilding = await this.buildingsService.finalizeUpgrade(
+            building.id,
+          );
+
+          this.sendToUser(
+            client.user.id,
+            WsEvent.BUILDING_FINISHED,
+            finishedBuilding,
+          );
+
+          await this.questsService.checkProgress(
+            client.user.id,
+            payload.serverId,
+            QuestObjectiveType.UPGRADE_BUILDING,
+            finishedBuilding.name,
+            1,
+          );
+        }, finishTime);
       }
     } catch (error) {
       this.logger.error(`Upgrade failed: ${error.message}`);
+    }
+  }
+
+  @SubscribeMessage(WsEvent.BUILDING_REPAIR)
+  async handleBuildingRepair(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() payload: { buildingId: number; serverId: number },
+  ) {
+    this.logger.log(
+      `User ${client.user.email} repairing building ${payload.buildingId}`,
+    );
+    try {
+      const building = await this.buildingsService.startRepairForUser(
+        client.user.id,
+        payload.buildingId,
+      );
+
+      this.sendToUser(client.user.id, WsEvent.BUILDING_UPDATE, building);
+
+      if (building && building.repairFinishedAt) {
+        const finishTime =
+          new Date(building.repairFinishedAt).getTime() - Date.now();
+
+        setTimeout(async () => {
+          const finishedBuilding = await this.buildingsService.finalizeRepair(
+            building.id,
+          );
+
+          this.sendToUser(
+            client.user.id,
+            WsEvent.BUILDING_FINISHED,
+            finishedBuilding,
+          );
+        }, finishTime);
+      }
+    } catch (error) {
+      this.logger.error(`Repair failed: ${error.message}`);
     }
   }
 
