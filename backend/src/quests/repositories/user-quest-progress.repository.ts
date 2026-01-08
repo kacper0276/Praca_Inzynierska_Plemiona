@@ -91,4 +91,31 @@ export class UserQuestProgressRepository extends BaseRepository<UserQuestProgres
       ],
     });
   }
+
+  async countByQuestId(questId: number): Promise<number> {
+    return this.repository.count({
+      where: { quest: { id: questId } as any },
+    });
+  }
+
+  async deleteNotStartedByQuestId(questId: number): Promise<void> {
+    const allProgresses = await this.repository.find({
+      where: { quest: { id: questId } as any },
+      relations: ['objectivesProgress'],
+    });
+
+    const entitiesToDelete = allProgresses.filter((progress) => {
+      if (progress.isCompleted) return false;
+
+      const hasStartedAnyObjective = progress.objectivesProgress.some(
+        (obj) => obj.currentCount > 0,
+      );
+
+      return !hasStartedAnyObjective;
+    });
+
+    if (entitiesToDelete.length > 0) {
+      await this.repository.remove(entitiesToDelete);
+    }
+  }
 }

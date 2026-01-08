@@ -232,4 +232,14 @@ export class QuestsService {
       this.wsGateway.sendToUser(userId, WsEvent.QUEST_UPDATE, updatedQuests);
     }
   }
+
+  async deleteQuest(questId: number): Promise<void> {
+    await this.userQuestRepo.deleteNotStartedByQuestId(questId);
+
+    const remainingUsers = await this.userQuestRepo.countByQuestId(questId);
+
+    if (remainingUsers === 0) {
+      await this.questRepo.delete(questId);
+    }
+  }
 }
