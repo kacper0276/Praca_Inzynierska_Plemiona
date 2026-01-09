@@ -71,6 +71,8 @@ export class WsGateway
 
   async handleConnection(client: AuthenticatedSocket) {
     const token = client.handshake.auth.token?.split(' ')[1];
+    const serverId =
+      client.handshake.query.serverId || client.handshake.auth.serverId;
 
     if (!token) {
       this.logger.warn(
@@ -101,6 +103,14 @@ export class WsGateway
 
       client.user = user;
       await this.usersService.setUserOnlineStatus(user.email, true);
+
+      if (serverId) {
+        await this.usersService.setActualUserServer(user.email, +serverId);
+        this.logger.log(
+          `User ${user.email} connected to Server ID: ${serverId}`,
+        );
+      }
+
       this.logger.log(
         `Client connected and authenticated: ${user.email} (ID: ${client.id})`,
       );
