@@ -22,7 +22,7 @@ export class WebSocketService {
     private readonly authService: AuthService
   ) {}
 
-  async connect(url: string) {
+  async connect(url: string, serverId?: number) {
     if (this.socket) {
       this.disconnect();
     }
@@ -35,13 +35,21 @@ export class WebSocketService {
     }
 
     this.url = url;
-    this.socket = io(this.url, {
+    this.url = url;
+
+    const options: any = {
       transports: ['websocket'],
       auth: {
         token: `Bearer ${token}`,
       },
       reconnection: false,
-    });
+    };
+
+    if (serverId) {
+      options.query = { serverId: serverId.toString() };
+    }
+
+    this.socket = io(this.url, options);
 
     this.socket.on('connect', () => {
       this.ngZone.run(() => this.connected$.next(true));

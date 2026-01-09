@@ -88,8 +88,8 @@ export class JobsService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_HOURS)
-  // @Cron(CronExpression.EVERY_10_SECONDS)
+  // @Cron(CronExpression.EVERY_10_HOURS)
+  @Cron(CronExpression.EVERY_10_SECONDS)
   async handleResourceGeneration() {
     this.logger.log('Uruchamianie zadania generowania surowców...');
 

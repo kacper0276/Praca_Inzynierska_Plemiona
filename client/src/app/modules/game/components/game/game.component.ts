@@ -116,7 +116,9 @@ export class GameComponent implements OnInit, OnDestroy {
         ? `http://${this.joinedServer.hostname}:${this.joinedServer.port}`
         : this.backendWsUrl;
 
-      this.webSocket.connect(wsURL);
+      const serverId = this.joinedServer.id;
+
+      this.webSocket.connect(wsURL, serverId);
 
       if (this.connectionSubscription)
         this.connectionSubscription.unsubscribe();
