@@ -169,6 +169,70 @@ export class ResourcesService {
     return await repo.save(userResources);
   }
 
+  async increaseMaxPopulation(
+    userId: number,
+    serverId: number,
+    amount: number,
+    manager?: EntityManager,
+    resources?: Resources,
+  ): Promise<Resources> {
+    const repo = manager ? manager.getRepository(Resources) : this.repository;
+
+    let targetResources = resources;
+
+    if (!targetResources) {
+      targetResources = await repo.findOne({
+        user: { id: userId } as any,
+        server: { id: serverId } as any,
+      });
+    }
+
+    if (!targetResources) {
+      throw new NotFoundException(
+        `Nie znaleziono zasobów dla użytkownika ${userId} na serwerze ${serverId}`,
+      );
+    }
+
+    targetResources.maxPopulation += amount;
+
+    const savedResources = await repo.save(targetResources);
+
+    if (!manager) {
+      this.wsGateway.sendToUser(
+        userId,
+        WsEvent.RESOURCE_UPDATE,
+        savedResources,
+      );
+    }
+
+    return savedResources;
+  }
+
+  async decreaseMaxPopulation(
+    userId: number,
+    serverId: number,
+    amount: number,
+  ): Promise<Resources> {
+    const resources = await this.repository.findOne({
+      user: { id: userId } as any,
+      server: { id: serverId } as any,
+    });
+
+    if (!resources) {
+      throw new NotFoundException(
+        `Nie znaleziono zasobów dla użytkownika ${userId} na serwerze ${serverId}`,
+      );
+    }
+
+    resources.maxPopulation = Math.max(0, resources.maxPopulation - amount);
+
+    const savedResources = await this.repository.save(resources);
+
+    this.wsGateway.sendToUser(userId, WsEvent.RESOURCE_UPDATE, savedResources);
+
+    return savedResources;
+  }
+
   async hasEnoughResources(
     userId: number,
     serverId: number,

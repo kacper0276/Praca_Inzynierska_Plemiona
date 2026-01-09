@@ -23,6 +23,7 @@ import { Resources } from 'src/resources/entities/resources.entity';
 import { WsGateway } from '@core/gateways/ws.gateway';
 import { WsEvent } from '@core/enums/ws-event.enum';
 import { UpgradeBuildingWsDto } from '../dto/upgrade-building-ws.dto';
+import { ResourcesService } from 'src/resources/services/resources.service';
 
 @Injectable()
 export class BuildingsService {
@@ -32,6 +33,8 @@ export class BuildingsService {
     private readonly villagesRepository: VillagesRepository,
     @InjectDataSource() private readonly dataSource: DataSource,
     @Inject(forwardRef(() => WsGateway)) private readonly wsGateway: WsGateway,
+    @Inject(forwardRef(() => ResourcesService))
+    private readonly resourcesService: ResourcesService,
   ) {}
 
   async findAll() {
@@ -168,7 +171,6 @@ export class BuildingsService {
       userResources.wood -= buildingCost.wood;
       userResources.clay -= buildingCost.clay;
       userResources.iron -= buildingCost.iron;
-      updatedResources = await resourcesRepository.save(userResources);
 
       const imageUrl = `assets/buildings/${dto.name}.png`;
       const defaultHealth = 100;
@@ -188,6 +190,18 @@ export class BuildingsService {
         constructionFinishedAt: finishedAt,
       });
       savedBuilding = await buildingRepository.save(newBuilding);
+
+      if (savedBuilding.name === BuildingName.RESIDENTIAL_HOUSE) {
+        updatedResources = await this.resourcesService.increaseMaxPopulation(
+          userId,
+          dto.serverId,
+          1,
+          queryRunner.manager,
+          userResources,
+        );
+      } else {
+        updatedResources = await resourcesRepository.save(userResources);
+      }
 
       await queryRunner.commitTransaction();
     } catch (err) {
@@ -286,7 +300,10 @@ export class BuildingsService {
   }
 
   async finalizeUpgrade(buildingId: number): Promise<Building> {
-    const building = await this.buildingsRepository.findOneById(buildingId);
+    const building = await this.buildingsRepository.findOneById(buildingId, {
+      relations: ['village', 'village.user', 'village.server'],
+    });
+
     if (!building) {
       throw new NotFoundException('Budynek nie istnieje.');
     }
@@ -296,7 +313,17 @@ export class BuildingsService {
     building.health = building.maxHealth;
     building.constructionFinishedAt = null;
 
-    return this.buildingsRepository.save(building);
+    const savedBuilding = await this.buildingsRepository.save(building);
+
+    if (savedBuilding.name === BuildingName.RESIDENTIAL_HOUSE) {
+      await this.resourcesService.increaseMaxPopulation(
+        building.village.user.id,
+        building.village.server.id,
+        savedBuilding.level,
+      );
+    }
+
+    return savedBuilding;
   }
 
   async startRepairForUser(userId: number, buildingId: number): Promise<any> {
