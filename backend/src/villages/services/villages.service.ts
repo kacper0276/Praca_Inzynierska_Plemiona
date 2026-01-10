@@ -384,6 +384,7 @@ export class VillagesService {
         gridSize: true,
         user: {
           email: true,
+          login: true,
         },
       } as any,
     });
@@ -404,10 +405,11 @@ export class VillagesService {
 
         return {
           id: v.id,
-          name: `Wioska ${v.user?.email || 'Nieznana'}`,
+          name: `Wioska ${v.user?.login || 'Nieznana'}`,
           x: simulatedX,
           y: simulatedY,
-          playerName: v.user?.email || 'Unknown',
+          playerEmail: v.user?.email || 'Unknown',
+          playerLogin: v.user.login || 'Unknown',
         };
       })
       .filter((v) => {

@@ -112,7 +112,14 @@ export class AuthService {
   async register(data: RegisterDto) {
     const existing = await this.usersRepository.findOneByEmail(data.email);
     if (existing) {
-      throw new UnauthorizedException('Email already in use');
+      throw new BadRequestException('auth.register.EMAIL_EXISTS');
+    }
+
+    const existingLogin = await this.usersRepository.findOne({
+      login: data.login,
+    });
+    if (existingLogin) {
+      throw new BadRequestException('auth.register.LOGIN_EXISTS');
     }
 
     const passwordHash = await bcrypt.hash(data.password, 10);
