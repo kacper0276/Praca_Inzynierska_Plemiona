@@ -1,6 +1,6 @@
 {
   "CLOSE": "Zamknij",
-  "INFO_FIELD": "Informacje o polu [{row}, {col}]",
+  "INFO_FIELD": "Puste pole",
   "MAX_GRID": "Osiągnięto maksymalny rozmiar wioski",
   "NOT_ENOUGH_RES_EXPAND": "Za mało surowców na rozszerzenie!",
   "NOT_ENOUGH_RES": "Za mało surowców!",

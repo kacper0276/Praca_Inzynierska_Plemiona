@@ -1,6 +1,6 @@
 {
   "CLOSE": "Close",
-  "INFO_FIELD": "Field info [{row}, {col}]",
+  "INFO_FIELD": "Empty field",
   "MAX_GRID": "Maximum village size reached",
   "NOT_ENOUGH_RES_EXPAND": "Not enough resources to expand!",
   "NOT_ENOUGH_RES": "Not enough resources!",

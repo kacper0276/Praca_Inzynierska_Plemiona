@@ -383,7 +383,7 @@ export class GridComponent implements OnInit, OnDestroy {
       this.buildCol = col;
       this.buildMode = true;
     } else if (action === 'inspect') {
-      this.toastr.showInfo(this.translate.instant('INFO_FIELD', { row, col }));
+      this.toastr.showInfo(this.translate.instant('INFO_FIELD'));
     }
   }
 
