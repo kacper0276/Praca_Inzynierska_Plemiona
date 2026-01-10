@@ -428,6 +428,8 @@
       "BTN_SUBMIT": "Log in"
     },
     "register": {
+      "EMAIL_EXISTS": "An account with this email already exists.",
+      "LOGIN_EXISTS": "An account with this username already exists.",
       "HAVE_ACCOUNT": "Already have an account?",
       "LOGIN_LINK": "Log in here",
       "TITLE": "Registration",
@@ -476,7 +478,7 @@
       "NAME": "Building Name",
       "LEVEL": "Building Level",
       "HEALTH": "Health Level",
-      "USER_LOGIN": "Username",
+      "USER_LOGIN": "Login",
       "VILLAGE_ID": "User Village ID",
       "DELETE_CONFIRM": "Are you sure you want to delete this building?"
     },

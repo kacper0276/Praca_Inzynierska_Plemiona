@@ -305,7 +305,7 @@
     "TITLE": "Ranking",
     "HEADERS": {
       "POSITION": "Miejsce",
-      "USERNAME": "Nazwa użytkownika",
+      "USERNAME": "Login",
       "SCORE": "Ilość punktów"
     },
     "ERRORS": {
@@ -428,11 +428,13 @@
       "BTN_SUBMIT": "Zaloguj się"
     },
     "register": {
+      "EMAIL_EXISTS": "Konto z tym adresem email już istnieje.",
+      "LOGIN_EXISTS": "Konto z tym loginem już istnieje.",
       "HAVE_ACCOUNT": "Masz już konto?",
       "LOGIN_LINK": "Zaloguj się tutaj",
       "TITLE": "Rejestracja",
       "EMAIL_LABEL": "Email",
-      "LOGIN_LABEL": "Nazwa użytkownika",
+      "LOGIN_LABEL": "Login",
       "FIRST_NAME_LABEL": "Imię",
       "LAST_NAME_LABEL": "Nazwisko",
       "PASSWORD_LABEL": "Hasło",
@@ -476,7 +478,7 @@
       "NAME": "Nazwa budynku",
       "LEVEL": "Poziom budynku",
       "HEALTH": "Poziom zdrowia",
-      "USER_LOGIN": "Nazwa użytkownika",
+      "USER_LOGIN": "Login",
       "VILLAGE_ID": "Id wioski użytkownika",
       "DELETE_CONFIRM": "Czy na pewno chcesz usunąć ten budynek?"
     },

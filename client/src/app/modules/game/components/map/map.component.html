@@ -31,14 +31,14 @@
             *ngFor="let tile of row"
             class="map-tile"
             [class.has-village]="tile.village"
-            (click)="tile.village && goToVillage(tile.village.playerName)"
+            (click)="tile.village && goToVillage(tile.village.playerEmail)"
           >
             <div *ngIf="tile.village" class="village-content">
               <i class="material-icons village-icon">home</i>
 
               <div class="tooltip panel">
                 <div class="tooltip-header">{{ tile.village.name }}</div>
-                <div class="tooltip-player">{{ tile.village.playerName }}</div>
+                <!-- <div class="tooltip-player">{{ tile.village.playerLogin }}</div> -->
                 <div class="tooltip-coords">({{ tile.x }}|{{ tile.y }})</div>
               </div>
             </div>

@@ -56,10 +56,8 @@ export class RegisterComponent {
           this.router.navigate(['/login']);
         },
         error: (err) => {
-          const errorMsg =
-            err.error?.message ||
-            this.translateService.instant('auth.register.ERROR');
-          this.toastr.showError(errorMsg);
+          const errorMsg = err.error?.message || 'auth.register.ERROR';
+          this.toastr.showError(this.translateService.instant(errorMsg));
         },
       });
     }

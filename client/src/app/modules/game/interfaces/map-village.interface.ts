@@ -3,5 +3,6 @@ export interface MapVillage {
   name: string;
   x: number;
   y: number;
-  playerName: string;
+  playerEmail: string;
+  playerLogin: string;
 }
