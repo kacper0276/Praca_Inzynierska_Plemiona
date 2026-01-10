@@ -10,6 +10,16 @@
   "CLAN_CREATED_SUBTITLE": "Zaproszenia wysłane do wybranych graczy",
   "CLAN_COST_LABEL": "Koszt",
   "GATHER_TICK_INFO": "Następne surowce za {seconds}s",
+  "DELETE": "Usuń",
+  "DETAILS": "Szczegóły",
+
+  "Dom_mieszkalny": "Dom mieszkalny",
+  "Glina": "Glina",
+  "Kowal": "Kowal",
+  "Młyn": "Młyn",
+  "Ratusz": "Ratusz",
+  "Spichlerz": "Spichlerz",
+  "Tartak": "Tartak",
 
   "bugModal": {
     "HEADER": "Zgłoś błąd",

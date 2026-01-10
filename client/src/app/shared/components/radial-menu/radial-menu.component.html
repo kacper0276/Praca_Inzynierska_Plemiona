@@ -11,7 +11,7 @@
       class="menu-item"
       [style.--i]="i"
       (click)="selectOption(option.action)"
-      [title]="option.tooltip"
+      [title]="option.tooltip ?? '' | translate"
     >
       <img
         *ngIf="option.iconUrl"

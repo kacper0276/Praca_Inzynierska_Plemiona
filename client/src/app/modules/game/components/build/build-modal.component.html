@@ -7,7 +7,7 @@
     <div class="build-options">
       <div *ngFor="let b of availableBuildings" class="build-option">
         <img [src]="b.imageUrl" [alt]="b.name" />
-        <div class="name">{{ b.name }}</div>
+        <div class="name">{{ b.name | translate }}</div>
         <div class="costs">
           <span *ngFor="let key of getCost(b) | keyvalue">
             {{ "resources." + key.key | translate }}: {{ key.value }}

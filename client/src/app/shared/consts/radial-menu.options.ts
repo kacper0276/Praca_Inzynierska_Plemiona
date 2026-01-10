@@ -17,17 +17,17 @@ export const BUILDING_OPTIONS: RadialMenuOption[] = [
   {
     action: 'details',
     iconUrl: '/assets/icons/info.png',
-    tooltip: 'Szczegóły',
+    tooltip: 'DETAILS',
   },
   {
     action: 'upgrade',
     iconUrl: '/assets/icons/building_upgrade.png',
-    tooltip: 'Rozbuduj',
+    tooltip: 'upgradeModal.BTN_UPGRADE',
   },
   {
     action: 'destroy',
     iconUrl: '/assets/icons/trash.png',
-    tooltip: 'Usuń',
+    tooltip: 'DELETE',
   },
   // {
   //   action: 'edit',

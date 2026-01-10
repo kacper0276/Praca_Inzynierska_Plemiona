@@ -10,6 +10,16 @@
   "CLAN_CREATED_SUBTITLE": "Invitations sent to selected players",
   "CLAN_COST_LABEL": "Cost",
   "GATHER_TICK_INFO": "Next resources in {seconds}s",
+  "DELETE": "Delete",
+  "DETAILS": "Details",
+
+  "Dom_mieszkalny": "Residential House",
+  "Glina": "Clay Pit",
+  "Kowal": "Smithy",
+  "Młyn": "Mill",
+  "Ratusz": "Town Hall",
+  "Spichlerz": "Granary",
+  "Tartak": "Sawmill",
 
   "bugModal": {
     "HEADER": "Report a bug",
