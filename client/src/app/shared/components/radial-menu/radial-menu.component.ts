@@ -47,8 +47,12 @@ export class RadialMenuComponent implements OnInit {
     this.toggled.emit(this.isOpen);
   }
 
-  selectOption(action: string): void {
-    this.optionSelected.emit(action);
+  selectOption(option: RadialMenuOption): void {
+    if (option.disabled) {
+      return;
+    }
+
+    this.optionSelected.emit(option.action);
     this.isOpen = false;
     this.toggled.emit(false);
   }

@@ -10,21 +10,45 @@
       *ngFor="let option of menuOptions; let i = index"
       class="menu-item"
       [style.--i]="i"
-      (click)="selectOption(option.action)"
+      (click)="selectOption(option)"
       [title]="option.tooltip ?? '' | translate"
+      [class.disabled]="$any(option).disabled"
     >
-      <img
-        *ngIf="option.iconUrl"
-        class="menu-icon"
-        [src]="option.iconUrl"
-        [alt]="option.action"
-      />
-
-      <i
-        *ngIf="option.iconName && !option.iconUrl"
-        class="material-icons menu-icon"
-        >{{ option.iconName }}</i
+      <div
+        class="item-content"
+        [style.transform]="
+          'rotate(calc(var(--i) * (-360deg / var(--item-count))))'
+        "
       >
+        <div class="icon-wrapper">
+          <img
+            *ngIf="option.iconUrl"
+            class="menu-icon-img"
+            [src]="option.iconUrl"
+            [alt]="option.action"
+          />
+          <i
+            *ngIf="option.iconName && !option.iconUrl"
+            class="material-icons menu-icon-font"
+            >{{ option.iconName }}</i
+          >
+        </div>
+
+        <div *ngIf="$any(option).cost" class="cost-container">
+          <div *ngIf="$any(option).cost.wood" class="res-row wood">
+            <img src="/assets/icons/wood.png" alt="W" />
+            <span>{{ $any(option).cost.wood }}</span>
+          </div>
+          <div *ngIf="$any(option).cost.clay" class="res-row clay">
+            <img src="/assets/icons/clay.png" alt="C" />
+            <span>{{ $any(option).cost.clay }}</span>
+          </div>
+          <div *ngIf="$any(option).cost.iron" class="res-row iron">
+            <img src="/assets/icons/iron.png" alt="I" />
+            <span>{{ $any(option).cost.iron }}</span>
+          </div>
+        </div>
+      </div>
     </li>
   </ul>
 </div>

@@ -145,7 +145,7 @@
               activeRadial.row === i &&
               activeRadial.col === j
             "
-            [menuOptions]="buildingOptions"
+            [menuOptions]="currentMenuOptions"
             [forceOpen]="true"
             [showToggle]="false"
             (optionSelected)="handleBuildingMenuOption($event, i, j)"

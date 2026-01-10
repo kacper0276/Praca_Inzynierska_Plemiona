@@ -10,7 +10,7 @@ import { Observable, Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 import { AVAILABLE_BUILDINGS } from '@shared/consts/available-buildings';
-import { WebSocketEvent } from '@shared/enums';
+import { BuildingName, WebSocketEvent } from '@shared/enums';
 import { BuildingData, Resources, RadialMenuOption } from '@shared/models';
 import {
   BUILDING_OPTIONS,
@@ -24,6 +24,7 @@ import {
 } from '@modules/game/services';
 import { ToastrService, WebSocketService } from '@shared/services';
 import { ArmyVisualState } from '@modules/game/interfaces/army-visual-state.interface';
+import { BUILDING_COSTS } from '@shared/consts/building-costs';
 
 @Component({
   selector: 'app-grid',
@@ -40,6 +41,8 @@ export class GridComponent implements OnInit, OnDestroy {
   expansionMultiplier: number = 1;
   userEmail: string | null = null;
   now: number = Date.now();
+
+  currentMenuOptions: RadialMenuOption[] = [];
 
   private timerInterval: any;
 
@@ -445,7 +448,6 @@ export class GridComponent implements OnInit, OnDestroy {
     );
   }
 
-  // --- DRAG AND DROP ---
   onDragEnter(event: DragEvent, row: number, col: number): void {
     if (!this.isOwnVillage) return;
     if (this.draggedBuilding) {
@@ -535,7 +537,6 @@ export class GridComponent implements OnInit, OnDestroy {
     }
   }
 
-  // --- UI INTERACTIONS ---
   onBuildingClick(row: number, col: number): void {
     const building = this.buildings[row][col];
     if (building) {
@@ -546,10 +547,51 @@ export class GridComponent implements OnInit, OnDestroy {
       ) {
         this.activeRadial = null;
       } else {
+        this.updateMenuOptionsForBuilding(building);
         this.activeRadial = { row, col };
       }
       this.selectedBuilding = null;
     }
+  }
+
+  private getUpgradeCost(
+    building: BuildingData
+  ): { wood: number; clay: number; iron: number } | null {
+    const baseCost = BUILDING_COSTS[building.name as BuildingName];
+
+    if (!baseCost) return null;
+
+    const level = building.level || 1;
+    const multiplier = Math.pow(1.2, level);
+
+    return {
+      wood: Math.ceil(baseCost.wood * multiplier),
+      clay: Math.ceil(baseCost.clay * multiplier),
+      iron: Math.ceil(baseCost.iron * multiplier),
+    };
+  }
+
+  private updateMenuOptionsForBuilding(building: BuildingData): void {
+    const options = JSON.parse(JSON.stringify(this.buildingOptions));
+
+    const upgradeOption = options.find((opt: any) => opt.action === 'upgrade');
+
+    if (upgradeOption) {
+      const cost = this.getUpgradeCost(building);
+
+      if (cost) {
+        (upgradeOption as any).cost = cost;
+
+        const canAfford =
+          (this.resources.wood || 0) >= cost.wood &&
+          (this.resources.clay || 0) >= cost.clay &&
+          (this.resources.iron || 0) >= cost.iron;
+
+        (upgradeOption as any).disabled = !canAfford;
+      }
+    }
+
+    this.currentMenuOptions = options;
   }
 
   showEmptyRadial(event: Event, row: number, col: number) {

@@ -5,4 +5,5 @@ export interface RadialMenuOption extends BaseModel {
   iconName?: string;
   iconUrl?: string;
   tooltip?: string;
+  disabled?: boolean;
 }
