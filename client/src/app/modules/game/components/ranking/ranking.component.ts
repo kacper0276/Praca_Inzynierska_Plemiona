@@ -20,6 +20,8 @@ export class RankingComponent implements OnInit {
     {
       key: 'username',
       header: 'ranking.HEADERS.USERNAME',
+      type: 'link',
+      getLink: (item: Ranking) => ['/game/village', item.email],
     },
     {
       key: 'score',

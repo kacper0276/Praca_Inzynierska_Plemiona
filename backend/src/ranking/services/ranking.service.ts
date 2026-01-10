@@ -36,14 +36,21 @@ export class RankingService {
       relations: ['user'],
     });
 
-    const userMap = new Map<number, { login: string; score: number }>();
+    const userMap = new Map<
+      number,
+      { login: string; score: number; email: string }
+    >();
 
     for (const village of villages) {
       if (!village.user) continue;
       const uid = village.user.id;
 
       if (!userMap.has(uid)) {
-        userMap.set(uid, { login: village.user.login, score: 0 });
+        userMap.set(uid, {
+          login: village.user.login,
+          score: 0,
+          email: village.user.email,
+        });
       }
 
       const entry = userMap.get(uid)!;
@@ -62,7 +69,11 @@ export class RankingService {
       const uid = res.user.id;
 
       if (!userMap.has(uid)) {
-        userMap.set(uid, { login: res.user.login, score: 0 });
+        userMap.set(uid, {
+          login: res.user.login,
+          score: 0,
+          email: res.user.email,
+        });
       }
 
       const entry = userMap.get(uid)!;
@@ -87,6 +98,7 @@ export class RankingService {
       .map((item, index) => ({
         position: startIndex + index + 1,
         username: item.login,
+        email: item.email,
         score: item.score,
         server: serverName,
         isYou: item.userId === currentUserId,

@@ -1,4 +1,3 @@
-# ETAP 1: Budowanie
 FROM node:20-alpine as build
 
 WORKDIR /src
@@ -9,7 +8,7 @@ RUN npm ci
 
 COPY . ./
 
-RUN npm run build -- --configuration=production
+RUN export NODE_OPTIONS="--max-old-space-size=4096" && npm run build -- --configuration=production
 
 FROM nginx:stable AS final
 

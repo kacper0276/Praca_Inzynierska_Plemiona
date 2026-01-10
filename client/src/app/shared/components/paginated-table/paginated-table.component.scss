@@ -11,6 +11,19 @@
   flex-direction: column;
 }
 
+.cell-link {
+  color: $blue-500;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s, text-decoration 0.2s;
+
+  &:hover {
+    color: $blue-600;
+    text-decoration: underline;
+  }
+}
+
 .table-wrapper {
   overflow-x: auto;
   flex: 1;

@@ -4,7 +4,6 @@
       <thead>
         <tr>
           @for (col of columns; track col.key) {
-          <!-- Tłumaczenie nagłówków kolumn -->
           <th>{{ col.header | translate }}</th>
           }
         </tr>
@@ -41,6 +40,14 @@
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
+            } @else if (col.type === 'link' && col.getLink) {
+            <a
+              [routerLink]="col.getLink(item)"
+              class="cell-link"
+              (click)="$event.stopPropagation()"
+            >
+              {{ getCellValue(item, col.key) }}
+            </a>
             } @else {
             {{ getCellValue(item, col.key) }}
             }

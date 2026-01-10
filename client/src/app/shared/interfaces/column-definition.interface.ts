@@ -6,6 +6,7 @@ export interface ColumnDefinition {
   isAction?: boolean;
   editField?: string;
   isReadOnly?: boolean;
-  type?: 'text' | 'checkbox' | 'select' | 'number';
+  type?: 'text' | 'checkbox' | 'select' | 'number' | 'link';
   options?: ColumnOption[];
+  getLink?: (item: any) => string | any[];
 }
