@@ -42,7 +42,7 @@ services:
       - JWT_SECRET=dka0e8912jdq8891hd98ah
       - JWT_REFRESH_SECRET=dadka09u89ud9qy4781j
     volumes:
-      - ./backend/public/uploads:/usr/src/app/public/uploads
+      - ./backend/public/uploads:/app/public/uploads
 
   client:
     build:
