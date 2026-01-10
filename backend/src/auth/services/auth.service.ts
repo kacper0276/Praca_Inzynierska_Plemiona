@@ -120,8 +120,8 @@ export class AuthService {
       email: data.email,
       login: data.login,
       password: passwordHash,
-      firstName: data.firstName,
-      lastName: data.lastName,
+      firstName: data.firstName ?? '',
+      lastName: data.lastName ?? '',
     });
 
     const savedUser = await this.usersRepository.save(user);
