@@ -204,7 +204,7 @@ export class UsersController {
     const userMakingRequest = user;
 
     if (
-      userMakingRequest.role !== UserRole.ADMIN ||
+      userMakingRequest.role !== UserRole.ADMIN &&
       userMakingRequest.email !== email
     ) {
       throw new ForbiddenException(
