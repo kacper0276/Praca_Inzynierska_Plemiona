@@ -35,7 +35,6 @@ export class WebSocketService {
     }
 
     this.url = url;
-    this.url = url;
 
     const options: any = {
       transports: ['websocket'],

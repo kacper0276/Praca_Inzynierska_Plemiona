@@ -25,7 +25,8 @@ export class AuthService {
     email: string,
     code: string,
   ): Promise<void> {
-    const activationLink = `http://localhost:4200/auth/activate-account`;
+    // const activationLink = `http://localhost:4200/activate-account`;
+    const activationLink = `http://72.60.18.198/activate-account`;
     const emailTemplate = getActivationEmailTemplate(activationLink, code);
 
     const message = {

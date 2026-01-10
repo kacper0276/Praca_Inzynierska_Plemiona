@@ -68,11 +68,11 @@ export class ResourcesService {
     const newResource = this.repository.create({
       user: user,
       server: { id: serverId } as any,
-      wood: 100,
-      clay: 100,
-      iron: 100,
+      wood: 350,
+      clay: 350,
+      iron: 350,
       population: 2,
-      maxPopulation: 10,
+      maxPopulation: 5,
     });
 
     return this.repository.save(newResource);

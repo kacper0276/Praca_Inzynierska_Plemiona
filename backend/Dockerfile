@@ -1,4 +1,3 @@
-# ETAP 1: Budowanie
 FROM node:22-alpine AS builder
 
 WORKDIR /app
@@ -16,11 +15,14 @@ WORKDIR /app
 
 COPY package.json yarn.lock ./
 
-RUN yarn install --production --frozen-lockfile
+RUN yarn install --frozen-lockfile
 
 COPY --from=builder /app/dist ./dist
-
 COPY --from=builder /app/config ./config
+
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/tsconfig.json ./
+COPY --from=builder /app/tsconfig.build.json ./
 
 EXPOSE 3000
 

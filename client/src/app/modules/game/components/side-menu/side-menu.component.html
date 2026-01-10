@@ -53,7 +53,7 @@
         [class.active]="activeTab === 'village'"
         [title]="isCollapsed ? ('sideMenu.ITEMS.VILLAGE' | translate) : ''"
       >
-        <a routerLink="village/kacper0276@op.pl">
+        <a [routerLink]="'village/' + currentUser?.email">
           <img src="/assets/icons/village.png" alt="Village" />
           <span *ngIf="!isCollapsed">{{
             "sideMenu.ITEMS.VILLAGE" | translate
