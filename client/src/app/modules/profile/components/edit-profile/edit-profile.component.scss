@@ -200,6 +200,8 @@ $input-focus-border: $blue-500;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  outline: none;
+  border: none;
 
   &.btn-primary {
     background-color: $blue-600;

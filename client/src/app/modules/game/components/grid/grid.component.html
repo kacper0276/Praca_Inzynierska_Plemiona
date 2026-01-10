@@ -9,7 +9,7 @@
     </button>
   </div>
 
-  <div class="expand-controls">
+  <div class="expand-controls" *ngIf="isOwnVillage">
     <button
       class="expand-btn left"
       (click)="requestExpansion('left')"

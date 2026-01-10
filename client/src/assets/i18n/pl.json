@@ -428,6 +428,8 @@
       "BTN_SUBMIT": "Zaloguj się"
     },
     "register": {
+      "HAVE_ACCOUNT": "Masz już konto?",
+      "LOGIN_LINK": "Zaloguj się tutaj",
       "TITLE": "Rejestracja",
       "EMAIL_LABEL": "Email",
       "LOGIN_LABEL": "Nazwa użytkownika",
