@@ -1,15 +1,27 @@
+# ETAP 1: Budowanie
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+
+COPY . .
+
+RUN yarn build
+
 FROM node:22-alpine
 
 WORKDIR /app
 
 COPY package.json yarn.lock ./
 
-RUN npm install -g yarn@latest --force
+RUN yarn install --production --frozen-lockfile
 
-RUN yarn install
+COPY --from=builder /app/dist ./dist
 
-COPY . .
+COPY --from=builder /app/config ./config
 
 EXPOSE 3000
 
-CMD yarn migration:run && yarn start:dev
+CMD ["sh", "-c", "yarn migration:run && node dist/main"]
