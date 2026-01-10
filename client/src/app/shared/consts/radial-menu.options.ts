@@ -8,7 +8,7 @@ export const EMPTY_PLOT_OPTIONS: RadialMenuOption[] = [
   },
   {
     action: 'inspect',
-    iconUrl: '/assets/icons/pencil.png',
+    iconUrl: '/assets/icons/info.png',
     tooltip: 'Informacje o polu',
   },
 ];

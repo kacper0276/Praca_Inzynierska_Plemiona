@@ -34,14 +34,25 @@ export class WebSocketService {
       return;
     }
 
+    //! Odkomentować do produkcji
+    // if (url.includes('backend') || url.includes('localhost')) {
+    //   this.url = '';
+    // } else {
+    //   this.url = url;
+    // }
+
     this.url = url;
 
     const options: any = {
-      transports: ['websocket'],
+      transports: ['polling', 'websocket'],
+
+      //! Odkomentować do produkcji
+      // path: '/socket.io/',
+
       auth: {
         token: `Bearer ${token}`,
       },
-      reconnection: false,
+      reconnection: true,
     };
 
     if (serverId) {

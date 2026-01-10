@@ -9,6 +9,7 @@ import { BuildingData } from '@shared/models';
 export class BuildingDetailsPopupComponent {
   @Input() building: BuildingData | null = null;
   @Input() resources: any;
+  @Input() isOwnVillage: boolean = false;
   @Input() availableBuildings: BuildingData[] = [];
   @Output() close = new EventEmitter<void>();
   @Output() demolish = new EventEmitter<void>();

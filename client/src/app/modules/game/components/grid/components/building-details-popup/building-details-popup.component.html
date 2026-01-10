@@ -34,10 +34,11 @@
     ></app-build-modal>
   </div>
   <div modal-footer class="buttons">
-    <button (click)="demolish.emit()">
+    <button *ngIf="isOwnVillage" (click)="demolish.emit()">
       {{ "buildingDetails.BTN_DEMOLISH" | translate }}
     </button>
     <button
+      *ngIf="isOwnVillage"
       (click)="repair.emit()"
       [disabled]="building?.health === building?.maxHealth"
     >
