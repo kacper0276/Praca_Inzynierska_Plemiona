@@ -33,9 +33,7 @@ export class RegisterComponent {
       lastName: [''],
     });
 
-    this.titleService.setTitle(
-      this.translateService.instant('auth.register.TITLE')
-    );
+    this.titleService.setTitle(this.translateService.instant('Rejestracja'));
   }
 
   togglePasswordVisibility(): void {

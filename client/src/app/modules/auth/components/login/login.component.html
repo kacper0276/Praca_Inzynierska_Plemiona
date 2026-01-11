@@ -25,6 +25,13 @@
       <a routerLink="/register">{{ "auth.login.REGISTER_LINK" | translate }}</a>
     </p>
 
+    <p class="create-account-link">
+      {{ "auth.login.FORGOT_PASSWORD" | translate }}
+      <a routerLink="/forgot-password">{{
+        "auth.login.FORGOT_PASSWORD_LINK" | translate
+      }}</a>
+    </p>
+
     <button type="submit" [disabled]="loginForm.invalid">
       {{ "auth.login.BTN_SUBMIT" | translate }}
     </button>

@@ -86,15 +86,26 @@ export class AuthInterceptor implements HttpInterceptor {
         );
     } else {
       this.authService.logout();
+
       const currentUrl = this.router.url;
-      const isOnAuthPage =
-        currentUrl.includes('/register') ||
-        currentUrl.includes('/activate-account') ||
-        currentUrl.includes('/login');
+
+      const publicRoutes = [
+        '/login',
+        '/register',
+        '/activate-account',
+        '/forgot-password',
+        '/reset-password',
+      ];
+
+      const isOnAuthPage = publicRoutes.some((route) =>
+        currentUrl.includes(route)
+      );
+
       if (!isOnAuthPage) {
         this.router.navigate(['/auth/login']);
         return EMPTY;
       }
+
       return throwError(() => new Error('Brak sesji. Zaloguj się ponownie.'));
     }
   }

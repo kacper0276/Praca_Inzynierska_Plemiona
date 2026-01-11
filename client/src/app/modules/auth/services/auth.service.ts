@@ -9,6 +9,7 @@ import { RegisterCredentials } from '../interfaces/register-credentials.interfac
 import { jwtDecode } from 'jwt-decode';
 import { HttpService } from '@shared/services/http.service';
 import { ApiResponse, User } from '@shared/models';
+import { ResetPasswordData } from '../interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -36,6 +37,14 @@ export class AuthService {
     credentials: RegisterCredentials
   ): Observable<ApiResponse<User>> {
     return this.httpService.post<User>('/auth/register', credentials);
+  }
+
+  forgotPassword(email: string): Observable<ApiResponse<null>> {
+    return this.httpService.post<null>('/auth/forgot-password', { email });
+  }
+
+  resetPassword(data: ResetPasswordData): Observable<ApiResponse<null>> {
+    return this.httpService.post<null>('/auth/reset-password', data);
   }
 
   activateAccount(code: string): Observable<ApiResponse<User>> {

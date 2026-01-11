@@ -425,7 +425,9 @@
       "REMEMBER_ME": "Zapamiętaj mnie",
       "NO_ACCOUNT": "Nie masz konta?",
       "REGISTER_LINK": "Załóż je teraz!",
-      "BTN_SUBMIT": "Zaloguj się"
+      "BTN_SUBMIT": "Zaloguj się",
+      "FORGOT_PASSWORD_LINK": "Zresetuj je tutaj",
+      "FORGOT_PASSWORD": "Zapomniałeś hasła?"
     },
     "register": {
       "EMAIL_EXISTS": "Konto z tym adresem email już istnieje.",
@@ -452,6 +454,26 @@
       },
       "SUCCESS": "Rejestracja przebiegła pomyślnie! Możesz się teraz zalogować.",
       "ERROR": "Wystąpił błąd podczas rejestracji. Sprawdź dane."
+    },
+    "forgot_password": {
+      "HEADER": "Resetowanie hasła",
+      "INSTRUCTION": "Wpisz swój adres e-mail, a wyślemy Ci link do zresetowania hasła.",
+      "BACK_TO_LOGIN": "Powrót do logowania",
+      "BTN_SUBMIT": "Wyślij link",
+      "SUCCESS": "Jeśli podany adres e-mail istnieje w bazie, wysłaliśmy na niego instrukcje.",
+      "ERROR": "Wystąpił błąd podczas przetwarzania żądania. Spróbuj ponownie."
+    },
+    "reset_password": {
+      "HEADER": "Ustaw nowe hasło",
+      "NEW_PASSWORD_LABEL": "Nowe hasło",
+      "CONFIRM_PASSWORD_LABEL": "Powtórz nowe hasło",
+      "BTN_SUBMIT": "Zmień hasło",
+      "SUCCESS": "Hasło zostało pomyślnie zmienione. Możesz się zalogować.",
+      "ERRORS": {
+        "PASSWORDS_NOT_MATCH": "Podane hasła nie są identyczne.",
+        "TOKEN_INVALID": "Link resetujący wygasł lub jest nieprawidłowy. Poproś o nowy link.",
+        "GENERIC": "Nie udało się zmienić hasła. Spróbuj ponownie."
+      }
     },
     "activate": {
       "TITLE": "Aktywacja konta",

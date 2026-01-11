@@ -425,7 +425,9 @@
       "REMEMBER_ME": "Remember me",
       "NO_ACCOUNT": "Don't have an account?",
       "REGISTER_LINK": "Create one now!",
-      "BTN_SUBMIT": "Log in"
+      "BTN_SUBMIT": "Log in",
+      "FORGOT_PASSWORD_LINK": "Reset it here",
+      "FORGOT_PASSWORD": "Forgot your password?"
     },
     "register": {
       "EMAIL_EXISTS": "An account with this email already exists.",
@@ -452,6 +454,26 @@
       },
       "SUCCESS": "Registration successful! You can now log in.",
       "ERROR": "Error occurred during registration. Check your data."
+    },
+    "forgot_password": {
+      "HEADER": "Reset Password",
+      "INSTRUCTION": "Enter your email address and we will send you a link to reset your password.",
+      "BACK_TO_LOGIN": "Back to login",
+      "BTN_SUBMIT": "Send link",
+      "SUCCESS": "If the provided email address exists in the database, we have sent instructions to it.",
+      "ERROR": "An error occurred while processing your request. Please try again."
+    },
+    "reset_password": {
+      "HEADER": "Set new password",
+      "NEW_PASSWORD_LABEL": "New password",
+      "CONFIRM_PASSWORD_LABEL": "Repeat new password",
+      "BTN_SUBMIT": "Change password",
+      "SUCCESS": "Password changed successfully. You can now log in.",
+      "ERRORS": {
+        "PASSWORDS_NOT_MATCH": "The provided passwords do not match.",
+        "TOKEN_INVALID": "The reset link has expired or is invalid. Request a new link.",
+        "GENERIC": "Failed to change password. Please try again."
+      }
     },
     "activate": {
       "TITLE": "Account activation",

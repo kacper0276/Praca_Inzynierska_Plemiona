@@ -28,9 +28,7 @@ export class LoginComponent {
       rememberMe: [false],
     });
 
-    this.titleService.setTitle(
-      this.translateService.instant('auth.login.TITLE')
-    );
+    this.titleService.setTitle(this.translateService.instant('Logowanie'));
   }
 
   onSubmit() {
