@@ -61,7 +61,7 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 - Usunięto zbędne biblioteki
 
-## [0.0.3] - 04.12.2025 - 09.12.2025
+## [0.0.3] - 04.12.2025 - 11.12.2025
 
 ### Added
 
@@ -76,6 +76,8 @@ a ten projekt stosuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Dodano tłumaczenia
 - Dodano odliczanie czasu przy naprawie i ulepszaniu budynku
 - Po wygranym ataku rabujemy 30% surowców atakowanego przeciwnika
+- Dodano zmianę hasła
+- Poprawki stylistyczne
 
 ### Changed
 
