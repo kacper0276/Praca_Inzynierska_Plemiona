@@ -22,4 +22,27 @@ export class TtlService {
     }
     return null;
   }
+
+  async generateResetToken(userId: number): Promise<string> {
+    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    await this.cacheManager.set(`reset-pass-${code}`, userId, 15 * 60 * 1000);
+
+    return code;
+  }
+
+  async verifyResetToken(token: string): Promise<number | null> {
+    const userId = await this.cacheManager.get<number | string>(
+      `reset-pass-${token}`,
+    );
+
+    if (userId !== undefined && userId !== null) {
+      return typeof userId === 'string' ? parseInt(userId, 10) : userId;
+    }
+    return null;
+  }
+
+  async deleteResetToken(token: string): Promise<void> {
+    await this.cacheManager.del(`reset-pass-${token}`);
+  }
 }

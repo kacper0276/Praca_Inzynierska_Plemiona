@@ -11,6 +11,7 @@ import * as bcrypt from 'bcryptjs';
 import { User } from 'src/users/entities/user.entity';
 import { RegisterDto } from '../dto/register.dto';
 import { TtlService } from '@core/ttl/services/ttl.service';
+import { getResetPasswordEmailTemplate } from 'src/users/templates/reset-password-email.template';
 
 @Injectable()
 export class AuthService {
@@ -167,5 +168,54 @@ export class AuthService {
 
     const { password, ...result } = user;
     return result;
+  }
+
+  private async sendResetPasswordEmail(
+    email: string,
+    token: string,
+    userName: string,
+  ): Promise<void> {
+    // const resetLink = `http://72.60.18.198/reset-password?token=${token}&email=${email}`;
+    const resetLink = `http://localhost:4200/reset-password?token=${token}&email=${email}`;
+
+    const emailTemplate = getResetPasswordEmailTemplate(resetLink, userName);
+
+    const message = {
+      to: email,
+      from: `"Administracja serwisu" <mailtestowy1221@op.pl>`,
+      subject: 'Resetowanie hasła - Serwis',
+      html: emailTemplate,
+    };
+
+    await this.mailerService.sendMail(message);
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await this.usersRepository.findOneByEmail(email);
+
+    if (!user) return;
+
+    const token = await this.ttlService.generateResetToken(user.id);
+
+    await this.sendResetPasswordEmail(user.email, token, user.login);
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    const userId = await this.ttlService.verifyResetToken(token);
+
+    if (!userId) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    const user = await this.usersRepository.findOneById(userId);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    user.password = passwordHash;
+    await this.usersRepository.save(user);
+
+    await this.ttlService.deleteResetToken(token);
   }
 }

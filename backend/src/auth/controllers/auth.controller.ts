@@ -24,6 +24,8 @@ import { Authenticated } from '@core/decorators/authenticated.decorator';
 import { Message } from '@core/decorators/message.decorator';
 import { Public } from '@core/decorators/public.decorator';
 import { CurrentUser } from '@core/decorators/current-user.decorator';
+import { ResetPasswordDto } from '../dto/reset-password.dto';
+import { ForgotPasswordDto } from '../dto/forgot-password.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -99,6 +101,33 @@ export class AuthController {
     );
     const { password, ...result } = user;
     return result;
+  }
+
+  @Public()
+  @Post('forgot-password')
+  @Message('auth.forgot-password-email-sent')
+  @ApiBody({ type: ForgotPasswordDto })
+  @ApiOkResponse({
+    description: 'Jeśli użytkownik istnieje, e-mail został wysłany.',
+  })
+  async forgotPassword(@Body() body: ForgotPasswordDto) {
+    await this.authService.forgotPassword(body.email);
+  }
+
+  @Public()
+  @Post('reset-password')
+  @Message('auth.password-reset-success')
+  @ApiBody({ type: ResetPasswordDto })
+  @ApiOkResponse({ description: 'Hasło zostało pomyślnie zmienione.' })
+  @ApiBadRequestResponse({
+    description: 'Token wygasł, jest nieprawidłowy lub hasła się nie zgadzają.',
+  })
+  async resetPassword(@Body() body: ResetPasswordDto) {
+    if (body.repeatedPassword !== body.password) {
+      throw new BadRequestException('passwords-do-not-match');
+    }
+
+    await this.authService.resetPassword(body.token, body.password);
   }
 
   @Get('profile')
