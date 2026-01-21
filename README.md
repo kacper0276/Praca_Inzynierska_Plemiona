@@ -156,3 +156,18 @@ npm start
 ```
 
 > Aplikacja działa na: http://localhost:4200
+
+---
+
+## 🖼️ 5. Zrzuty Ekranu
+
+Poniżej przedstawiono kluczowe widoki aplikacji:
+
+### Widok główny
+![Widok główny](screens/main.png)
+
+### Tworzenie klanu
+![Tworzenie klanu](screens/clan.png)
+
+### Mapa wiosek
+![Mapa wiosek](screens/map.png)
