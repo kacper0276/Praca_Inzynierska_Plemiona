@@ -166,7 +166,7 @@ Poniżej przedstawiono kluczowe widoki aplikacji:
 ### Widok główny
 ![Widok główny](screens/main.png)
 
-### Tworzenie klanu
+### Panel klanu
 ![Tworzenie klanu](screens/clan.png)
 
 ### Mapa wiosek
